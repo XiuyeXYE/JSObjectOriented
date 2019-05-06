@@ -133,13 +133,13 @@ export default class Dom{
         return new Dom(document.getElementById(id));
     }
     static byClass(clsName) {
-        return new Dom(document.getElementsByClassName(clsName));
+        return new DomList(document.getElementsByClassName(clsName));
     }
     static byTagName(tagName) {
-        return new Dom(document.getElementsByTagName(tagName));
+        return new DomList(document.getElementsByTagName(tagName));
     }
     static byName(name) {
-        return new Dom(document.getElementsByName(name));
+        return new DomList(document.getElementsByName(name));
     }
 
     static after(callback){
@@ -152,15 +152,11 @@ Object.freeze(Dom);
 class DomList{
     constructor(elements){
     	let domList = [];
-        let i=0;
-    	elements.forEach((d)=>{
-            domList.push(new Dom(d));
-            this[i++] = d;
-        });
-        this.length = i-1;
-
+        for(let i=0;i<elements.length;i++){
+            domList.push(new Dom(elements[i]));
+        }
         this.domList = domList;
-        
+        this.length = this.domList.length;
     }
 
     item(index){

@@ -43,11 +43,11 @@ export default class Dom{
     }
 
     rmChild(node){
-        this.node.removeChild(node);
+        this.node.removeChild(node.node);
     }
 
     append(node){
-        this.node.appendChild(node);
+        this.node.appendChild(node.node);
     }
 
     set(attr,value){
@@ -62,7 +62,18 @@ export default class Dom{
         this.node.removeAttribute(attr);
     }
 
-
+    content(html){
+        if(arguments.length>0){
+            if(v !== undefined ){
+                if(!!this.node.innerHTML)
+                    this.node.innerHTML = html;
+            }
+            else{
+                this.node.innerHTML = '';
+            }
+        }
+        return this.node.innerHTML;
+    }
 
     on(e, callback) {
         if (arguments.length < 2) {
@@ -70,7 +81,7 @@ export default class Dom{
         }
         this.node.addEventListener(e, callback);
     }
-    off(e, callbck) {
+    off(e, callback) {
         if (arguments.length < 2) {
             throw "error:this method has two parameters.";
         }
@@ -95,12 +106,12 @@ export default class Dom{
         this.on("click",callback);
     }
 
-    static create(node,nType){
+    static create(node,nType=Node.ELEMENT_NODE){
         switch(nType){
             case Node.ELEMENT_NODE:
-                return document.createElement(node);
+                return new Dom(document.createElement(node));
             case Node.TEXT_NODE:
-                return document.createTextNode(node);
+                return new Dom(document.createTextNode(node));
         }
         
     }

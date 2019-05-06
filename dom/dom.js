@@ -231,7 +231,7 @@ class DomList{
    
 
 }
-Object.freeze(DomList);
+
 // export default Dom;
 // export Dom;
 

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	.c1{
+		width:500px;
+		height:600px;
+		background-color: red;
+	}
+	.c2{
+		border:2px solid green;
+	}
+</style>
+</head>
+<body>
+<h1>Hello World!</h1>
+<div id="out1"></div>
+<div id="out2"></div>
+<script type="text/javascript" src="../dom/XYDom.js"></script>
+<script type="text/javascript">
+	let elem = xy.byId('out1');
+	elem.css('width','500px');
+	elem.css('height','500px');
+	elem.css('background-color',"#ccc");
+	
+</script>
+</body>
+</html>

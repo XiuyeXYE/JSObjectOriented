@@ -151,7 +151,14 @@
 		this.get=function(){
 			return this.value;
 		}
-
+		this.ifPresent=function(f){
+			if(isFunction(f)){
+				if(this.ifPresent()){
+					f(this.value);
+				}
+			}
+			return this.value != null;
+		}
 	}
 
 	option.of = function(obj){

@@ -435,6 +435,13 @@
 			byTag:function(tag){
 				return new domlist(document.getElementsByTagName(tag));
 			},
+			byClass:function(cls){
+				return new domlist(document.getElementsByClassName(cls));
+			},
+
+			byName:function(n){
+				return new domlist(document.getElementsByName(n));
+			},
 
 			// 把空格字符串拆分成数组
 			convertStr2ListByWs:convertStr2ListByWs,

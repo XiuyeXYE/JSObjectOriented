@@ -262,6 +262,7 @@
 				return this.node.getAttribute(k);
 			} else if (arguments.length >= 2) {
 				this.node.setAttribute(k, v);
+				return this;
 			}
 		},
 		// 变量元素自身的属性,终归不太好,弃用
@@ -338,7 +339,7 @@
 					classList.push(c);
 				}
 				var classStr = convertList2StrWithWs(classList);
-				this.attr('class',classStr);
+				return this.attr('class',classStr);
 
 			}else{
 				throw 'First parameter must be string!';
@@ -375,6 +376,7 @@
 				for(var i=0;i<this.nodeList.length;i++){
 					this.nodeList[i].attr(k,v);
 				}
+				return this;
 			}
 		},
 		css:function(k,v){
@@ -395,6 +397,7 @@
 				for(var i=0;i<this.nodeList.length;i++){
 					this.nodeList[i].css(k,v);
 				}
+				return this;
 			}
 		},
 		cls:function(c,append=true){
@@ -414,7 +417,7 @@
 				for(var i=0;i<this.nodeList.length;i++){
 					this.nodeList[i].cls(c,append);
 				}
-
+				return this;
 			}else{
 				throw 'First parameter must be string!';
 			}
@@ -493,7 +496,6 @@
 	// set xy static fields
 	xy = shallowCopyObj(xy,fd);
 
-// xy = Object.freeze(xy);
 
 	window.xy = xy;
 	return xy;

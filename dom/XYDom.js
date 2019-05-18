@@ -1,5 +1,5 @@
 /**
- *
+ *	my dom handler API
  */
 (function(global, factory) {
 	factory(global);
@@ -20,6 +20,9 @@
 	// 不要定义静态变量赋初始值,否则容易出bug
 	// const EMPTY_ARRAY = [];
 	// const EMPTY_STRING = '';
+
+
+
 
 	/**
 	 * Utilities :
@@ -108,11 +111,56 @@
 	}
 
 
+
+	function shallowCopyObj(dest,src){
+		var pNum = arguments.length;
+		if(pNum == 0){
+			return {};
+		}
+		else if(pNum == 2){
+			for(var key in src){
+				dest[key] = src[key];
+			}
+		}else{//>2
+			for(var i=1;i<pNum;i++){
+				dest = shallowCopyObj(dest,arguments[i]);
+			}
+		}
+
+
+		return dest;
+
+	}
+
+
+
 	/**
 	 * End.
 	 */
 
 
+
+	function option(){
+
+	}
+
+	option = Object.defineProperties(option,{
+		EMPTY_OBJECT:{
+			get:function(){
+				return {}
+			}
+		},
+		EMPTY_ARRAY:{
+			get:function(){
+				return [];
+			}
+		},
+		EMPTY_STRING:{
+			get:function(){
+				return '';
+			}
+		}
+	});
 
 
 
@@ -218,8 +266,8 @@
 	var xy = function() {
 	};
 
-	xy.__proto__ = {
-			constructor:xy.constructor,
+	var fn = {
+
 
 			// 根据元素ID找到html对象
 			byId:function(id) {
@@ -250,7 +298,21 @@
 			// 用指定符号合并字符串数组
 			list2StrWithJoint:list2StrWithJoint,
 			arrayForEach:arrayForEach,
+			//浅拷贝
+			shallowCopyObj:shallowCopyObj
 	};
+
+	//set xy static methods
+	xy = shallowCopyObj(xy,fn);
+
+	//provide some Object with outer
+	var fd = {
+			Dom:dom,
+			Option:option,
+	}
+
+	//set xy static fields
+	xy = shallowCopyObj(xy,fd);
 
 
 	window.xy = xy;

@@ -212,7 +212,7 @@
 		});
 		this.get=function(){
 			return this.value;
-		}
+		};
 		this.ifPresent=function(f){
 			if(isFunction(f)){
 				if(this.ifPresent()){
@@ -220,12 +220,12 @@
 				}
 			}
 			return this.value != null;
-		}
+		};
 	}
 
 	option.of = function(obj){
 		return new option(obj);
-	}
+	};
 
 	option.valueOf = option.of;
 
@@ -489,7 +489,7 @@
 			DomList:domlist,
 			Option:option,
 			EMPTY_VALUES:EMPTY_VALUES,
-	}
+	};
 
 
 

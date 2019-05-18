@@ -348,7 +348,8 @@
 	};
 
 	function domlist(nodeList){
-		if(!nodeList||!nodeList.length||!isNumber(nodeList.length)){
+		//bug:!0 == true!!!
+		if(!nodeList||!isNumber(nodeList.length)){
 			throw 'cannot init this domlist,because of not html collection or list!';
 		}
 		var nlist = EMPTY_VALUES.EMPTY_ARRAY;
@@ -441,6 +442,10 @@
 
 			byName:function(n){
 				return new domlist(document.getElementsByName(n));
+			},
+
+			d:function(selector){
+				return new domlist(document.querySelectorAll(selector));
 			},
 
 			// 把空格字符串拆分成数组

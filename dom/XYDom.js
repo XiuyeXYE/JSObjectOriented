@@ -140,9 +140,25 @@
 
 
 
-	function option(){
+	function option(obj){
+//		this.value = obj;
+		Object.defineProperty(this,'value',{
+			value:obj,
+			//default
+//			configurable:false,
+//			writable:false,
+		});
+		this.get=function(){
+			return this.value;
+		}
 
 	}
+
+	option.of = function(obj){
+		return new option(obj);
+	}
+
+	option.valueOf = option.of;
 
 	option = Object.defineProperties(option,{
 		EMPTY_OBJECT:{
@@ -159,6 +175,9 @@
 			get:function(){
 				return '';
 			}
+		},
+		EMPTY_OPTION:{
+			value:new option(null)
 		}
 	});
 

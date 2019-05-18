@@ -1,5 +1,5 @@
 /**
- *	my dom handler API
+ * my dom handler API
  */
 (function(global, factory) {
 	factory(global);
@@ -21,6 +21,25 @@
 	// const EMPTY_ARRAY = [];
 	// const EMPTY_STRING = '';
 
+	var EMPTY_VALUES = {};
+	EMPTY_VALUES = Object.defineProperties(EMPTY_VALUES,{
+		EMPTY_OBJECT:{
+			get:function(){
+				return {}
+			}
+		},
+		EMPTY_ARRAY:{
+			get:function(){
+				return [];
+			}
+		},
+		EMPTY_STRING:{
+			get:function(){
+				return '';
+			}
+		}
+
+	});
 
 
 
@@ -69,7 +88,7 @@
 		if(strNonEmpty(s)){
 			return s.split(separator);
 		}
-		return [];
+		return EMPTY_VALUES.EMPTY_ARRAY;
 	}
 
 	function convertStr2ListByWs(s){
@@ -81,7 +100,7 @@
 		if(isArray(a)){
 			return a.join(joint);
 		}
-		return '';
+		return EMPTY_VALUES.EMPTY_STRING;
 	}
 
 	function convertList2StrWithWs(a){
@@ -91,13 +110,13 @@
 
 	function arrayFilter(a,f){
 		if(isArray(a)&&isFunction(f)){
-			var tmp = [];
+			var tmp = EMPTY_VALUES.EMPTY_ARRAY;
 			for(var i=0;i<a.length;i++){
 				if(f(a[i]))tmp.push(a[i]);
 			}
 			return tmp;
 		}
-		return [];
+		return EMPTY_VALUES.EMPTY_ARRAY;
 	}
 
 	function arrayForEach(a,f){
@@ -115,13 +134,13 @@
 	function shallowCopyObj(dest,src){
 		var pNum = arguments.length;
 		if(pNum == 0){
-			return {};
+			return EMPTY_VALUES.EMPTY_OBJECT;
 		}
 		else if(pNum == 2){
 			for(var key in src){
 				dest[key] = src[key];
 			}
-		}else{//>2
+		}else{// >2
 			for(var i=1;i<pNum;i++){
 				dest = shallowCopyObj(dest,arguments[i]);
 			}
@@ -140,13 +159,19 @@
 
 
 
+	function string(str){
+		this.value = str;
+	}
+
+
+
 	function option(obj){
-//		this.value = obj;
+// this.value = obj;
 		Object.defineProperty(this,'value',{
 			value:obj,
-			//default
-//			configurable:false,
-//			writable:false,
+			// default
+// configurable:false,
+// writable:false,
 		});
 		this.get=function(){
 			return this.value;
@@ -168,19 +193,15 @@
 	option.valueOf = option.of;
 
 	option = Object.defineProperties(option,{
-		EMPTY_OBJECT:{
-			get:function(){
-				return {}
-			}
-		},
+
 		EMPTY_ARRAY:{
 			get:function(){
-				return [];
+				return  option.of(EMPTY_VALUES.EMPTY_ARRAY);
 			}
 		},
 		EMPTY_STRING:{
 			get:function(){
-				return '';
+				return option.of(EMPTY_VALUES.EMPTY_STRING);
 			}
 		},
 		EMPTY_OPTION:{
@@ -231,7 +252,7 @@
 				});
 
 				if(cssExprs.length >= 1){
-					var vs = [];
+					var vs = EMPTY_VALUES.EMPTY_ARRAY;
 					arrayForEach(cssExprs,function(cssExpr){
 						var cssKV = str2ListBySeparator(cssExpr,/\s*:\s*/);
 						if(cssKV.length==2){
@@ -245,7 +266,7 @@
 						return vs;
 					}
 				}
-				return '';
+				return EMPTY_VALUES.EMPTY_STRING;
 			} else if (arguments.length >= 2) {
 				var newCssExpr = k+':'+v;
 				var cssExprs = str2ListBySeparator(this.attr('style'), /\s*;\s*/);
@@ -254,7 +275,7 @@
 					if(cssKV.length==2){
 						return cssKV[0] !== k;
 					}
-					//<=>clear wrong css
+					// <=>clear wrong css
 					return false;
 				});
 				cssExprs.push(newCssExpr);
@@ -266,7 +287,7 @@
 				return convertStr2ListByWs(this.attr('class'));
 			}
 			else if(isStr(c)){
-				//如果是空字符串直接返回!
+				// 如果是空字符串直接返回!
 				if(strIsEmpty(c)){
 					return;
 				}
@@ -324,22 +345,26 @@
 			// 用指定符号合并字符串数组
 			list2StrWithJoint:list2StrWithJoint,
 			arrayForEach:arrayForEach,
-			//浅拷贝
+			// 浅拷贝
 			shallowCopyObj:shallowCopyObj
 	};
 
-	//set xy static methods
+	// set xy static methods
 	xy = shallowCopyObj(xy,fn);
 
-	//provide some Object with outer
+	// provide some Object with outer
 	var fd = {
 			Dom:dom,
 			Option:option,
+			EMPTY_VALUES:EMPTY_VALUES,
 	}
 
-	//set xy static fields
+
+
+	// set xy static fields
 	xy = shallowCopyObj(xy,fd);
 
+//	xy = Object.freeze(xy);
 
 	window.xy = xy;
 	return xy;

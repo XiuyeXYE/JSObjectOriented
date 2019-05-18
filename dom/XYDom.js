@@ -49,6 +49,9 @@
 	 *
 	 */
 
+	function isNumber(i){
+		return typeof i === 'number';
+	}
 
 	function isNull(s){
 		// 注意null==undefined:true
@@ -152,6 +155,43 @@
 	}
 
 
+	function p0(params){
+		return params.length == 0;
+	}
+
+	function pgt0(params){
+		return params.length > 0;
+	}
+	// not less than:>=
+	function pnl0(params){
+		return params.length > 0;
+	}
+
+	function p1(params){
+		return params.length == 1;
+	}
+	function p2(params){
+		return params.length == 2;
+	}
+	function p3(params){
+		return params.length == 3;
+	}
+	function pgt2(params){
+		return params.length > 2;
+	}
+	function pgt3(params){
+		return params.length > 3;
+	}
+	// not less than : >=
+	function pnl2(params){
+		return params.length >= 2;
+	}
+
+	function pnl3(params){
+		return params.length >= 3;
+	}
+
+
 
 	/**
 	 * End.
@@ -211,6 +251,7 @@
 	function dom(node) {
 		this.node = node;
 	};
+
 	dom.prototype = {
 		constructor : dom,
 		//
@@ -290,9 +331,9 @@
 				}
 				var classList = convertStr2ListByWs(this.attr('class'));
 				classList = arrayFilter(classList,
-					function(d){
+				function(d){
 							return d !== c;
-					});
+				});
 				if(append){
 					classList.push(c);
 				}
@@ -306,6 +347,80 @@
 
 	};
 
+	function domlist(nodeList){
+		if(!nodeList||!nodeList.length||!isNumber(nodeList.length)){
+			throw 'cannot init this domlist,because of not html collection or list!';
+		}
+		var nlist = EMPTY_VALUES.EMPTY_ARRAY;
+		for(var i=0;i<nodeList.length;i++){
+			nlist[i] = new dom(nodeList[i]);
+		}
+		this.nodeList = nlist;
+	}
+
+	domlist.prototype = {
+		contructor:domlist,
+		attr:function(k,v){
+			if(p0(arguments)){
+				throw "less than one parameter!";
+			}
+			else if(p1(arguments)){
+				var attrs = EMPTY_VALUES.EMPTY_ARRAY;
+				for(var i=0;i<this.nodeList.length;i++){
+					attrs.push(this.nodeList[i].attr(k));
+				}
+				return attrs;
+			}else if(pnl2(arguments)){
+				for(var i=0;i<this.nodeList.length;i++){
+					this.nodeList[i].attr(k,v);
+				}
+			}
+		},
+		css:function(k,v){
+			if(p0(arguments)){
+				var csses = EMPTY_VALUES.EMPTY_ARRAY;
+				for(var i=0;i<this.nodeList.length;i++){
+					csses.push(this.nodeList[i].css());
+				}
+				return csses;
+			}
+			else if(p1(arguments)){
+				var csses = EMPTY_VALUES.EMPTY_ARRAY;
+				for(var i=0;i<this.nodeList.length;i++){
+					csses.push(this.nodeList[i].css(k));
+				}
+				return csses;
+			}else if(pnl2(arguments)){
+				for(var i=0;i<this.nodeList.length;i++){
+					this.nodeList[i].css(k,v);
+				}
+			}
+		},
+		cls:function(c,append=true){
+			if(p0(arguments)){
+				var clses = EMPTY_VALUES.EMPTY_ARRAY;
+				for(var i=0;i<this.nodeList.length;i++){
+					clses.push(this.nodeList[i].cls());
+				}
+				return clses;
+			}
+			else if(isStr(c)){
+				// 如果是空字符串直接返回!
+				if(strIsEmpty(c)){
+					return;
+				}
+
+				for(var i=0;i<this.nodeList.length;i++){
+					this.nodeList[i].cls(c,append);
+				}
+
+			}else{
+				throw 'First parameter must be string!';
+			}
+		}
+	};
+
+
 	// 为了解决和jQuery等框架的冲突，必须是函数，真操蛋！！！
 	var xy = function() {
 	};
@@ -317,6 +432,9 @@
 			byId:function(id) {
 				return new dom(document.getElementById(id));
 			},
+			byTag:function(tag){
+				return new domlist(document.getElementsByTagName(tag));
+			},
 
 			// 把空格字符串拆分成数组
 			convertStr2ListByWs:convertStr2ListByWs,
@@ -325,6 +443,7 @@
 			// 过滤数组生成新的数组
 			arrayFilter:arrayFilter,
 			// 判断对象是否为空
+			isNumber:isNumber,
 			isNull:isNull,
 			isArray:isArray,
 			// 判断变量是否未定义
@@ -352,6 +471,7 @@
 	// provide some Object with outer
 	var fd = {
 			Dom:dom,
+			DomList:domlist,
 			Option:option,
 			EMPTY_VALUES:EMPTY_VALUES,
 	}
@@ -361,7 +481,7 @@
 	// set xy static fields
 	xy = shallowCopyObj(xy,fd);
 
-//	xy = Object.freeze(xy);
+// xy = Object.freeze(xy);
 
 	window.xy = xy;
 	return xy;

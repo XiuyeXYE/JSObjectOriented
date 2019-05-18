@@ -159,9 +159,6 @@
 
 
 
-	function string(str){
-		this.value = str;
-	}
 
 
 

@@ -296,7 +296,11 @@
 	shallowCopyObj(option,static_methods);
 
 	option = Object.defineProperties(option,{
-
+		EMPTY_OBJECT:{
+			get:function(){
+				return option.of({});
+			}
+		},
 		EMPTY_ARRAY:{
 			get:function(){
 				return  option.of(EMPTY_VALUES.EMPTY_ARRAY);

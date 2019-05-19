@@ -1,9 +1,6 @@
 /**
- * my dom handler API
- * class level function
- * is not equal with obj function.
- * class function cannot be called by obj!!!
- * obj function cannot be called by class!!!
+ * my dom handler API class level function is not equal with obj function. class
+ * function cannot be called by obj!!! obj function cannot be called by class!!!
  */
 (function(global, factory) {
 	factory(global);
@@ -12,13 +9,7 @@
 	function notSupportMethod(){
 		throw "function "+notSupportMethod.caller.name+" not supported by this document.";
 	}
-	var document = window.document || {
-// style:{},
-// classList:{},
-		getElementById:function(id){notSupportMethod();},
-		getAttribute:function(k){notSupportMethod();},
-		setAttribute:function(k,v){notSupportMethod();},
-	}/* compatibility */;
+	var document = window.document;
 
 	// 这种方式是错误的!!!因为是引用,所以只想同一个
 	// 不要定义静态变量赋初始值,否则容易出bug
@@ -52,6 +43,10 @@
 	 *
 	 *
 	 */
+
+	function isBoolean(b){
+		return typeof b === 'boolean';
+	}
 
 	function isNumber(i){
 		return typeof i === 'number';
@@ -198,6 +193,11 @@
 	function p1(arr){
 		return arr.length == 1;
 	}
+
+	function pnl1(arr){
+		return arr.length >= 1;
+	}
+
 	function p2(arr){
 		return arr.length == 2;
 	}
@@ -604,6 +604,7 @@
 			isUndefinded:isUndefinded,
 			// 判断变量是否是字符串
 			isStr:isStr,
+			isBoolean:isBoolean,
 			// 判断字符串是否是为空
 			strIsEmpty:strIsEmpty,
 			// 非空字符串
@@ -752,10 +753,85 @@
 	 *
 	 */
 
-	
+	var dom_event_fn = {
+
+			on:function(e,c){
+				if(pnl2(arguments)&&isStr(e)&&isFunction(c)){
+					if(!!this.node&&!!this.node.addEventListener)
+						this.node.addEventListener(e,c);
+				}
+			},
+			off:function(e,c){
+				if(pnl2(arguments)&&isStr(e)&&isFunction(c)){
+					if(!!this.node&&!!this.node.removeEventListener)
+							this.node.removeEventListener(e,c);
+				}
+			},
+			trigger:function(e,d){
+				if(pnl1(arguments)&&this.node&&!!this.node.dispatchEvent)
+					this.node.dispatchEvent(new CustomEvent(e,{detail:d}));
+			},
+			click:function(c,o=false){
+				if(p0(arguments)){
+					this.trigger('click');
+				}
+				else if(isFunction(c)){
+					if(isBoolean(o)&&o){
+						this.node.onclick=c;
+					}
+					else{
+						this.on('click',c);
+					}
+				}
+				else{
+					this.trigger('click',c);
+				}
+			}
+	};
 
 
+	shallowCopyObj(dom.prototype,dom_event_fn);
 
+
+	var domlist_event_fn = {
+			on:function(e,c){
+				this.forEach(function(n){
+					n.on(e,c);
+				});
+			},
+			off:function(e,c){
+				this.forEach(function(n){
+					n.off(e,c);
+				});
+			},
+			trigger:function(e,d){
+				if(pnl1(arguments)){
+					this.forEach(function(n){
+						n.trigger(e,d);
+					});
+				}
+			},
+			click:function(c,o=false){
+				if(p0(arguments)){
+					this.forEach(function(n){
+						n.click();
+					});
+				}
+				else if(isFunction(c)){
+					this.forEach(function(n){
+						n.click(c,o);
+					});
+				}
+				else{
+					this.forEach(function(n){
+						n.click(c);
+					});
+				}
+			}
+
+	};
+
+	shallowCopyObj(domlist.prototype,domlist_event_fn);
 	/**
 	 *
 	 * end

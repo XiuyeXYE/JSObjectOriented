@@ -677,9 +677,11 @@
 			var	data = params.data;
 			var	method = params.type||AJAX_TYPE.TYPE_GET;
 			var	success = params.success;
+			var error = params.error;
 			var	dataType = params.dataType||AJAX_TYPE.DATA_TYPE_DEFAULT;
 			var	headers = params.headers||EMPTY_VALUES.EMPTY_OBJECT;
 			var async = params.async || true;
+			
 			
 	        this.xhr.open(method,url,async);
 	        for(var h in headers){
@@ -688,6 +690,12 @@
 	        }
 	        this.xhr.responseType = dataType;
 
+			if(!!error){
+				this.xhr.onerror = error;
+			}
+			
+			
+			
 			this.xhr.onreadystatechange=function(e){
 			    var xhrt = e.target;
 				if(xhrt.readyState==XMLHttpRequest.DONE&&xhrt.status==200){

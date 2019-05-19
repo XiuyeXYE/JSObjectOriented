@@ -702,9 +702,9 @@
 	//static methods
 	var ajax_fn = {
 			createAjax:createAjax,
-			q:function(params,async=true){
+			q:function(params){
 				var ajax = this.createAjax();
-				ajax.q(params, async);
+				ajax.q(params);
 			},
 	};
 

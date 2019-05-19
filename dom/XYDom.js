@@ -298,7 +298,7 @@
 	option = Object.defineProperties(option,{
 		EMPTY_OBJECT:{
 			get:function(){
-				return option.of({});
+				return option.of(EMPTY_VALUES.EMPTY_OBJECT);
 			}
 		},
 		EMPTY_ARRAY:{
@@ -545,7 +545,7 @@
 	var xy = function() {
 	};
 
-	xy = shallowCopyObj(xy,static_methods);
+	shallowCopyObj(xy,static_methods);
 
 	var fn = {
 
@@ -610,7 +610,7 @@
 	};
 
 	// set xy static methods
-	xy = shallowCopyObj(xy,fn);
+	xy.extend(fn);
 
 	// provide some Object with outer
 	var fd = {
@@ -623,7 +623,7 @@
 
 
 	// set xy static fields
-	xy = shallowCopyObj(xy,fd);
+	xy.extend(fd);
 
 
 	window.xy = xy;

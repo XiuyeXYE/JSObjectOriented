@@ -542,6 +542,7 @@
 	shallowCopyObj(domlist,static_methods);
 
 	// 为了解决和jQuery等框架的冲突，必须是函数，真操蛋！！！
+	//xy 是对外开放的接口API
 	var xy = function() {
 	};
 
@@ -625,6 +626,113 @@
 	// set xy static fields
 	xy.extend(fd);
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 *
+	 * AJAX API
+	 *
+	 */
+	
+	var AJAX_TYPE = {
+			TYPE_GET:'GET',
+			TYPE_POST:'POST',
+			TYPE_PUT:'PUT',
+			TYPE_DELETE:'DELETE',
+			DATA_TYPE_DEFAULT:'',
+			DATA_TYPE_JSON:'json',
+			DATA_TYPE_TEXT:'text',
+			DATA_TYPE_BLOB:'blob',
+			DATA_TYPE_DOM:'document',
+			DATA_TYPE_BUFFER:'arraybuffer'
+	};
+
+
+
+	function ajax(){
+		this.xhr = new XMLHttpRequest;
+	}
+
+	shallowCopyObj(ajax,static_methods);
+	
+	function createAjax(){
+		return ajax.of();
+	}
+
+	ajax.extend(AJAX_TYPE);
+
+	ajax.prototype = {
+		constructor:ajax,
+		q:function(params){
+			
+			params = params || EMPTY_VALUES.EMPTY_OBJECT;
+			var	url = params.url||EMPTY_VALUES.EMPTY_STRING;
+			var	data = params.data;
+			var	method = params.type||AJAX_TYPE.TYPE_GET;
+			var	success = params.success;
+			var	dataType = params.dataType||AJAX_TYPE.DATA_TYPE_DEFAULT;
+			var	headers = params.headers||EMPTY_VALUES.EMPTY_OBJECT;
+			var async = params.async || true;
+			
+	        this.xhr.open(method,url,async);
+	        for(var h in headers){
+	            var v = headers[h];
+	            this.xhr.setRequestHeader(h,v);
+	        }
+	        this.xhr.responseType = dataType;
+
+			this.xhr.onreadystatechange=function(e){
+			    var xhrt = e.target;
+				if(xhrt.readyState==XMLHttpRequest.DONE&&xhrt.status==200){
+					if(!!success)
+						success(xhrt.response,xhrt);
+				}
+			};
+			this.xhr.send(data);
+		}
+	};
+
+	//static methods
+	var ajax_fn = {
+			createAjax:createAjax,
+			q:function(params,async=true){
+				var ajax = this.createAjax();
+				ajax.q(params, async);
+			},
+	};
+
+
+	//static fields
+	var ajax_clses = {
+		Ajax:ajax
+	};
+
+	xy.extend(ajax_clses,ajax_fn);
+	
+		
+	
+	
+	
+	
+	
+	/**
+	 *
+	 * End.
+	 */
+	
+	
+	
+	
+	
+	
+	
 
 	window.xy = xy;
 	return xy;

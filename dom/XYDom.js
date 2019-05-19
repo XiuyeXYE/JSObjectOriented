@@ -259,7 +259,12 @@
 		},
 		of:function(d){
 			return this.valueOf(d);
-		}
+		},
+		extend:function(){
+			for(var i=0;i<arguments.length;i++){
+				shallowCopyObj(this,arguments[i]);
+			}
+		},
 	};
 
 	/**
@@ -536,6 +541,8 @@
 	var xy = function() {
 	};
 
+	xy = shallowCopyObj(xy,static_methods);
+
 	var fn = {
 
 
@@ -564,6 +571,8 @@
 				return dom.of(elems[0]);
 
 			},
+
+
 
 			// 把空格字符串拆分成数组
 			convertStr2ListByWs:convertStr2ListByWs,

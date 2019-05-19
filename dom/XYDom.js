@@ -321,10 +321,11 @@
 	function dom(node) {
 		this.node = node;
 	};
+	
+	shallowCopyObj(dom,static_methods);
 
-	dom.prototype = {
-		constructor : dom,
-
+	var dom_prototype_extend = {
+		
 		isList:function(){
 			return false;
 		},
@@ -432,7 +433,10 @@
 
 	};
 
-	shallowCopyObj(dom,static_methods);
+
+	
+	shallowCopyObj(dom.prototype,dom_prototype_extend);
+	
 
 	function domlist(nodeList){
 		// bug:!0 == true!!!
@@ -447,8 +451,10 @@
 		shallowCopyObj(this,nlist);
 		this.length = nlist.length;
 	}
+	
+	shallowCopyObj(domlist,static_methods);
 
-	domlist.prototype = {
+	var domlist_prototype_extend = {
 		constructor:domlist,
 		isList:function(){
 			return true;
@@ -539,7 +545,7 @@
 		}
 	};
 
-	shallowCopyObj(domlist,static_methods);
+	shallowCopyObj(domlist.prototype,domlist_prototype_extend);
 
 	// 为了解决和jQuery等框架的冲突，必须是函数，真操蛋！！！
 	//xy 是对外开放的接口API

@@ -248,7 +248,23 @@
 
 
 
+	/**
+	 * public static methods:
+	 *
+	 */
 
+	var static_methods = {
+		valueOf:function(d){
+			return new this(d);
+		},
+		of:function(d){
+			return this.valueOf(d);
+		}
+	};
+
+	/**
+	 * end.
+	 */
 
 
 	function option(obj){
@@ -272,11 +288,7 @@
 		};
 	}
 
-	option.of = function(obj){
-		return new option(obj);
-	};
-
-	option.valueOf = option.of;
+	shallowCopyObj(option,static_methods);
 
 	option = Object.defineProperties(option,{
 
@@ -317,9 +329,14 @@
 			if (arguments.length == 0) {
 				throw "less than one parameter!";
 			} else if (arguments.length == 1) {
-				return this.node.getAttribute(k);
+				if(!!this.node&&!!this.node.getAttribute){
+					return this.node.getAttribute(k);
+				}
+				return EMPTY_VALUES.EMPTY_STRING;
 			} else if (arguments.length >= 2) {
-				this.node.setAttribute(k, v);
+				if(!!this.node&&this.node.setAttribute){
+					this.node.setAttribute(k, v);
+				}
 				return this;
 			}
 		},
@@ -406,8 +423,10 @@
 
 	};
 
+	shallowCopyObj(dom,static_methods);
+
 	function domlist(nodeList){
-		//bug:!0 == true!!!
+		// bug:!0 == true!!!
 		if(!nodeList||!isNumber(nodeList.length)){
 			throw 'cannot init this domlist,because of not html collection or list!';
 		}
@@ -446,7 +465,7 @@
 		map:function(f){
 			return arrayMap(this.list(),f);
 		},
-		reduce:function(){
+		reduce:function(f){
 			return arrayReduce(this.list(), f);
 		},
 		attr:function(k,v){
@@ -511,6 +530,7 @@
 		}
 	};
 
+	shallowCopyObj(domlist,static_methods);
 
 	// 为了解决和jQuery等框架的冲突，必须是函数，真操蛋！！！
 	var xy = function() {
@@ -521,21 +541,28 @@
 
 			// 根据元素ID找到html对象
 			byId:function(id) {
-				return new dom(document.getElementById(id));
+				return dom.of(document.getElementById(id));
 			},
 			byTag:function(tag){
-				return new domlist(document.getElementsByTagName(tag));
+				return domlist.of(document.getElementsByTagName(tag));
 			},
 			byClass:function(cls){
-				return new domlist(document.getElementsByClassName(cls));
+				return domlist.of(document.getElementsByClassName(cls));
 			},
 
 			byName:function(n){
-				return new domlist(document.getElementsByName(n));
+				return domlist.of(document.getElementsByName(n));
 			},
 
 			d:function(selector){
-				return new domlist(document.querySelectorAll(selector));
+				var elems = document.querySelectorAll(selector);
+
+				if(pnl2(elems)){
+					return domlist.of(elems);
+				}
+
+				return dom.of(elems[0]);
+
 			},
 
 			// 把空格字符串拆分成数组

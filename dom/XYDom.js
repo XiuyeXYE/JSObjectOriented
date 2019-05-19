@@ -115,7 +115,7 @@
 		if(isArray(a)&&isFunction(f)){
 			var tmp = EMPTY_VALUES.EMPTY_ARRAY;
 			for(var i=0;i<a.length;i++){
-				if(f(a[i]))tmp.push(a[i]);
+				if(f(a[i],i,a))tmp.push(a[i]);
 			}
 			return tmp;
 		}
@@ -125,7 +125,7 @@
 	function arrayForEach(a,f){
 		if(isArray(a)&&isFunction(f)){
 			for(var i=0;i<a.length;i++){
-				f(a[i]);
+				f(a[i],i,a);
 			}
 		}else{
 			throw 'First param:array,second param:function!';
@@ -133,6 +133,30 @@
 	}
 
 
+	function arrayMap(a,f){
+		var tmp = EMPTY_VALUES.EMPTY_ARRAY;
+
+		arrayForEach(a,function(n,idx,arr){
+			tmp.push(f(n,idx,arr));
+		});
+
+		return tmp;
+	}
+
+	function arrayReduce(a,f){
+		if(isArray(a)&&isFunction(f)){
+
+			var result = a[0];
+
+			for(var i=1;i<a.length;i++){
+				result = f(result,a[i],i-1,i,a);
+			}
+			return result;
+		}
+		else{
+			throw 'First param:array,second param:function!';
+		}
+	}
 
 	function shallowCopyObj(dest,src){
 		var pNum = arguments.length;
@@ -155,43 +179,68 @@
 	}
 
 
-	function p0(params){
-		return params.length == 0;
+	function p0(arr){
+		return arr.length == 0;
 	}
 
-	function pgt0(params){
-		return params.length > 0;
+	function pgt0(arr){
+		return arr.length > 0;
 	}
 	// not less than:>=
-	function pnl0(params){
-		return params.length > 0;
+	function pnl0(arr){
+		return arr.length > 0;
 	}
 
-	function p1(params){
-		return params.length == 1;
+	function p1(arr){
+		return arr.length == 1;
 	}
-	function p2(params){
-		return params.length == 2;
+	function p2(arr){
+		return arr.length == 2;
 	}
-	function p3(params){
-		return params.length == 3;
+	function p3(arr){
+		return arr.length == 3;
 	}
-	function pgt2(params){
-		return params.length > 2;
+	function pgt2(arr){
+		return arr.length > 2;
 	}
-	function pgt3(params){
-		return params.length > 3;
+	function pgt3(arr){
+		return arr.length > 3;
 	}
 	// not less than : >=
-	function pnl2(params){
-		return params.length >= 2;
+	function pnl2(arr){
+		return arr.length >= 2;
 	}
 
-	function pnl3(params){
-		return params.length >= 3;
+	function pnl3(arr){
+		return arr.length >= 3;
 	}
 
+	function checkNumberType(a){
+		if(p1(arguments)){
+			if(!isNumber(a))throw 'params must be number!';
+		}
+		else if(pnl2(arguments)){
+			for(var i=0;i<arguments.length;i++){
+				checkNumberType(arguments[i]);
+			}
+		}
+		return true;
+	}
 
+	function gt(a,b){
+		checkNumberType(a,b);
+		return a > b;
+	}
+
+	function lt(a,b){
+		checkNumberType(a,b);
+		return a < b;
+	}
+
+	function eq(a,b){
+		checkNumberType(a,b);
+		return a === b;
+	}
 
 	/**
 	 * End.
@@ -242,7 +291,7 @@
 			}
 		},
 		EMPTY_OPTION:{
-			value:new option(null)
+			value:option.of(null)
 		}
 	});
 
@@ -254,6 +303,15 @@
 
 	dom.prototype = {
 		constructor : dom,
+
+		isList:function(){
+			return false;
+		},
+
+		get:function(){
+			return this.node;
+		},
+
 		//
 		attr : function(k, v) {
 			if (arguments.length == 0) {
@@ -358,10 +416,39 @@
 			nlist[i] = new dom(nodeList[i]);
 		}
 		this.nodeList = nlist;
+		shallowCopyObj(this,nlist);
+		this.length = nlist.length;
 	}
 
 	domlist.prototype = {
-		contructor:domlist,
+		constructor:domlist,
+		isList:function(){
+			return true;
+		},
+		list:function(){
+			return this.nodeList;
+		},
+		item:function(i){
+			return this.list()[i];
+		},
+		eq:function(i){
+			return this.item(i);
+		},
+		get:function(i){
+			return this.item(i).get();
+		},
+		forEach:function(f){
+			arrayForEach(this.list(),f);
+		},
+		filter:function(f){
+			return arrayFilter(this.list(),f);
+		},
+		map:function(f){
+			return arrayMap(this.list(),f);
+		},
+		reduce:function(){
+			return arrayReduce(this.list(), f);
+		},
 		attr:function(k,v){
 			if(p0(arguments)){
 				throw "less than one parameter!";
@@ -457,6 +544,8 @@
 			convertList2StrWithWs:convertList2StrWithWs,
 			// 过滤数组生成新的数组
 			arrayFilter:arrayFilter,
+			arrayMap:arrayMap,
+			arrayReduce:arrayReduce,
 			// 判断对象是否为空
 			isNumber:isNumber,
 			isNull:isNull,

@@ -1030,6 +1030,11 @@
 				return dom.of(this.node.nextElementSibling);
 			}
 		},
+		parent:function(){
+			if(this.exist()){
+				return dom.of(this.node.parentElement);
+			}
+		}
 
 	};
 

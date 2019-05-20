@@ -1,41 +1,54 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<style type="text/css">
-	.c1{
-		width:500px;
-		height:600px;
-		background-color: red;
-	}
-	.c2{
-		border:2px solid green;
-	}
-</style>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<style type="text/css">
+		.c1 {
+			width: 500px;
+			height: 600px;
+			background-color: red;
+		}
+
+		.c2 {
+			border: 2px solid green;
+		}
+	</style>
 </head>
+
 <body>
-<h1>Hello World!</h1>
-<div id="out1"></div>
-<div id="out2"></div>
-<script type="text/javascript" src="../dom/xy.js"></script> 
-<!-- <script type="text/javascript" src="../dom/xy.min.js"></script> 
+	<h1>Hello World!</h1>
+	<div id="out1"></div>
+	<div id="out2"></div>
+	<script type="text/javascript" src="../dom/xy.js"></script>
+	<!-- <script type="text/javascript" src="../dom/xy.min.js"></script> 
 <script type="text/javascript" src="../dom/xy.en.js"></script>  -->
-<script type="text/javascript">
-	let elem = xy.byId('out1');
-	elem.css('width','700px');
-	elem.css('height','500px');
-	elem.css('background-color',"#ccc");
-	xy.d('div').onEvent('click',(e)=>{
-		console.log('First div click:',e);
-	});
-	xy.d('div').onEvent('click',(e)=>{
-		console.log('Second div click:',e);
-	});
-	xy.d('div').click((e)=>{
-		console.log('ALL Three div click:',e);
-	});
-	xy.d('div').cls('c1').cls('c2');
-</script>
+	<script type="text/javascript">
+		xy.ready((e) => {
+			console.log(e);
+			let elem = xy.byId('out1');
+			elem.css('width', '700px');
+			elem.css('height', '500px');
+			elem.css('background-color', "#ccc");
+			xy.d('div').onEvent('click', (e) => {
+				console.log('First div click:', e);
+			});
+			xy.d('div').onEvent('click', (e) => {
+				console.log('Second div click:', e);
+			});
+			xy.d('div').click((e) => {
+				console.log('ALL Three div click:', e);
+			});
+			xy.d('div').cls('c1').cls('c2');
+		}
+
+		);
+		xy((e) => {
+			console.log(2, e);
+		});
+
+	</script>
 </body>
+
 </html>

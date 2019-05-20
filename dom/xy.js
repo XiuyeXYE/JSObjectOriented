@@ -579,7 +579,10 @@
 
 	// 为了解决和jQuery等框架的冲突，必须是函数，真操蛋！！！
 	// xy 是对外开放的接口API
-	var xy = function () {
+	var xy = function (p) {
+		if(isFunction(p)){
+			xy.ready(p);
+		}
 	};
 
 	shallowCopyObj(xy, static_methods);
@@ -868,6 +871,24 @@
 	};
 
 	domlist.prototype.extend(domlist_event_fn);
+
+
+	/**
+	 * global event handler
+	 */
+	var global_event_fn = {
+
+		ready: function (f) {
+			if (isFunction(f)) {
+				dom.of(document).on('DOMContentLoaded', f);
+			}
+		}
+
+	};
+
+	xy.extend(global_event_fn);
+
+
 	/**
 	 *
 	 * end

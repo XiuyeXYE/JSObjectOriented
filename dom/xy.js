@@ -325,6 +325,16 @@
 	});
 
 
+	function query(d, selector) {
+		var elems = d.querySelectorAll(selector);
+
+		if (pnl2(elems)) {
+			return domlist.of(elems);
+		}
+
+		return dom.of(elems[0]);
+	}
+
 
 	function dom(node) {
 		this.node = node;
@@ -334,6 +344,10 @@
 	shallowCopyObj(dom.prototype, static_methods);
 
 	var dom_prototype_extend = {
+
+		d: function (selector) {
+			return query(this.node, selector);
+		},
 
 		exist: function () {
 			return !!this.node;
@@ -589,13 +603,8 @@
 		},
 
 		d: function (selector) {
-			var elems = document.querySelectorAll(selector);
 
-			if (pnl2(elems)) {
-				return domlist.of(elems);
-			}
-
-			return dom.of(elems[0]);
+			return query(document, selector);
 
 		},
 
@@ -955,6 +964,82 @@
 	 * 
 	 */
 
+	/**
+	 * 
+	 * Dom API:
+	 * 1.create html node
+	 * 2.append 
+	 * 3.remove
+	 * xy:factory
+	 * 
+	 */
+
+	var dom_static_extend_3 = {
+		create: function (tag) {
+			return this.of(document.createElement(tag));
+		}
+	};
+	dom.extend(dom_static_extend_3);
+
+	var dom_prototype_extend_3 = {
+		append: function (d) {
+			if (!(d instanceof dom)) {
+				throw 'parameter 1 is not of type "Dom"';
+			}
+			if (this.exist() && d.exist()) {
+				if (!!this.node.appendChild) {
+					this.node.appendChild(d.node);
+				}
+			}
+		},
+		remove: function (d) {
+			if (!(d instanceof dom)) {
+				throw 'parameter 1 is not of type "Dom"';
+			}
+			if (this.exist() && d.exist()) {
+				if (!!this.node.removeChild) {
+					this.node.removeChild(d.node);
+				}
+			}
+		},
+		destroy: function () {
+			if (this.exist()) {
+				if (!!this.node.remove) {
+					this.node.remove();
+				}
+			}
+		},
+		children: function () {
+			var childs = EMPTY_VALUES.EMPTY_ARRAY;
+			if (this.exist()) {
+				this.node.children = this.node.children || EMPTY_VALUES.EMPTY_ARRAY;
+				for (var i = 0; i < this.node.children.length; i++) {
+					var child = this.node.children[i];
+					childs.push(dom.of(child));
+				}
+			}
+			return childs;
+		},
+		prev: function () {
+			if (this.exist()) {
+				return dom.of(this.node.previousElementSibling);
+			}
+		},
+		next: function () {
+			if (this.exist()) {
+				return dom.of(this.node.nextElementSibling);
+			}
+		},
+
+	};
+
+	dom.prototype.extend(dom_prototype_extend_3);
+
+	/**
+	 * 
+	 * end.
+	 * 
+	 */
 
 
 

@@ -580,7 +580,7 @@
 	// 为了解决和jQuery等框架的冲突，必须是函数，真操蛋！！！
 	// xy 是对外开放的接口API
 	var xy = function (p) {
-		if(isFunction(p)){
+		if (isFunction(p)) {
 			xy.ready(p);
 		}
 	};
@@ -999,7 +999,10 @@
 	var dom_static_extend_3 = {
 		create: function (tag) {
 			return this.of(document.createElement(tag));
-		}
+		},
+		// createFragment:function(){
+		// 	return this.of(document.createDocumentFragment());
+		// }
 	};
 	dom.extend(dom_static_extend_3);
 
@@ -1059,7 +1062,45 @@
 			if (this.exist()) {
 				return dom.of(this.node.parentElement);
 			}
+		},
+		before: function (d) {
+			if (!(d instanceof dom)) {
+				throw 'parameter 1 is not of type "Dom"';
+			}
+			if (this.exist() && d.exist()) {
+				var p = d.parent();
+				if (p.exist()) {
+					p.node.insertBefore(this.node, d.node);
+					return d;
+				}
+			}
+		},
+		after: function (d) {
+			if (!(d instanceof dom)) {
+				throw 'parameter 1 is not of type "Dom"';
+			}
+			if (this.exist() && d.exist()) {
+				var p = d.parent();
+				var n = d.next();
+
+				if (p.exist()) {
+					if (n.exist()) {
+						this.before(n);
+					}
+					else {
+						p.append(this);
+					}
+					return d;
+				}
+			}
 		}
+		// appendHtml:function(h){
+		// 	if(this.exist()){
+		// 		var frg = dom.createFragment();
+		// 		frg.html(h);
+		// 		this.append(frg);
+		// 	}
+		// }
 
 	};
 

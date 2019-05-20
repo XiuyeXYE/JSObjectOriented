@@ -970,6 +970,7 @@
 	 * 1.create html node
 	 * 2.append 
 	 * 3.remove
+	 * ...
 	 * xy:factory
 	 * 
 	 */
@@ -989,6 +990,7 @@
 			if (this.exist() && d.exist()) {
 				if (!!this.node.appendChild) {
 					this.node.appendChild(d.node);
+					return this;
 				}
 			}
 		},
@@ -999,8 +1001,10 @@
 			if (this.exist() && d.exist()) {
 				if (!!this.node.removeChild) {
 					this.node.removeChild(d.node);
+					return this;
 				}
 			}
+
 		},
 		destroy: function () {
 			if (this.exist()) {
@@ -1030,8 +1034,8 @@
 				return dom.of(this.node.nextElementSibling);
 			}
 		},
-		parent:function(){
-			if(this.exist()){
+		parent: function () {
+			if (this.exist()) {
 				return dom.of(this.node.parentElement);
 			}
 		}
@@ -1039,6 +1043,14 @@
 	};
 
 	dom.prototype.extend(dom_prototype_extend_3);
+
+	var dom_handler_extend = {
+		crt: function (tag) {
+			return dom.create(tag);
+		}
+	};
+
+	xy.extend(dom_handler_extend);
 
 	/**
 	 * 

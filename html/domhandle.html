@@ -32,6 +32,9 @@
 	xy.d('div').onEvent('click',(e)=>{
 		console.log('Second div click:',e);
 	});
+	xy.d('div').click((e)=>{
+		console.log('ALL Three div click:',e);
+	});
 	xy.d('div').cls('c1').cls('c2');
 </script>
 </body>

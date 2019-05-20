@@ -275,6 +275,10 @@
 	 * end.
 	 */
 
+	/**
+	 * class definition
+	 * @param obj 
+	 */
 
 	function option(obj) {
 		// this.value = obj;
@@ -327,8 +331,13 @@
 	};
 
 	shallowCopyObj(dom, static_methods);
+	shallowCopyObj(dom.prototype, static_methods);
 
 	var dom_prototype_extend = {
+
+		exist: function () {
+			return !!this.node;
+		},
 
 		isList: function () {
 			return false;
@@ -439,7 +448,8 @@
 
 
 
-	shallowCopyObj(dom.prototype, dom_prototype_extend);
+	//shallowCopyObj(dom.prototype, dom_prototype_extend);
+	dom.prototype.extend(dom_prototype_extend);
 
 
 	function domlist(nodeList) {
@@ -457,6 +467,7 @@
 	}
 
 	shallowCopyObj(domlist, static_methods);
+	shallowCopyObj(domlist.prototype, static_methods);
 
 	var domlist_prototype_extend = {
 		isList: function () {
@@ -548,7 +559,9 @@
 		}
 	};
 
-	shallowCopyObj(domlist.prototype, domlist_prototype_extend);
+	//shallowCopyObj(domlist.prototype, domlist_prototype_extend);
+
+	domlist.prototype.extend(domlist_prototype_extend);
 
 	// 为了解决和jQuery等框架的冲突，必须是函数，真操蛋！！！
 	// xy 是对外开放的接口API
@@ -671,6 +684,7 @@
 	}
 
 	shallowCopyObj(ajax, static_methods);
+	shallowCopyObj(ajax.prototype, static_methods);
 
 	function createAjax() {
 		return ajax.of();
@@ -716,7 +730,8 @@
 		}
 	};
 
-	shallowCopyObj(ajax.prototype, ajax_prototype_extend);
+	//shallowCopyObj(ajax.prototype, ajax_prototype_extend);
+	ajax.prototype.extend(ajax_prototype_extend);
 
 	// static methods
 	var ajax_fn = {
@@ -797,7 +812,7 @@
 	};
 
 
-	shallowCopyObj(dom.prototype, dom_event_fn);
+	dom.prototype.extend(dom_event_fn);
 
 
 	var domlist_event_fn = {
@@ -843,13 +858,102 @@
 
 	};
 
-	shallowCopyObj(domlist.prototype, domlist_event_fn);
+	domlist.prototype.extend(domlist_event_fn);
 	/**
 	 *
 	 * end
 	 */
 
 
+	/**
+	 * 
+	 * dom/domlist
+	 * API: html text value 
+	 * 
+	 */
+	var dom_prototype_extend_2 = {
+		html: function (h) {
+			h = h || EMPTY_VALUES.EMPTY_STRING;
+			if (this.exist()) {
+				//bug: 不是所有的属性，都可以用这种方式检验属性啊
+				//因为空字符串''也是false！！！
+				//直接用吧，即可
+				// if (!!this.node.innerHTML) {
+				if (p0(arguments)) {
+					return this.node.innerHTML;
+				}
+				this.node.innerHTML = h;
+				// }
+			}
+
+		},
+		text: function (t) {
+			t = t || EMPTY_VALUES.EMPTY_STRING;
+			if (this.exist()) {
+				// if (!!this.node.innerText) {
+				if (p0(arguments)) {
+					return this.node.innerText;
+				}
+				this.node.innerText = t;
+				// }
+			}
+
+		},
+		value: function (v) {
+			v = v || EMPTY_VALUES.EMPTY_STRING;
+			if (this.exist()) {
+				if (p0(arguments)) {
+					return this.attr('value');
+				}
+				this.attr('value', v);
+			}
+		}
+	};
+
+	dom.prototype.extend(dom_prototype_extend_2);
+
+	var domlist_prototype_extend_2 = {
+		html: function (h) {
+			if (p0(arguments)) {
+				var hs = this.map(function (d) {
+					return d.html();
+				});
+				return hs;
+			}
+			this.forEach(function (d) {
+				d.html(h);
+			});
+		},
+		text: function (t) {
+			if (p0(arguments)) {
+				var ts = this.map(function (d) {
+					return d.text();
+				});
+				return ts;
+			}
+			this.forEach(function (d) {
+				d.text(t);
+			});
+		},
+		value: function (v) {
+			if (p0(arguments)) {
+				var vs = this.map(function (d) {
+					return d.value();
+				});
+				return vs;
+			}
+			this.forEach(function (d) {
+				d.value(v);
+			});
+		}
+	};
+
+	domlist.prototype.extend(domlist_prototype_extend_2);
+
+	/**
+	 * end.
+	 * 
+	 */
 
 
 

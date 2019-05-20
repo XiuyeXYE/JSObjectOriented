@@ -767,6 +767,13 @@
 							this.node.removeEventListener(e,c);
 				}
 			},
+			onEvent:function(e,c){
+				if(pnl2(arguments)&&isStr(e)&&isFunction(c)){
+					if(!!this.node){
+						this.node['on'+e]=c;
+					}
+				}
+			},
 			trigger:function(e,d){
 				if(pnl1(arguments)&&this.node&&!!this.node.dispatchEvent)
 					this.node.dispatchEvent(new CustomEvent(e,{detail:d}));
@@ -797,6 +804,11 @@
 			on:function(e,c){
 				this.forEach(function(n){
 					n.on(e,c);
+				});
+			},
+			onEvent:function(e,c){
+				this.forEach(function(n){
+					n.onEvent(e,c);
 				});
 			},
 			off:function(e,c){

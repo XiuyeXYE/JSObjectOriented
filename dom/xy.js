@@ -11,6 +11,8 @@
 	}
 	var document = window.document;
 
+	var XMLHttpRequest = window.XMLHttpRequest;
+
 	// 这种方式是错误的!!!因为是引用,所以只想同一个
 	// 不要定义静态变量赋初始值,否则容易出bug
 	// const EMPTY_ARRAY = [];

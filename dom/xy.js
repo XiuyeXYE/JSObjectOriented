@@ -1275,23 +1275,27 @@
 				this.id = setTimeout(timer_fn, this.interval, this.params);
 				this.status = TIMER_STATUS.STARTED;
 			}
-
+			return this;
 		},
 
 		releasePrevTimer: function () {
 			if (fnExist(clearTimeout)) {
 				clearTimeout(this.id);
 			}
+			return this;
 		},
 		stop: function () {
 			this.status = TIMER_STATUS.STOP;
+			return this;
 		}
 	};
 
 	timer.prototype.extend(timer_prototype_interfaces);
 
 
-
+	/**
+	 * thread
+	 */
 	var THREAD_STATUS = {
 		RUNABLE: 1,
 		STARTING: 2,
@@ -1393,11 +1397,13 @@
 					, this.delay, this.params);
 			}
 			this.status = THREAD_STATUS.STARTED;
+			return this;
 		},
 		release: function () {
 			if (fnExist(clearTimeout)) {
 				clearTimeout(this.id);
 			}
+			return this;
 		},
 		sleep: function (n) {
 			sleep(n);
@@ -1409,6 +1415,11 @@
 	thread.prototype.extend(thread_prototype_interfaces);
 
 
+
+	/**
+	 * FPS
+	 * 
+	 */
 
 
 	var FPS_STATUS = {
@@ -1497,13 +1508,13 @@
 			if (p0(arguments) || !isFunction(c)) {
 				throw 'first param must be function!';
 			}
-			this.of(c).exec();
+			return this.of(c).exec();
 		},
 		loop: function (c) {
 			if (p0(arguments) || !isFunction(c)) {
 				throw 'first param must be function!';
 			}
-			this.of(c).loop();
+			return this.of(c).loop();
 		}
 
 	};
@@ -1534,6 +1545,7 @@
 				this.id = requestAnimationFrame(frame_fn);
 				this.status = FPS_STATUS.STARTED;
 			}
+			return this;
 		},
 		exec: function () {
 			if (fnExist(requestAnimationFrame)) {
@@ -1548,14 +1560,17 @@
 				});
 				this.status = FPS_STATUS.STARTED;
 			}
+			return this;
 		},
 		stop: function () {
 			this.status = FPS_STATUS.STOP;
+			return this;
 		},
 		cancel: function () {
 			if (fnExist(cancelAnimationFrame)) {
 				cancelAnimationFrame(this.id);
 			}
+			return this;
 		}
 
 	};

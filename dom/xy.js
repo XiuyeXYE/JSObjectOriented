@@ -348,7 +348,7 @@
 		this.node = node;
 	};
 
-	
+
 	shallowCopyObj(dom, of_interface);
 	shallowCopyObj(dom, extend_interface);
 	shallowCopyObj(dom.prototype, extend_interface);
@@ -490,7 +490,7 @@
 		this.length = nlist.length;
 	}
 
-	
+
 	shallowCopyObj(domlist, of_interface);
 	shallowCopyObj(domlist, extend_interface);
 	shallowCopyObj(domlist.prototype, extend_interface);
@@ -598,7 +598,7 @@
 	};
 
 	shallowCopyObj(xy, of_interface);
-	shallowCopyObj(xy,extend_interface);
+	shallowCopyObj(xy, extend_interface);
 
 
 	var fn = {
@@ -706,10 +706,12 @@
 
 
 	function ajax() {
-		this.xhr = new XMLHttpRequest;
+		if (!!XMLHttpRequest) {
+			this.xhr = new XMLHttpRequest;
+		}
 	}
 
-	
+
 
 	shallowCopyObj(ajax, of_interface);
 	shallowCopyObj(ajax, extend_interface);
@@ -722,40 +724,43 @@
 	ajax.extend(AJAX_TYPE);
 
 	var ajax_prototype_extend = {
+		exist: function () {
+			return !!this.xhr;
+		},
 		q: function (params) {
-
-			params = params || EMPTY_VALUES.EMPTY_OBJECT;
-			var url = params.url || EMPTY_VALUES.EMPTY_STRING;
-			var data = params.data;
-			var method = params.type || AJAX_TYPE.TYPE_GET;
-			var success = params.success;
-			var error = params.error;
-			var dataType = params.dataType || AJAX_TYPE.DATA_TYPE_DEFAULT;
-			var headers = params.headers || EMPTY_VALUES.EMPTY_OBJECT;
-			var async = params.async || true;
-
-
-			this.xhr.open(method, url, async);
-			for (var h in headers) {
-				var v = headers[h];
-				this.xhr.setRequestHeader(h, v);
-			}
-			this.xhr.responseType = dataType;
-
-			if (!!error) {
-				this.xhr.onerror = error;
-			}
+			if (this.exist()) {
+				params = params || EMPTY_VALUES.EMPTY_OBJECT;
+				var url = params.url || EMPTY_VALUES.EMPTY_STRING;
+				var data = params.data;
+				var method = params.type || AJAX_TYPE.TYPE_GET;
+				var success = params.success;
+				var error = params.error;
+				var dataType = params.dataType || AJAX_TYPE.DATA_TYPE_DEFAULT;
+				var headers = params.headers || EMPTY_VALUES.EMPTY_OBJECT;
+				var async = params.async || true;
 
 
-
-			this.xhr.onreadystatechange = function (e) {
-				var xhrt = e.target;
-				if (xhrt.readyState == XMLHttpRequest.DONE && xhrt.status == 200) {
-					if (!!success)
-						success(xhrt.response, xhrt);
+				this.xhr.open(method, url, async);
+				for (var h in headers) {
+					var v = headers[h];
+					this.xhr.setRequestHeader(h, v);
 				}
-			};
-			this.xhr.send(data);
+				this.xhr.responseType = dataType;
+
+				if (!!error) {
+					this.xhr.onerror = error;
+				}
+
+				this.xhr.onreadystatechange = function (e) {
+					var xhrt = e.target;
+					if (xhrt.readyState == XMLHttpRequest.DONE && xhrt.status == 200) {
+						if (!!success)
+							success(xhrt.response, xhrt);
+					}
+				};
+				this.xhr.send(data);
+			}
+
 		}
 	};
 

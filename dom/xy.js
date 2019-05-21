@@ -257,18 +257,24 @@
 	 *
 	 */
 
-	var static_methods = {
+	var of_interface = {
 		valueOf: function (d) {
 			return new this(d);
 		},
 		of: function (d) {
 			return this.valueOf(d);
 		},
+
+	};
+
+	var extend_interface = {
+
 		extend: function () {
 			for (var i = 0; i < arguments.length; i++) {
 				shallowCopyObj(this, arguments[i]);
 			}
 		},
+
 	};
 
 	/**
@@ -301,7 +307,9 @@
 		};
 	}
 
-	shallowCopyObj(option, static_methods);
+	shallowCopyObj(option, of_interface);
+	shallowCopyObj(option, extend_interface);
+	shallowCopyObj(option.prototype, extend_interface);
 
 	option = Object.defineProperties(option, {
 		EMPTY_OBJECT: {
@@ -340,8 +348,10 @@
 		this.node = node;
 	};
 
-	shallowCopyObj(dom, static_methods);
-	shallowCopyObj(dom.prototype, static_methods);
+	
+	shallowCopyObj(dom, of_interface);
+	shallowCopyObj(dom, extend_interface);
+	shallowCopyObj(dom.prototype, extend_interface);
 
 	var dom_prototype_extend = {
 
@@ -480,8 +490,10 @@
 		this.length = nlist.length;
 	}
 
-	shallowCopyObj(domlist, static_methods);
-	shallowCopyObj(domlist.prototype, static_methods);
+	
+	shallowCopyObj(domlist, of_interface);
+	shallowCopyObj(domlist, extend_interface);
+	shallowCopyObj(domlist.prototype, extend_interface);
 
 	var domlist_prototype_extend = {
 		isList: function () {
@@ -585,7 +597,9 @@
 		}
 	};
 
-	shallowCopyObj(xy, static_methods);
+	shallowCopyObj(xy, of_interface);
+	shallowCopyObj(xy,extend_interface);
+
 
 	var fn = {
 
@@ -695,8 +709,11 @@
 		this.xhr = new XMLHttpRequest;
 	}
 
-	shallowCopyObj(ajax, static_methods);
-	shallowCopyObj(ajax.prototype, static_methods);
+	
+
+	shallowCopyObj(ajax, of_interface);
+	shallowCopyObj(ajax, extend_interface);
+	shallowCopyObj(ajax.prototype, extend_interface);
 
 	function createAjax() {
 		return ajax.of();

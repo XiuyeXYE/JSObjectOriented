@@ -13,6 +13,10 @@
 
 	var XMLHttpRequest = window.XMLHttpRequest;
 
+	var requestAnimationFrame = window.requestAnimationFrame;
+	var setTimeout = window.setTimeout;
+	var clearTimeout = window.clearTimeout;
+
 	// 这种方式是错误的!!!因为是引用,所以只想同一个
 	// 不要定义静态变量赋初始值,否则容易出bug
 	// const EMPTY_ARRAY = [];
@@ -45,6 +49,8 @@
 	 *
 	 *
 	 */
+
+
 
 	function isBoolean(b) {
 		return typeof b === 'boolean';
@@ -86,6 +92,9 @@
 		return isStr(s) && !strIsEmpty(s);
 	}
 
+	function fnExist(c) {
+		return isFunction(c);
+	}
 
 
 	function str2ListBySeparator(s, separator) {
@@ -1144,9 +1153,140 @@
 	 * end.
 	 * 
 	 */
+	/**
+	 * Timer
+	 * 
+	 */
+
+	var TIMER_STATUS = {
+		NEW: 1,
+		STARTING: 2,
+		STARTED: 3,
+		RUNNING: 4,
+		RUN: 5,
+		STOP: 6,
+		STOPPED: 7
+	};
+
+	function timer(c, interval = 1000) {
+
+		if (!(this instanceof timer)) {
+			throw 'timer is an class,have to use "new"!';
+		}
+
+		if (p0(arguments) || !isFunction(c)) {
+			throw 'first param must be function!';
+		}
+		if (pnl2(arguments)) {
+			this.params = EMPTY_VALUES.EMPTY_ARRAY;
+			for (var i = 0; i < arguments.length; i++) {
+				this.params.push(arguments[i]);
+			}
+		}
+		this.run = c;
+		this.interval = interval;
+		var that = this;
+		this.timerFn = function (p) {
+			if (that.status === TIMER_STATUS.STOP) {
+				that.releasePrevTimer();
+				that.status = TIMER_STATUS.STOPPED;
+			} else {
+				that.status = TIMER_STATUS.RUNNING;
+				that.run(p);
+				that.status = TIMER_STATUS.RUN;
+				that.releasePrevTimer();
+				that.start();
+			}
+		};
+
+		Object.defineProperty(this, 'status', {
+			set: function (v) {
+				that._status = v;
+				switch (v) {
+					//无效状态？
+					case TIMER_STATUS.NEW:
+						if (fnExist(that.onnew)) {
+							that.onnew();
+						}
+						break;
+					case TIMER_STATUS.STARTING:
+						if (fnExist(that.onstarting)) {
+							that.onstarting();
+						}
+						break;
+					case TIMER_STATUS.STARTED:
+						if (fnExist(that.onstarted)) {
+							that.onstarted();
+						}
+						break;
+					case TIMER_STATUS.RUNNING:
+						if (fnExist(that.onrunning)) {
+							that.onrunning();
+						}
+						break;
+					case TIMER_STATUS.RUN:
+						if (fnExist(that.onrun)) {
+							that.onrun();
+						}
+						break;
+					case TIMER_STATUS.STOP:
+						if (fnExist(that.onstop)) {
+							that.onstop();
+						}
+						break;
+					case TIMER_STATUS.STOPPED:
+						if (fnExist(that.onstopped)) {
+							that.onstopped();
+						}
+						break;
+				}
+			},
+			get: function () {
+				return that._status;
+			}
+		});
+
+		this.status = TIMER_STATUS.NEW;
+	}
+
+	shallowCopyObj(timer, of_interface);
+	shallowCopyObj(timer, extend_interface);
+	shallowCopyObj(timer.prototype, extend_interface);
+
+	timer.extend(TIMER_STATUS);
 
 
+	var timer_prototype_interfaces = {
 
+		start: function () {
+			this.status = TIMER_STATUS.STARTING;
+			this.id = setTimeout(this.timerFn, this.interval, this.params);
+			this.status = TIMER_STATUS.STARTED;
+		},
+
+		releasePrevTimer: function () {
+			clearTimeout(this.id);
+		},
+		stop: function () {
+			this.status = TIMER_STATUS.STOP;
+		}
+	};
+
+	timer.prototype.extend(timer_prototype_interfaces);
+
+
+	function animation() {
+
+	}
+
+	/**
+	 * end.
+	 * 
+	 */
+
+	xy.extend({
+		Timer: timer,
+	});
 
 	window.xy = xy;
 	return xy;

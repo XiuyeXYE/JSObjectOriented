@@ -593,7 +593,7 @@
 	// xy 是对外开放的接口API
 	var xy = function (p) {
 		if (isFunction(p)) {
-			xy.ready(p);
+			dom.of(document).on('DOMContentLoaded', p);
 		}
 	};
 
@@ -897,7 +897,8 @@
 
 		ready: function (f) {
 			if (isFunction(f)) {
-				dom.of(document).on('DOMContentLoaded', f);
+				// dom.of(document).on('DOMContentLoaded', f);
+				this(f);
 			}
 		}
 

@@ -275,12 +275,22 @@
 	 *
 	 */
 
+	// var of_interface = {
+	// 	valueOf: function (d) {
+	// 		return new this(d);
+	// 	},
+	// 	of: function (d) {
+	// 		return this.valueOf(d);
+	// 	},
+
+	// };
+	//es6 new feature ...args
 	var of_interface = {
-		valueOf: function (d) {
-			return new this(d);
+		valueOf: function (...d) {
+			return new this(...d);
 		},
-		of: function (d) {
-			return this.valueOf(d);
+		of: function (...d) {
+			return this.valueOf(...d);
 		},
 
 	};
@@ -1195,6 +1205,7 @@
 		this.run = c;
 		this.interval = interval;
 
+		var that = this;
 
 		Object.defineProperty(this, 'status', {
 			set: function (v) {
@@ -1387,16 +1398,17 @@
 			if (fnExist(setTimeout)) {
 				this.status = THREAD_STATUS.STARTING;
 				var that = this;
-				this.id = setTimeout(function () {
+				this.id = setTimeout(function (p) {
 					that.status = THREAD_STATUS.RUNNING;
-					that.run();
+					that.run(p);
 					that.status = THREAD_STATUS.RUN;
 					that.status = THREAD_STATUS.STOPPED;
 					that.release();
 				}
 					, this.delay, this.params);
+				this.status = THREAD_STATUS.STARTED;
 			}
-			this.status = THREAD_STATUS.STARTED;
+
 			return this;
 		},
 		release: function () {

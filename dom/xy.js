@@ -14,6 +14,7 @@
 	var XMLHttpRequest = window.XMLHttpRequest;
 
 	var requestAnimationFrame = window.requestAnimationFrame;
+	var cancelAnimationFrame = window.cancelAnimationFrame;
 	var setTimeout = window.setTimeout;
 	var clearTimeout = window.clearTimeout;
 
@@ -257,6 +258,12 @@
 		return a === b;
 	}
 
+	function notInstanceof(o, c, msg) {
+		if (!(o instanceof c)) {
+			throw msg;
+		}
+	}
+
 	/**
 	 * End.
 	 */
@@ -298,6 +305,7 @@
 	 */
 
 	function option(obj) {
+		notInstanceof(this, option, 'option is an class,have to use "new"!');
 		// this.value = obj;
 		Object.defineProperty(this, 'value', {
 			value: obj,
@@ -356,6 +364,7 @@
 
 
 	function dom(node) {
+		notInstanceof(this, dom, 'dom is an class,have to use "new"!');
 		this.node = node;
 	};
 
@@ -488,6 +497,7 @@
 
 
 	function domlist(nodeList) {
+		notInstanceof(this, domlist, 'domlist is an class,have to use "new"!');
 		// bug:!0 == true!!!
 		if (!nodeList || !isNumber(nodeList.length)) {
 			throw 'cannot init this domlist,because of not html collection or list!';
@@ -717,7 +727,8 @@
 
 
 	function ajax() {
-		if (!!XMLHttpRequest) {
+		notInstanceof(this, ajax, 'ajax is an class,have to use "new"!');
+		if (fnExist(XMLHttpRequest)) {
 			this.xhr = new XMLHttpRequest;
 		}
 	}
@@ -1170,34 +1181,20 @@
 
 	function timer(c, interval = 1000) {
 
-		if (!(this instanceof timer)) {
-			throw 'timer is an class,have to use "new"!';
-		}
+		notInstanceof(this, timer, 'timer is an class,have to use "new"!');
 
 		if (p0(arguments) || !isFunction(c)) {
 			throw 'first param must be function!';
 		}
 		if (pnl2(arguments)) {
 			this.params = EMPTY_VALUES.EMPTY_ARRAY;
-			for (var i = 0; i < arguments.length; i++) {
+			for (var i = 2; i < arguments.length; i++) {
 				this.params.push(arguments[i]);
 			}
 		}
 		this.run = c;
 		this.interval = interval;
-		var that = this;
-		this.timerFn = function (p) {
-			if (that.status === TIMER_STATUS.STOP) {
-				that.releasePrevTimer();
-				that.status = TIMER_STATUS.STOPPED;
-			} else {
-				that.status = TIMER_STATUS.RUNNING;
-				that.run(p);
-				that.status = TIMER_STATUS.RUN;
-				that.releasePrevTimer();
-				that.start();
-			}
-		};
+
 
 		Object.defineProperty(this, 'status', {
 			set: function (v) {
@@ -1257,15 +1254,34 @@
 
 
 	var timer_prototype_interfaces = {
-
 		start: function () {
-			this.status = TIMER_STATUS.STARTING;
-			this.id = setTimeout(this.timerFn, this.interval, this.params);
-			this.status = TIMER_STATUS.STARTED;
+			if (fnExist(setTimeout)) {
+				this.status = TIMER_STATUS.STARTING;
+				var that = this;
+				var timer_fn = function (p) {
+					if (that.status === TIMER_STATUS.STOP) {
+						that.releasePrevTimer();
+						that.status = TIMER_STATUS.STOPPED;
+					} else {
+						that.status = TIMER_STATUS.RUNNING;
+						that.run(p);
+						that.status = TIMER_STATUS.RUN;
+						that.releasePrevTimer();
+						that.status = TIMER_STATUS.STARTING;
+						that.id = setTimeout(timer_fn, that.interval, that.params);
+						that.status = TIMER_STATUS.STARTED;
+					}
+				};
+				this.id = setTimeout(timer_fn, this.interval, this.params);
+				this.status = TIMER_STATUS.STARTED;
+			}
+
 		},
 
 		releasePrevTimer: function () {
-			clearTimeout(this.id);
+			if (fnExist(clearTimeout)) {
+				clearTimeout(this.id);
+			}
 		},
 		stop: function () {
 			this.status = TIMER_STATUS.STOP;
@@ -1275,19 +1291,294 @@
 	timer.prototype.extend(timer_prototype_interfaces);
 
 
-	function animation() {
 
+	var THREAD_STATUS = {
+		RUNABLE: 1,
+		STARTING: 2,
+		STARTED: 3,
+		RUNNING: 4,
+		RUN: 5,
+		STOPPED: 6,
+	};
+
+
+	function thread(c) {
+		notInstanceof(this, thread, 'thread is an class,have to use "new"!');
+		if (p0(arguments) || !isFunction(c)) {
+			throw 'first param must be function!';
+		}
+		if (pnl1(arguments)) {
+			this.params = EMPTY_VALUES.EMPTY_ARRAY;
+			for (var i = 1; i < arguments.length; i++) {
+				this.params.push(arguments[i]);
+			}
+		}
+		this.run = c;
+		this.delay = 0;
+		var that = this;
+		Object.defineProperty(this, 'status', {
+			set: function (v) {
+				that._status = v;
+				switch (v) {
+					//无效状态？
+					case THREAD_STATUS.RUNABLE:
+						if (fnExist(that.onrunable)) {
+							that.onrunable();
+						}
+						break;
+					case THREAD_STATUS.STARTING:
+						if (fnExist(that.onstarting)) {
+							that.onstarting();
+						}
+						break;
+					case THREAD_STATUS.STARTED:
+						if (fnExist(that.onstarted)) {
+							that.onstarted();
+						}
+						break;
+					case THREAD_STATUS.RUNNING:
+						if (fnExist(that.onrunning)) {
+							that.onrunning();
+						}
+						break;
+					case THREAD_STATUS.RUN:
+						if (fnExist(that.onrun)) {
+							that.onrun();
+						}
+						break;
+					case THREAD_STATUS.STOPPED:
+						if (fnExist(that.onstopped)) {
+							that.onstopped();
+						}
+						break;
+				}
+			},
+			get: function () {
+				return that._status;
+			}
+		});
+		this.status = THREAD_STATUS.RUNABLE;
 	}
 
-	fucntion 
+	shallowCopyObj(thread, of_interface);
+	shallowCopyObj(thread, extend_interface);
+	shallowCopyObj(thread.prototype, extend_interface);
+
+	thread.extend(THREAD_STATUS);
+
+	//ms
+	function sleep(n) {
+		var s = new Date().getTime();
+		var e = new Date().getTime();
+		while (e < s + n) {
+			e = new Date().getTime();
+		}
+		return e - s;
+	}
+
+	//setTimeout每次只有一个执行所以不能当做多线程!而且按创建的先后顺序执行!!!
+	var thread_prototype_interfaces = {
+		start: function () {
+
+			if (fnExist(setTimeout)) {
+				this.status = THREAD_STATUS.STARTING;
+				var that = this;
+				this.id = setTimeout(function () {
+					that.status = THREAD_STATUS.RUNNING;
+					that.run();
+					that.status = THREAD_STATUS.RUN;
+					that.status = THREAD_STATUS.STOPPED;
+					that.release();
+				}
+					, this.delay, this.params);
+			}
+			this.status = THREAD_STATUS.STARTED;
+		},
+		release: function () {
+			if (fnExist(clearTimeout)) {
+				clearTimeout(this.id);
+			}
+		},
+		sleep: function (n) {
+			sleep(n);
+		},
+	};
+
+
+
+	thread.prototype.extend(thread_prototype_interfaces);
+
+
+
+
+	var FPS_STATUS = {
+		READY: 1,
+		STARTING: 2,
+		STARTED: 3,
+		RUNNING: 4,
+		RUN: 5,
+		STOP: 6,
+		STOPPED: 7
+	};
+
+
+	function fps(c) {
+		notInstanceof(this, fps, 'fps is class,have to use "new"');
+		if (p0(arguments) || !isFunction(c)) {
+			throw 'first param must be function!';
+		}
+		// if (pnl1(arguments)) {
+		// 	this.params = EMPTY_VALUES.EMPTY_ARRAY;
+		// 	for (var i = 1; i < arguments.length; i++) {
+		// 		this.params.push(arguments[i]);
+		// 	}
+		// }
+		this.run = c;
+
+		var that = this;
+
+		Object.defineProperty(this, 'status', {
+			set: function (v) {
+				that._status = v;
+				switch (v) {
+					//无效状态？
+					case FPS_STATUS.READY:
+						if (fnExist(that.onready)) {
+							that.onready();
+						}
+						break;
+					case FPS_STATUS.STARTING:
+						if (fnExist(that.onstarting)) {
+							that.onstarting();
+						}
+						break;
+					case FPS_STATUS.STARTED:
+						if (fnExist(that.onstarted)) {
+							that.onstarted();
+						}
+						break;
+					case FPS_STATUS.RUNNING:
+						if (fnExist(that.onrunning)) {
+							that.onrunning();
+						}
+						break;
+					case FPS_STATUS.RUN:
+						if (fnExist(that.onrun)) {
+							that.onrun();
+						}
+						break;
+					case FPS_STATUS.STOP:
+						if (fnExist(that.onstop)) {
+							that.onstop();
+						}
+						break;
+					case FPS_STATUS.STOPPED:
+						if (fnExist(that.onstopped)) {
+							that.onstopped();
+						}
+						break;
+				}
+			},
+			get: function () {
+				return that._status;
+			}
+		});
+
+
+		this.status = FPS_STATUS.READY;
+	}
+
+	shallowCopyObj(fps, of_interface);
+	shallowCopyObj(fps, extend_interface);
+	shallowCopyObj(fps.prototype, extend_interface);
+
+	var fps_static_extend = {
+		exec: function (c) {
+			if (p0(arguments) || !isFunction(c)) {
+				throw 'first param must be function!';
+			}
+			this.of(c).exec();
+		},
+		loop: function (c) {
+			if (p0(arguments) || !isFunction(c)) {
+				throw 'first param must be function!';
+			}
+			this.of(c).loop();
+		}
+
+	};
+
+	fps.extend(fps_static_extend);
+
+	var fps_prototype_extend = {
+		loop: function () {
+
+			if (fnExist(requestAnimationFrame)) {
+				this.status = FPS_STATUS.STARTING;
+				var that = this;
+				var frame_fn = function (p) {
+					if (that.status === FPS_STATUS.STOP) {
+						that.cancel();
+						this.status = FPS_STATUS.STOPPED;
+					}
+					else {
+						that.status = FPS_STATUS.RUNNING;
+						that.run(p);
+						that.status = FPS_STATUS.RUN;
+						that.cancel();
+						that.status = FPS_STATUS.STARTING;
+						that.id = requestAnimationFrame(frame_fn);
+						that.status = FPS_STATUS.STARTED;
+					}
+				};
+				this.id = requestAnimationFrame(frame_fn);
+				this.status = FPS_STATUS.STARTED;
+			}
+		},
+		exec: function () {
+			if (fnExist(requestAnimationFrame)) {
+				this.status = FPS_STATUS.STARTING;
+				var that = this;
+				this.id = requestAnimationFrame(function (p) {
+					that.status = FPS_STATUS.RUNNING;
+					that.run(p);
+					that.status = FPS_STATUS.RUN;
+					that.cancel();
+					that.status = FPS_STATUS.STOPPED;
+				});
+				this.status = FPS_STATUS.STARTED;
+			}
+		},
+		stop: function () {
+			this.status = FPS_STATUS.STOP;
+		},
+		cancel: function () {
+			if (fnExist(cancelAnimationFrame)) {
+				cancelAnimationFrame(this.id);
+			}
+		}
+
+	};
+
+	fps.prototype.extend(fps_prototype_extend);
+
+
 
 	/**
 	 * end.
 	 * 
 	 */
 
+
+
+
+
+
 	xy.extend({
 		Timer: timer,
+		Thread: thread,
+		FPS: fps,
+		sleep: sleep
 	});
 
 	window.xy = xy;

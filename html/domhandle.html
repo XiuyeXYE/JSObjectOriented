@@ -47,6 +47,17 @@
 		xy((e) => {
 			console.log(2, e);
 		});
+		xy(()=>{
+			
+			for(var i=0;i<10;i++){
+				new xy.Thread(()=>{
+					console.log(i);
+					//xy.sleep(Math.random()*3000);
+				}).start();
+			}
+			console.log("threads created over!");
+			xy.Thread.of(()=>console.log("thread of!")).start();
+		});
 
 	</script>
 </body>

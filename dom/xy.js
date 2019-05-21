@@ -1591,6 +1591,14 @@
 
 
 
+	xy.extend({
+		Timer: timer,
+		Thread: thread,
+		FPS: fps,
+		sleep: sleep
+	});
+
+
 	/**
 	 * end.
 	 * 
@@ -1601,12 +1609,7 @@
 
 
 
-	xy.extend({
-		Timer: timer,
-		Thread: thread,
-		FPS: fps,
-		sleep: sleep
-	});
+	
 
 	window.xy = xy;
 	return xy;

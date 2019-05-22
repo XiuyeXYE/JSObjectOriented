@@ -1743,7 +1743,7 @@
 
 
 	function canvas(c) {
-		notInstanceof(this,canvas,'function canvas is constructor,must using new!')
+		notInstanceof(this, canvas, 'function canvas is constructor,must using new!')
 		if (p0(arguments)) {
 			throw "less than one parameter!";
 		}
@@ -1777,38 +1777,96 @@
 		}
 	}
 
-	shallowCopyObj(canvas,of_interface);
-	shallowCopyObj(canvas,extend_interface);
-	shallowCopyObj(canvas.prototype,extend_interface);
+	shallowCopyObj(canvas, of_interface);
+	shallowCopyObj(canvas, extend_interface);
+	shallowCopyObj(canvas.prototype, extend_interface);
 
 	var canvas_prototype_extend = {
-		get:function(){
+		get: function () {
 			return this.cv;
 		},
-		k:function(key){
+		k: function (key) {
 			return this.get().k(key);
 		},
-		kv:function(key,value){
-			this.get().kv(key,value);
+		kv: function (key, value) {
+			this.get().kv(key, value);
 		},
-		pen:function(type='2d'){
+		getPen: function (type = '2d') {
 			var ctx = this.k('getContext');
-			if(fnExist(ctx)){
+			if (fnExist(ctx)) {
 				//Uncaught TypeError: Illegal invocation
 				//return ctx(type);
-				return ctx.call(this.get().get(),type);
-			}else{
+				return ctx.call(this.get().get(), type);
+			} else {
 				throw 'this canvas cannot use function getContext!';
 			}
 		},
-		
+		init: function () {
+			this.p = this.getPen();
+		},
+		pen: function () {
+			return this.p;
+		},
+		pk:function(k){
+			return this.pen()[k];
+		},
+		pkv:function(k,v){
+			this.pen()[k] = v;
+			return this;
+		},
+		fillColor: function (c) {
+			this.p.fillStyle = c;
+			return this;
+		},
+		color: function (c) {
+			this.p.strokeStyle = c;
+			return this;
+		},
+		bp: function () {
+			this.p.beginPath();
+			return this;
+		},
+		cp: function () {
+			this.p.closePath();
+			return this;
+		},
+		lineRect: function (x = 0, y = 0, w = 0, h = 0) {
+			this.p.strokeRect(x, y, w, h);
+			return this;
+		},
+		fillRect: function (x = 0, y = 0, w = 0, h = 0) {
+			this.p.fillRect(x, y, w, h);
+			return this;
+		},
+		lineText:function(text, x, y,maxWidth){
+			if(oExist(maxWidth)){
+				this.p.strokeText(text, x, y,maxWidth);
+			}else{
+				this.p.strokeText(text, x, y);
+			}
+			return this;
+		},
+		fillText:function(text, x, y , maxWidth){
+			
+			if(oExist(maxWidth)){
+				this.p.fillText(text, x, y,maxWidth);
+			}else{
+				this.p.fillText(text, x, y);
+			}
+			return this;
+		},
+		textSize:function(s){
+			return this.p.measureText(s);
+		}
+
+
 	};
 
 	canvas.prototype.extend(canvas_prototype_extend);
 
 
 	xy.extend({
-		Canvas:canvas,
+		Canvas: canvas,
 	});
 
 	/**

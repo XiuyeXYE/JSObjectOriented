@@ -9,13 +9,17 @@
 	function notSupportMethod() {
 		throw "function " + notSupportMethod.caller.name + " not supported by this document.";
 	}
+	//文档对象
 	var document = window.document;
-
+	//ajax 
 	var XMLHttpRequest = window.XMLHttpRequest;
-
+	//帧绘制回调
 	var requestAnimationFrame = window.requestAnimationFrame;
+	//删除
 	var cancelAnimationFrame = window.cancelAnimationFrame;
+	//定时器
 	var setTimeout = window.setTimeout;
+	//清理
 	var clearTimeout = window.clearTimeout;
 
 	// 这种方式是错误的!!!因为是引用,所以只想同一个
@@ -23,7 +27,11 @@
 	// const EMPTY_ARRAY = [];
 	// const EMPTY_STRING = '';
 
+	/**
+	 * 默认空值
+	 */
 	var EMPTY_VALUES = {};
+	//为了去重引用，返回每一个都是新对象
 	EMPTY_VALUES = Object.defineProperties(EMPTY_VALUES, {
 		EMPTY_OBJECT: {
 			get: function () {
@@ -47,51 +55,45 @@
 
 	/**
 	 * Utilities :
-	 *
+	 *	工具函数
 	 *
 	 */
 
 
-
+	//check boolean
 	function isBoolean(b) {
 		return typeof b === 'boolean';
 	}
-
+	//check number,but not Number!!!Number is object.
 	function isNumber(i) {
 		return typeof i === 'number';
 	}
-
+	//check obj if null
 	function isNull(s) {
 		// 注意null==undefined:true
 		// 所以用"==="
 		return s === null;
 	}
-
+	//check undefined
 	function isUndefinded(s) {
 		// 注意null==undefined:true
 		// 所以用"==="
 		return s === undefined;
 	}
 
+	//check string,because of !!'' == false,so using 'typeof' .
 	function isStr(s) {
 		return typeof s === 'string';
 	}
-
+	//check array
 	function isArray(a) {
 		return Array.isArray(a);
 	}
-
+	//check function
 	function isFunction(f) {
 		return typeof f === 'function';
 	}
 
-	function strIsEmpty(s) {
-		return s.length == 0;
-	}
-
-	function strNonEmpty(s) {
-		return isStr(s) && !strIsEmpty(s);
-	}
 
 	//手写！！容易出错和漏掉，还是用函数吧
 	function fnExist(c) {
@@ -99,14 +101,27 @@
 	}
 
 	//手写！！容易出错和漏掉，还是用函数吧
+	//undefined == null : true
+	//undefined === null : false
 	function oExist(o) {
 		return o != null;
 	}
+	//check empty string
+	function strIsEmpty(s) {
+		return s.length == 0;
+	}
+	//not empty string
+	function strNonEmpty(s) {
+		return isStr(s) && !strIsEmpty(s);
+	}
 
+
+	//default value set
 	function defaultValue(o, defaultValue) {
 		return o || defaultValue;
 	}
 
+	//string to array using separator to split
 	function str2ListBySeparator(s, separator) {
 		if (strNonEmpty(s)) {
 			return s.split(separator);
@@ -114,10 +129,12 @@
 		return EMPTY_VALUES.EMPTY_ARRAY;
 	}
 
+	//string to array using ' ' to split
 	function convertStr2ListByWs(s) {
 		return str2ListBySeparator(s, /\s+/);
 	}
 
+	//array to string using joint to link
 	function list2StrWithJoint(a, joint) {
 
 		if (isArray(a)) {
@@ -126,11 +143,12 @@
 		return EMPTY_VALUES.EMPTY_STRING;
 	}
 
+	//array to string using ' ' to link
 	function convertList2StrWithWs(a) {
 		return list2StrWithJoint(a, ' ');
 	}
 
-
+	//array filter
 	function arrayFilter(a, f) {
 		if (isArray(a) && isFunction(f)) {
 			var tmp = EMPTY_VALUES.EMPTY_ARRAY;
@@ -141,7 +159,7 @@
 		}
 		return EMPTY_VALUES.EMPTY_ARRAY;
 	}
-
+	//array for each
 	function arrayForEach(a, f) {
 		if (isArray(a) && isFunction(f)) {
 			for (var i = 0; i < a.length; i++) {
@@ -152,7 +170,7 @@
 		}
 	}
 
-
+	//array map
 	function arrayMap(a, f) {
 		var tmp = EMPTY_VALUES.EMPTY_ARRAY;
 
@@ -162,7 +180,7 @@
 
 		return tmp;
 	}
-
+	//array reduce
 	function arrayReduce(a, f) {
 		if (isArray(a) && isFunction(f)) {
 
@@ -178,6 +196,7 @@
 		}
 	}
 
+	//copy obj
 	function shallowCopyObj(dest, src) {
 		var pNum = arguments.length;
 		if (pNum == 0) {
@@ -198,11 +217,11 @@
 
 	}
 
-
+	//==0
 	function p0(arr) {
 		return arr.length == 0;
 	}
-
+	//>0
 	function pgt0(arr) {
 		return arr.length > 0;
 	}
@@ -210,11 +229,11 @@
 	function pnl0(arr) {
 		return arr.length > 0;
 	}
-
+	//==1
 	function p1(arr) {
 		return arr.length == 1;
 	}
-
+	//>=1
 	function pnl1(arr) {
 		return arr.length >= 1;
 	}
@@ -239,7 +258,7 @@
 	function pnl3(arr) {
 		return arr.length >= 3;
 	}
-
+	//check multiple number type is?
 	function checkNumberType(a) {
 		if (p1(arguments)) {
 			if (!isNumber(a)) throw 'params must be number!';
@@ -266,7 +285,7 @@
 		checkNumberType(a, b);
 		return a === b;
 	}
-
+	//o not instance of c,will raise exception!
 	function notInstanceof(o, c, msg) {
 		if (!(o instanceof c)) {
 			throw msg;
@@ -303,7 +322,7 @@
 		},
 
 	};
-
+	//extend interface
 	var extend_interface = {
 
 		extend: function () {
@@ -348,7 +367,7 @@
 	shallowCopyObj(option, of_interface);
 	shallowCopyObj(option, extend_interface);
 	shallowCopyObj(option.prototype, extend_interface);
-
+	//define empty option
 	option = Object.defineProperties(option, {
 		EMPTY_OBJECT: {
 			get: function () {
@@ -370,7 +389,7 @@
 		}
 	});
 
-
+	//document selector query dom
 	function query(d, selector) {
 		var elems = d.querySelectorAll(selector);
 
@@ -381,7 +400,7 @@
 		return dom.of(elems[0]);
 	}
 
-
+	//html element
 	function dom(node) {
 		notInstanceof(this, dom, 'dom is an class,have to use "new"!');
 		this.node = node;
@@ -516,7 +535,7 @@
 	//shallowCopyObj(dom.prototype, dom_prototype_extend);
 	dom.prototype.extend(dom_prototype_extend);
 
-
+	//html elements
 	function domlist(nodeList) {
 		notInstanceof(this, domlist, 'domlist is an class,have to use "new"!');
 		// bug:!0 == true!!!

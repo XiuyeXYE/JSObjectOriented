@@ -871,15 +871,19 @@
 
 		on: function (e, c) {
 			if (pnl2(arguments) && isStr(e) && isFunction(c)) {
-				if (oExist(this.node) && fnExist(this.node.addEventListener))
+				if (oExist(this.node) && fnExist(this.node.addEventListener)) {
 					this.node.addEventListener(e, c);
+				}
 			}
+			return this;
 		},
 		off: function (e, c) {
 			if (pnl2(arguments) && isStr(e) && isFunction(c)) {
-				if (oExist(this.node) && fnExist(this.node.removeEventListener))
+				if (oExist(this.node) && fnExist(this.node.removeEventListener)) {
 					this.node.removeEventListener(e, c);
+				}
 			}
+			return this;
 		},
 		onEvent: function (e, c) {
 			if (pnl2(arguments) && isStr(e) && isFunction(c)) {
@@ -887,10 +891,13 @@
 					this.node['on' + e] = c;
 				}
 			}
+			return this;
 		},
 		trigger: function (e, d) {
-			if (pnl1(arguments) && oExist(this.node) && fnExist(this.node.dispatchEvent))
+			if (pnl1(arguments) && oExist(this.node) && fnExist(this.node.dispatchEvent)) {
 				this.node.dispatchEvent(new CustomEvent(e, { detail: d }));
+			}
+			return this;
 		},
 		click: function (c, o = false) {
 			if (p0(arguments)) {
@@ -907,6 +914,7 @@
 			else {
 				this.trigger('click', c);
 			}
+			return this;
 		}
 	};
 
@@ -919,16 +927,19 @@
 			this.forEach(function (n) {
 				n.on(e, c);
 			});
+			return this;
 		},
 		onEvent: function (e, c) {
 			this.forEach(function (n) {
 				n.onEvent(e, c);
 			});
+			return this;
 		},
 		off: function (e, c) {
 			this.forEach(function (n) {
 				n.off(e, c);
 			});
+			return this;
 		},
 		trigger: function (e, d) {
 			if (pnl1(arguments)) {
@@ -936,6 +947,7 @@
 					n.trigger(e, d);
 				});
 			}
+			return this;
 		},
 		click: function (c, o = false) {
 			if (p0(arguments)) {
@@ -953,6 +965,7 @@
 					n.click(c);
 				});
 			}
+			return this;
 		}
 
 	};
@@ -970,6 +983,7 @@
 				// dom.of(document).on('DOMContentLoaded', f);
 				this(f);
 			}
+			
 		}
 
 	};

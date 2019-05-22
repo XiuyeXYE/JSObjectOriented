@@ -431,6 +431,17 @@
 			return this.node;
 		},
 
+		k: function (key) {
+			if (this.exist()) {
+				return this.get()[key];
+			}
+		},
+		kv: function (key, value) {
+			if (this.exist()) {
+				this.get()[key] = value;
+			}
+		},
+
 		//
 		attr: function (k, v) {
 			if (arguments.length == 0) {
@@ -526,6 +537,60 @@
 			} else {
 				throw 'First parameter must be string!';
 			}
+		},
+		clientWidth: function () {
+			if (this.exist() && oExist(this.node.clientWidth)) {
+				return this.node.clientWidth;
+			}
+			return 0;
+		},
+		clientHeight: function () {
+			if (this.exist() && oExist(this.node.clientHeight)) {
+				return this.node.clientHeight;
+			}
+			return 0;
+		},
+		clientTop: function () {
+			if (this.exist() && oExist(this.node.clientTop)) {
+				return this.node.clientTop;
+			}
+			return 0;
+		},
+		clientLeft: function () {
+			if (this.exist() && oExist(this.node.clientLeft)) {
+				return this.node.clientLeft;
+			}
+			return 0;
+		},
+		offsetWidth: function () {
+			if (this.exist() && oExist(this.node.offsetWidth)) {
+				return this.node.offsetWidth;
+			}
+			return 0;
+		},
+		offsetHeight: function () {
+			if (this.exist() && oExist(this.node.offsetHeight)) {
+				return this.node.offsetHeight;
+			}
+			return 0;
+		},
+		offsetTop: function () {
+			if (this.exist() && oExist(this.node.offsetTop)) {
+				return this.node.offsetTop;
+			}
+			return 0;
+		},
+		offsetLeft: function () {
+			if (this.exist() && oExist(this.node.offsetLeft)) {
+				return this.node.offsetLeft;
+			}
+			return 0;
+		},
+		rect: function () {
+			if (this.exist() && fnExist(this.node.getBoundingClientRect)) {
+				return this.node.getBoundingClientRect();
+			}
+			return EMPTY_VALUES.EMPTY_OBJECT;
 		}
 
 	};
@@ -983,7 +1048,7 @@
 				// dom.of(document).on('DOMContentLoaded', f);
 				this(f);
 			}
-			
+
 		}
 
 	};
@@ -1652,7 +1717,17 @@
 	 * 
 	 */
 
+	/**
+	 * canvas game api
+	 * 
+	 */
+	
 
+
+
+	 /**
+	  * end.
+	  */
 
 
 

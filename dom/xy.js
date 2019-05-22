@@ -103,6 +103,10 @@
 		return o != null;
 	}
 
+	function defaultValue(o, defaultValue) {
+		return o || defaultValue;
+	}
+
 	function str2ListBySeparator(s, separator) {
 		if (strNonEmpty(s)) {
 			return s.split(separator);
@@ -516,7 +520,7 @@
 	function domlist(nodeList) {
 		notInstanceof(this, domlist, 'domlist is an class,have to use "new"!');
 		// bug:!0 == true!!!
-		if (!nodeList || !isNumber(nodeList.length)) {
+		if (!oExist(nodeList) || !isNumber(nodeList.length)) {
 			throw 'cannot init this domlist,because of not html collection or list!';
 		}
 		var nlist = EMPTY_VALUES.EMPTY_ARRAY;
@@ -663,6 +667,7 @@
 
 		},
 
+		defaultValue: defaultValue,
 
 
 		// 把空格字符串拆分成数组
@@ -695,8 +700,8 @@
 		arrayForEach: arrayForEach,
 		// 浅拷贝
 		shallowCopyObj: shallowCopyObj,
-		fnExist:fnExist,
-		oExist:oExist,
+		fnExist: fnExist,
+		oExist: oExist,
 	};
 
 	// set xy static methods
@@ -770,15 +775,15 @@
 		},
 		q: function (params) {
 			if (this.exist()) {
-				params = params || EMPTY_VALUES.EMPTY_OBJECT;
-				var url = params.url || EMPTY_VALUES.EMPTY_STRING;
+				params = defaultValue(params, EMPTY_VALUES.EMPTY_OBJECT);
+				var url = defaultValue(params.url, EMPTY_VALUES.EMPTY_STRING);
 				var data = params.data;
-				var method = params.type || AJAX_TYPE.TYPE_GET;
+				var method = defaultValue(params.type, AJAX_TYPE.TYPE_GET);
 				var success = params.success;
 				var error = params.error;
-				var dataType = params.dataType || AJAX_TYPE.DATA_TYPE_DEFAULT;
-				var headers = params.headers || EMPTY_VALUES.EMPTY_OBJECT;
-				var async = params.async || true;
+				var dataType = defaultValue(params.dataType, AJAX_TYPE.DATA_TYPE_DEFAULT);
+				var headers = defaultValue(params.headers, EMPTY_VALUES.EMPTY_OBJECT);
+				var async = defaultValue(params.async, true);
 
 
 				this.xhr.open(method, url, async);
@@ -967,7 +972,7 @@
 	 */
 	var dom_prototype_extend_2 = {
 		html: function (h) {
-			h = h || EMPTY_VALUES.EMPTY_STRING;
+			h = defaultValue(h, EMPTY_VALUES.EMPTY_STRING);
 			if (this.exist()) {
 				//bug: 不是所有的属性，都可以用这种方式检验属性啊
 				//因为空字符串''也是false！！！
@@ -982,7 +987,7 @@
 
 		},
 		text: function (t) {
-			t = t || EMPTY_VALUES.EMPTY_STRING;
+			t = defaultValue(t, EMPTY_VALUES.EMPTY_STRING);
 			if (this.exist()) {
 				// if (!!this.node.innerText) {
 				if (p0(arguments)) {
@@ -993,8 +998,9 @@
 			}
 
 		},
+		//fix bug:var v and function v conflict!!!
 		value: function (v) {
-			v = v || EMPTY_VALUES.EMPTY_STRING;
+			v = defaultValue(v, EMPTY_VALUES.EMPTY_STRING);
 			if (this.exist()) {
 				if (p0(arguments)) {
 					return this.attr('value');
@@ -1104,7 +1110,7 @@
 		children: function () {
 			var childs = EMPTY_VALUES.EMPTY_ARRAY;
 			if (this.exist()) {
-				this.node.children = this.node.children || EMPTY_VALUES.EMPTY_ARRAY;
+				this.node.children = defaultValue(this.node.children, EMPTY_VALUES.EMPTY_ARRAY);
 				for (var i = 0; i < this.node.children.length; i++) {
 					var child = this.node.children[i];
 					childs.push(dom.of(child));

@@ -97,6 +97,9 @@
 		return isFunction(c);
 	}
 
+	function oExist(o) {
+		return o != null;
+	}
 
 	function str2ListBySeparator(s, separator) {
 		if (strNonEmpty(s)) {
@@ -389,8 +392,10 @@
 			return query(this.node, selector);
 		},
 
+
+
 		exist: function () {
-			return !!this.node;
+			return oExist(this.node);
 		},
 
 		isList: function () {
@@ -406,12 +411,12 @@
 			if (arguments.length == 0) {
 				throw "less than one parameter!";
 			} else if (arguments.length == 1) {
-				if (!!this.node && !!this.node.getAttribute) {
+				if (oExist(this.node) && fnExist(this.node.getAttribute)) {
 					return this.node.getAttribute(k);
 				}
 				return EMPTY_VALUES.EMPTY_STRING;
 			} else if (arguments.length >= 2) {
-				if (!!this.node && this.node.setAttribute) {
+				if (oExist(this.node) && fnExist(this.node.setAttribute)) {
 					this.node.setAttribute(k, v);
 				}
 				return this;
@@ -757,7 +762,7 @@
 
 	var ajax_prototype_extend = {
 		exist: function () {
-			return !!this.xhr;
+			return oExist(this.xhr);
 		},
 		q: function (params) {
 			if (this.exist()) {
@@ -779,14 +784,14 @@
 				}
 				this.xhr.responseType = dataType;
 
-				if (!!error) {
+				if (fnExist(error)) {
 					this.xhr.onerror = error;
 				}
 
 				this.xhr.onreadystatechange = function (e) {
 					var xhrt = e.target;
 					if (xhrt.readyState == XMLHttpRequest.DONE && xhrt.status == 200) {
-						if (!!success)
+						if (fnExist(success))
 							success(xhrt.response, xhrt);
 					}
 				};
@@ -838,25 +843,25 @@
 
 		on: function (e, c) {
 			if (pnl2(arguments) && isStr(e) && isFunction(c)) {
-				if (!!this.node && !!this.node.addEventListener)
+				if (oExist(this.node) && fnExist(this.node.addEventListener))
 					this.node.addEventListener(e, c);
 			}
 		},
 		off: function (e, c) {
 			if (pnl2(arguments) && isStr(e) && isFunction(c)) {
-				if (!!this.node && !!this.node.removeEventListener)
+				if (oExist(this.node) && fnExist(this.node.removeEventListener))
 					this.node.removeEventListener(e, c);
 			}
 		},
 		onEvent: function (e, c) {
 			if (pnl2(arguments) && isStr(e) && isFunction(c)) {
-				if (!!this.node) {
+				if (oExist(this.node)) {
 					this.node['on' + e] = c;
 				}
 			}
 		},
 		trigger: function (e, d) {
-			if (pnl1(arguments) && this.node && !!this.node.dispatchEvent)
+			if (pnl1(arguments) && oExist(this.node) && fnExist(this.node.dispatchEvent))
 				this.node.dispatchEvent(new CustomEvent(e, { detail: d }));
 		},
 		click: function (c, o = false) {
@@ -1067,7 +1072,7 @@
 				throw 'parameter 1 is not of type "Dom"';
 			}
 			if (this.exist() && d.exist()) {
-				if (!!this.node.appendChild) {
+				if (fnExist(this.node.appendChild)) {
 					this.node.appendChild(d.node);
 					return this;
 				}
@@ -1078,7 +1083,7 @@
 				throw 'parameter 1 is not of type "Dom"';
 			}
 			if (this.exist() && d.exist()) {
-				if (!!this.node.removeChild) {
+				if (fnExist(this.node.removeChild)) {
 					this.node.removeChild(d.node);
 					return this;
 				}
@@ -1087,7 +1092,7 @@
 		},
 		destroy: function () {
 			if (this.exist()) {
-				if (!!this.node.remove) {
+				if (fnExist(this.node.remove)) {
 					this.node.remove();
 				}
 			}
@@ -1609,7 +1614,7 @@
 
 
 
-	
+
 
 	window.xy = xy;
 	return xy;

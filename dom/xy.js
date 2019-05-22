@@ -591,6 +591,24 @@
 				return this.node.getBoundingClientRect();
 			}
 			return EMPTY_VALUES.EMPTY_OBJECT;
+		},
+		width: function (w) {
+			if (p0(arguments)) {
+				return this.clientWidth();
+			}
+			if (pnl1(arguments) && isNumber(w)) {
+				this.css('width', w + 'px');
+				return this;
+			}
+		},
+		height: function (h) {
+			if (p0(arguments)) {
+				return this.clientHeight();
+			}
+			if (pnl1(arguments) && isNumber(h)) {
+				this.css('height', h + 'px');
+				return this;
+			}
 		}
 
 	};
@@ -1721,13 +1739,81 @@
 	 * canvas game api
 	 * 
 	 */
-	
 
 
 
-	 /**
-	  * end.
-	  */
+	function canvas(c) {
+		notInstanceof(this,canvas,'function canvas is constructor,must using new!')
+		if (p0(arguments)) {
+			throw "less than one parameter!";
+		}
+		else if (pnl1(arguments)) {
+			if (strNonEmpty(c)) {
+				c = xy.d(c);
+				if (c.isList()) {
+					c = c.list()[0];
+				}
+			}
+			else if (c instanceof domlist) {
+				c = c.list()[0];
+			}
+			else if (c instanceof HTMLCanvasElement) {
+				c = dom.of(c);
+			} else if (c instanceof HTMLCollection) {
+				c = domlist.of(c)[0];
+
+			} else if (c instanceof NodeList) {
+				c = domlist.of(c)[0];
+			}
+			else {
+				throw 'cannot use ' + c + ' to find one canvas element!';
+			}
+			if (c.get() instanceof HTMLCanvasElement) {
+				this.cv = c;
+			}
+			else {
+				throw c + ' is not a canvas element!';
+			}
+		}
+	}
+
+	shallowCopyObj(canvas,of_interface);
+	shallowCopyObj(canvas,extend_interface);
+	shallowCopyObj(canvas.prototype,extend_interface);
+
+	var canvas_prototype_extend = {
+		get:function(){
+			return this.cv;
+		},
+		k:function(key){
+			return this.get().k(key);
+		},
+		kv:function(key,value){
+			this.get().kv(key,value);
+		},
+		pen:function(type='2d'){
+			var ctx = this.k('getContext');
+			if(fnExist(ctx)){
+				//Uncaught TypeError: Illegal invocation
+				//return ctx(type);
+				return ctx.call(this.get().get(),type);
+			}else{
+				throw 'this canvas cannot use function getContext!';
+			}
+		},
+		
+	};
+
+	canvas.prototype.extend(canvas_prototype_extend);
+
+
+	xy.extend({
+		Canvas:canvas,
+	});
+
+	/**
+	 * end.
+	 */
 
 
 

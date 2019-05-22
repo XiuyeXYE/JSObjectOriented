@@ -93,10 +93,12 @@
 		return isStr(s) && !strIsEmpty(s);
 	}
 
+	//手写！！容易出错和漏掉，还是用函数吧
 	function fnExist(c) {
 		return isFunction(c);
 	}
 
+	//手写！！容易出错和漏掉，还是用函数吧
 	function oExist(o) {
 		return o != null;
 	}
@@ -335,7 +337,7 @@
 					f(this.value);
 				}
 			}
-			return this.value != null;
+			return oExist(this.value);
 		};
 	}
 
@@ -692,7 +694,9 @@
 		list2StrWithJoint: list2StrWithJoint,
 		arrayForEach: arrayForEach,
 		// 浅拷贝
-		shallowCopyObj: shallowCopyObj
+		shallowCopyObj: shallowCopyObj,
+		fnExist:fnExist,
+		oExist:oExist,
 	};
 
 	// set xy static methods

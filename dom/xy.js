@@ -599,21 +599,21 @@
 			}
 			return EMPTY_VALUES.EMPTY_OBJECT;
 		},
-		width: function (w) {
+		width: function (w, u = 'px') {
 			if (p0(arguments)) {
 				return this.clientWidth();
 			}
-			if (pnl1(arguments) && isNumber(w)) {
-				this.css('width', w + 'px');
+			else if (pnl1(arguments) && isNumber(w)) {
+				this.css('width', w + u);
 				return this;
 			}
 		},
-		height: function (h) {
+		height: function (h, u = 'px') {
 			if (p0(arguments)) {
 				return this.clientHeight();
 			}
-			if (pnl1(arguments) && isNumber(h)) {
-				this.css('height', h + 'px');
+			else if (pnl1(arguments) && isNumber(h)) {
+				this.css('height', h + u);
 				return this;
 			}
 		},
@@ -1803,7 +1803,13 @@
 	 */
 	canvas.prototype.__proto__ = dom.prototype;
 
+
+	/**
+	 * pen is canvas context(2d)
+	 * @param {*} p 
+	 */
 	function pen(p) {
+		notInstanceof(this, pen, 'pen is a constructor,should "new".');
 		this.init(p);
 	}
 
@@ -1811,16 +1817,141 @@
 	shallowCopyObj(pen, extend_interface);
 	shallowCopyObj(pen.prototype, extend_interface);
 
-	pen.prototype.extend({
+
+	var pen_prototype_extend = {
 		init: function (p) {
 			this.p = p;
 		},
-		
-	});
+		get: function () {
+			return this.p;
+		},
+		k: function (key) {
+			return this.get()[key];
+		},
+		kv: function (k, v) {
+			this.get()[k] = v;
+			return this;
+		},
+		// fn: function (f, ...ps) {
+		// 	if (fnExist(this.k(f))) {
+		// 		return this.get()[f](...ps);
+		// 	}
+		// },
+		fn: function (f) {
+			if (pnl1(arguments) && fnExist(this.k(f))) {
+				f = this.k(f);
+				var ps = EMPTY_VALUES.EMPTY_ARRAY;
+				for (var i = 1; i < arguments.length; i++) {
+					ps.push(arguments[i]);
+				}
+				return f.apply(this.get(), ps);
+			}
+			return this;
+		},
+		color: function (c) {
+			return this.kv('strokeStyle', c);
+		},
+		fillColor: function (c) {
+			return this.kv('fillStyle', c);
+		},
+		lineRect: function (x = 0, y = 0, w = 0, h = 0) {
+			// if (fnExist(this.k('strokeRect'))) {
+			// 	// this.k('strokeRect')(x, y, w, h);
+			// 	this.fn('strokeRect', x, y, w, h);
+			// 	return this;
+			// }
+			this.fn('strokeRect', x, y, w, h);
+			return this;
+		},
+		fillRect: function (x = 0, y = 0, w = 0, h = 0) {
+			this.fn('fillRect', x, y, w, h);
+			return this;
+		},
+		clearRect: function (x = 0, y = 0, w = 0, h = 0) {
+			this.fn('clearRect', x, y, w, h);
+			return this;
+		},
+		text: function (t, x, y, ops = { fill: true }) {
+			var maxWidth = ops.maxWidth;
+			var fill = ops.fill || true;
+			if (fill) {
+				if (oExist(maxWidth)) {
+					this.fn('fillText', t, x, y, maxWidth);
+				} else {
+					this.fn('fillText', t, x, y);
+				}
+			} else {
+				if (oExist(maxWidth)) {
+					this.fn('strokeText', t, x, y, maxWidth);
+				} else {
+					this.fn('strokeText', t, x, y);
+				}
+			}
+			return this;
+		},
+		textSize: function (s) {
+			if (pnl0(arguments)) {
+				return this.fn('measureText', s);
+			}
+		}
 
+	};
+
+	pen.prototype.extend(pen_prototype_extend);
+
+	var canvas_static_extend = {
+		from: function (s) {
+			if (pnl1(s) && strNonEmpty(s)) {
+				s = xy.d(s);
+				//see dom and domlist get function!
+				s = s.get(0);
+				return canvas.of(s);
+			}
+			throw 'first parameter must be string related to canvas element: id,tag name,class and so on.';
+		}
+	};
+
+	canvas.extend(canvas_static_extend);
 
 
 	var canvas_prototype_extend = {
+		pen: function (type = '2d') {
+			if (this.exist() && fnExist(this.k('getContext'))) {
+				//Illegal invocation
+				// return this.k('getContext')('2d');
+				return pen.of(this.get().getContext(type));
+			}
+		},
+		/**
+		 * 
+		 * canvas must use width/height attribute!
+		 * 
+		 * real size on canvas
+		 * it influences canvas api!
+		 * it's very important!
+		 * 
+		 */
+		width: function (w, u = 'px') {
+			if (p0(arguments)) {
+				return this.clientWidth();
+			}
+			else if (pnl1(arguments) && isNumber(w)) {
+				this.css('width', w + u);
+				this.attr('width', w);
+				return this;
+			}
+		},
+		height: function (h, u = 'px') {
+			if (p0(arguments)) {
+				return this.clientHeight();
+			}
+			else if (pnl1(arguments) && isNumber(h)) {
+				this.css('height', h + u);
+				this.attr('height', h);
+				return this;
+			}
+		},
+
 
 	};
 

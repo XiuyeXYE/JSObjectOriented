@@ -402,8 +402,7 @@
 
 	//html element
 	function dom(node) {
-		notInstanceof(this, dom, 'dom is an class,have to use "new"!');
-		this.node = node;
+		this.init(node);
 	};
 
 
@@ -412,6 +411,12 @@
 	shallowCopyObj(dom.prototype, extend_interface);
 
 	var dom_prototype_extend = {
+
+		//real constructor
+		init: function (n) {
+			notInstanceof(this, dom, this.init.caller.name+' is an class,have to use "new"!');
+			this.node = n;
+		},
 
 		d: function (selector) {
 			return query(this.node, selector);
@@ -439,6 +444,7 @@
 		kv: function (key, value) {
 			if (this.exist()) {
 				this.get()[key] = value;
+				return this;
 			}
 		},
 
@@ -609,6 +615,14 @@
 				this.css('height', h + 'px');
 				return this;
 			}
+		},
+		full:function(h){
+			if(p0(arguments)){
+				return this.k('outerHTML');
+			}else{
+				//will changes node,no return!
+				this.kv('outerHTML',h);
+			}
 		}
 
 	};
@@ -620,18 +634,7 @@
 
 	//html elements
 	function domlist(nodeList) {
-		notInstanceof(this, domlist, 'domlist is an class,have to use "new"!');
-		// bug:!0 == true!!!
-		if (!oExist(nodeList) || !isNumber(nodeList.length)) {
-			throw 'cannot init this domlist,because of not html collection or list!';
-		}
-		var nlist = EMPTY_VALUES.EMPTY_ARRAY;
-		for (var i = 0; i < nodeList.length; i++) {
-			nlist[i] = new dom(nodeList[i]);
-		}
-		this.nodeList = nlist;
-		shallowCopyObj(this, nlist);
-		this.length = nlist.length;
+		this.init(nodeList);
 	}
 
 
@@ -640,6 +643,22 @@
 	shallowCopyObj(domlist.prototype, extend_interface);
 
 	var domlist_prototype_extend = {
+		//real constructor
+		init: function (nodeList) {
+			notInstanceof(this, domlist, this.init.caller.name+' is an class,have to use "new"!');
+			// bug:!0 == true!!!
+			if (!oExist(nodeList) || !isNumber(nodeList.length)) {
+				throw 'cannot init this domlist,because of not html collection or list!';
+			}
+			var nlist = EMPTY_VALUES.EMPTY_ARRAY;
+			for (var i = 0; i < nodeList.length; i++) {
+				nlist[i] = new dom(nodeList[i]);
+			}
+			this.nodeList = nlist;
+			shallowCopyObj(this, nlist);
+			this.length = nlist.length;
+		},
+
 		isList: function () {
 			return true;
 		},
@@ -1741,128 +1760,168 @@
 	 */
 
 
-
 	function canvas(c) {
-		notInstanceof(this, canvas, 'function canvas is constructor,must using new!')
-		if (p0(arguments)) {
-			throw "less than one parameter!";
-		}
-		else if (pnl1(arguments)) {
-			if (strNonEmpty(c)) {
-				c = xy.d(c);
-				if (c.isList()) {
-					c = c.list()[0];
-				}
-			}
-			else if (c instanceof domlist) {
-				c = c.list()[0];
-			}
-			else if (c instanceof HTMLCanvasElement) {
-				c = dom.of(c);
-			} else if (c instanceof HTMLCollection) {
-				c = domlist.of(c)[0];
-
-			} else if (c instanceof NodeList) {
-				c = domlist.of(c)[0];
-			}
-			else {
-				throw 'cannot use ' + c + ' to find one canvas element!';
-			}
-			if (c.get() instanceof HTMLCanvasElement) {
-				this.cv = c;
-			}
-			else {
-				throw c + ' is not a canvas element!';
-			}
-		}
+		// canvas.prototype = new dom(c);
+		// //console.log(1, 'canvas.constructor=', canvas.constructor);
+		// console.log(1, 'canvas.prototype.constructor=', canvas.prototype.constructor);
+		// console.log(1, 'this.__proto__.constructor=', this.__proto__.constructor);
+		// console.log(1, 'this.constructor=', this.constructor);
+		// console.log(1, 'this.__proto__ == canvas.prototype =', this.__proto__ == canvas.prototype);
+		// this.__proto__ = new dom(c);
+		// // console.log(2, 'canvas.constructor=', canvas.constructor);
+		// console.log(2, 'canvas.prototype.constructor=', canvas.prototype.constructor);
+		// console.log(2, 'this.__proto__.constructor=', this.__proto__.constructor);
+		// console.log(2, 'this.constructor=', this.constructor);
+		// console.log(2, 'this.__proto__ == canvas.prototype =', this.__proto__ == canvas.prototype);
+		// this.__proto__.__proto__ = dom.of(c);
+		this.init(c);
 	}
 
 	shallowCopyObj(canvas, of_interface);
 	shallowCopyObj(canvas, extend_interface);
 	shallowCopyObj(canvas.prototype, extend_interface);
+	/**
+	 * 	Inherit：
+	 *  old:canvas.prototype.__proto__ = {}
+	 * 	new:canvas.prototype.__proto__ = dom.prototype
+	 *	because of dom.prototype.__proto__ is {}
+	 *	calling process like this:
+	 *		canvas obj(new Canvas) 
+	 *		 -> canvas.prototype 
+	 *			-> dom.prototype (canvas.prototype.__proto__)
+	 *				-> object (dom.prototype.__proto__) 
+	 *					-> null (dom.prototype.__proto__.__proto__) 
+	 *	dom.prototype should only have common shared variables and methods!
+	 *	instanceof ok,inherits ok
+	 *  if you do understand meanings of "instanceof"
+	 *  and do know meaning of "this" and "prototype",
+	 * 	you will understand the following one code.
+	 * 	but it cannot use dom's own fields or methods.
+	 */
+	canvas.prototype.__proto__ = dom.prototype;
 
-	var canvas_prototype_extend = {
-		get: function () {
-			return this.cv;
-		},
-		k: function (key) {
-			return this.get().k(key);
-		},
-		kv: function (key, value) {
-			this.get().kv(key, value);
-		},
-		getPen: function (type = '2d') {
-			var ctx = this.k('getContext');
-			if (fnExist(ctx)) {
-				//Uncaught TypeError: Illegal invocation
-				//return ctx(type);
-				return ctx.call(this.get().get(), type);
-			} else {
-				throw 'this canvas cannot use function getContext!';
-			}
-		},
-		init: function () {
-			this.p = this.getPen();
-		},
-		pen: function () {
-			return this.p;
-		},
-		pk:function(k){
-			return this.pen()[k];
-		},
-		pkv:function(k,v){
-			this.pen()[k] = v;
-			return this;
-		},
-		fillColor: function (c) {
-			this.p.fillStyle = c;
-			return this;
-		},
-		color: function (c) {
-			this.p.strokeStyle = c;
-			return this;
-		},
-		bp: function () {
-			this.p.beginPath();
-			return this;
-		},
-		cp: function () {
-			this.p.closePath();
-			return this;
-		},
-		lineRect: function (x = 0, y = 0, w = 0, h = 0) {
-			this.p.strokeRect(x, y, w, h);
-			return this;
-		},
-		fillRect: function (x = 0, y = 0, w = 0, h = 0) {
-			this.p.fillRect(x, y, w, h);
-			return this;
-		},
-		lineText:function(text, x, y,maxWidth){
-			if(oExist(maxWidth)){
-				this.p.strokeText(text, x, y,maxWidth);
-			}else{
-				this.p.strokeText(text, x, y);
-			}
-			return this;
-		},
-		fillText:function(text, x, y , maxWidth){
-			
-			if(oExist(maxWidth)){
-				this.p.fillText(text, x, y,maxWidth);
-			}else{
-				this.p.fillText(text, x, y);
-			}
-			return this;
-		},
-		textSize:function(s){
-			return this.p.measureText(s);
-		}
+	// function canvas(c) {
+	// 	notInstanceof(this, canvas, 'function canvas is constructor,must using new!')
+	// 	if (p0(arguments)) {
+	// 		throw "less than one parameter!";
+	// 	}
+	// 	else if (pnl1(arguments)) {
+
+	// 		if (strNonEmpty(c)) {
+	// 			c = xy.d(c);
+	// 			if (c.isList()) {
+	// 				c = c.list()[0];
+	// 			}
+	// 		}
+	// 		else if (c instanceof domlist) {
+	// 			c = c.list()[0];
+	// 		}
+	// 		else if (c instanceof HTMLCanvasElement) {
+	// 			c = dom.of(c);
+	// 		} else if (c instanceof HTMLCollection) {
+	// 			c = domlist.of(c)[0];
+
+	// 		} else if (c instanceof NodeList) {
+	// 			c = domlist.of(c)[0];
+	// 		}
+	// 		else {
+	// 			throw 'cannot use ' + c + ' to find one canvas element!';
+	// 		}
+	// 		if (c.get() instanceof HTMLCanvasElement) {
+	// 			this.cv = c;
+	// 		}
+	// 		else {
+	// 			throw c + ' is not a canvas element!';
+	// 		}
+	// 	}
+	// }
+
+	// shallowCopyObj(canvas, of_interface);
+	// shallowCopyObj(canvas, extend_interface);
+	// shallowCopyObj(canvas.prototype, extend_interface);
+
+	// var canvas_prototype_extend = {
+	// 	get: function () {
+	// 		return this.cv;
+	// 	},
+	// 	k: function (key) {
+	// 		return this.get().k(key);
+	// 	},
+	// 	kv: function (key, value) {
+	// 		this.get().kv(key, value);
+	// 	},
+	// 	getPen: function (type = '2d') {
+	// 		var ctx = this.k('getContext');
+	// 		if (fnExist(ctx)) {
+	// 			//Uncaught TypeError: Illegal invocation
+	// 			//return ctx(type);
+	// 			return ctx.call(this.get().get(), type);
+	// 		} else {
+	// 			throw 'this canvas cannot use function getContext!';
+	// 		}
+	// 	},
+	// 	init: function () {
+	// 		this.p = this.getPen();
+	// 	},
+	// 	pen: function () {
+	// 		return this.p;
+	// 	},
+	// 	pk:function(k){
+	// 		return this.pen()[k];
+	// 	},
+	// 	pkv:function(k,v){
+	// 		this.pen()[k] = v;
+	// 		return this;
+	// 	},
+	// 	fillColor: function (c) {
+	// 		this.p.fillStyle = c;
+	// 		return this;
+	// 	},
+	// 	color: function (c) {
+	// 		this.p.strokeStyle = c;
+	// 		return this;
+	// 	},
+	// 	bp: function () {
+	// 		this.p.beginPath();
+	// 		return this;
+	// 	},
+	// 	cp: function () {
+	// 		this.p.closePath();
+	// 		return this;
+	// 	},
+	// 	lineRect: function (x = 0, y = 0, w = 0, h = 0) {
+	// 		this.p.strokeRect(x, y, w, h);
+	// 		return this;
+	// 	},
+	// 	fillRect: function (x = 0, y = 0, w = 0, h = 0) {
+	// 		this.p.fillRect(x, y, w, h);
+	// 		return this;
+	// 	},
+	// 	lineText:function(text, x, y,maxWidth){
+	// 		if(oExist(maxWidth)){
+	// 			this.p.strokeText(text, x, y,maxWidth);
+	// 		}else{
+	// 			this.p.strokeText(text, x, y);
+	// 		}
+	// 		return this;
+	// 	},
+	// 	fillText:function(text, x, y , maxWidth){
+
+	// 		if(oExist(maxWidth)){
+	// 			this.p.fillText(text, x, y,maxWidth);
+	// 		}else{
+	// 			this.p.fillText(text, x, y);
+	// 		}
+	// 		return this;
+	// 	},
+	// 	textSize:function(s){
+	// 		return this.p.measureText(s);
+	// 	}
 
 
-	};
+	// };
 
-	canvas.prototype.extend(canvas_prototype_extend);
+	// canvas.prototype.extend(canvas_prototype_extend);
 
 
 	xy.extend({

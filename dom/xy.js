@@ -391,6 +391,8 @@
 
 	//document selector query dom
 	function query(d, selector) {
+
+		//default []
 		var elems = d.querySelectorAll(selector);
 
 		if (pnl2(elems)) {
@@ -402,9 +404,9 @@
 
 	//html element
 	function dom(node) {
+		notInstanceof(this, dom, 'dom is an class,have to use "new"!');
 		this.init(node);
 	};
-
 
 	shallowCopyObj(dom, of_interface);
 	shallowCopyObj(dom, extend_interface);
@@ -414,7 +416,6 @@
 
 		//real constructor
 		init: function (n) {
-			notInstanceof(this, dom, this.init.caller.name+' is an class,have to use "new"!');
 			this.node = n;
 		},
 
@@ -616,12 +617,12 @@
 				return this;
 			}
 		},
-		full:function(h){
-			if(p0(arguments)){
+		full: function (h) {
+			if (p0(arguments)) {
 				return this.k('outerHTML');
-			}else{
+			} else {
 				//will changes node,no return!
-				this.kv('outerHTML',h);
+				this.kv('outerHTML', h);
 			}
 		}
 
@@ -634,6 +635,7 @@
 
 	//html elements
 	function domlist(nodeList) {
+		notInstanceof(this, domlist, 'domlist is an class,have to use "new"!');
 		this.init(nodeList);
 	}
 
@@ -645,7 +647,6 @@
 	var domlist_prototype_extend = {
 		//real constructor
 		init: function (nodeList) {
-			notInstanceof(this, domlist, this.init.caller.name+' is an class,have to use "new"!');
 			// bug:!0 == true!!!
 			if (!oExist(nodeList) || !isNumber(nodeList.length)) {
 				throw 'cannot init this domlist,because of not html collection or list!';
@@ -1774,6 +1775,8 @@
 		// console.log(2, 'this.constructor=', this.constructor);
 		// console.log(2, 'this.__proto__ == canvas.prototype =', this.__proto__ == canvas.prototype);
 		// this.__proto__.__proto__ = dom.of(c);
+		notInstanceof(this, canvas, 'canvas is a constructor,should "new".');
+		//inherit from dom!
 		this.init(c);
 	}
 
@@ -1799,6 +1802,32 @@
 	 * 	but it cannot use dom's own fields or methods.
 	 */
 	canvas.prototype.__proto__ = dom.prototype;
+
+	function pen(p) {
+		this.init(p);
+	}
+
+	shallowCopyObj(pen, of_interface);
+	shallowCopyObj(pen, extend_interface);
+	shallowCopyObj(pen.prototype, extend_interface);
+
+	pen.prototype.extend({
+		init: function (p) {
+			this.p = p;
+		},
+		
+	});
+
+
+
+	var canvas_prototype_extend = {
+
+	};
+
+	canvas.prototype.extend(canvas_prototype_extend);
+
+
+
 
 	// function canvas(c) {
 	// 	notInstanceof(this, canvas, 'function canvas is constructor,must using new!')
@@ -1940,3 +1969,5 @@
 	window.xy = xy;
 	return xy;
 }));
+
+

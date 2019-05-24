@@ -1909,15 +1909,78 @@
 				return this.fn('measureText', s);
 			}
 		},
-		lineWidth:function(n){
-			if(p0(arguments)){
+		lineWidth: function (n) {
+			if (p0(arguments)) {
 				return this.k('lineWidth');
 			}
-			return this.kv('lineWidth',n);
+			return this.kv('lineWidth', n);
 		},
-		lineCap:function(c){
-			return this.kv('',c);
-		}
+		/**
+		 * ctx.lineCap = "butt";
+		 * ctx.lineCap = "round";
+		 * ctx.lineCap = "square";
+		 * @param {string} c 
+		 */
+		lineCap: function (c) {
+			if (p0(arguments)) {
+				return this.k('lineCap');
+			}
+			return this.kv('lineCap', c);
+		},
+		/**
+		 * ctx.lineJoin = "bevel";
+		 * ctx.lineJoin = "round";
+		 * ctx.lineJoin = "miter";
+		 */
+		lineJoin: function (j) {
+			if (p0(arguments)) {
+				return this.k('lineJoin');
+			}
+			return this.kv('lineJoin', j);
+		},
+		miterLimit: function (m) {
+			if (p0(arguments)) {
+				return this.k('miterLimit');
+			}
+			return this.kv('miterLimit', m);
+		},
+		lineDash: function (arr) {
+			if (p0(arguments)) {
+				return this.fn('getLineDash');
+			}
+			this.fn('setLineDash', arr);
+			return this;
+		},
+		lineDashOffset: function (v) {
+			if (p0(arguments)) {
+				return this.k('lineDashOffset');
+			}
+			return this.kv('lineDashOffset', m);
+		},
+		font: function (f) {
+			if (p0(arguments)) {
+				return this.k('font');
+			}
+			return this.kv('font', f);
+		},
+		textAlign: function (t) {
+			if (p0(arguments)) {
+				return this.k('textAlign');
+			}
+			return this.kv('textAlign', t);
+		},
+		textBaseline: function (t) {
+			if (p0(arguments)) {
+				return this.k('textBaseline');
+			}
+			return this.kv('textBaseline', t);
+		},
+		direction: function (t) {
+			if (p0(arguments)) {
+				return this.k('direction');
+			}
+			return this.kv('direction', t);
+		},
 
 
 	};

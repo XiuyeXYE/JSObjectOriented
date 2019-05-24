@@ -22,12 +22,14 @@
 	//清理
 	var clearTimeout = window.clearTimeout;
 
-	// 这种方式是错误的!!!因为是引用,所以只想同一个
+	// 这种方式是错误的!!!因为是引用,所以赋值只是同一个
+	// 容易引起隐藏bug!
 	// 不要定义静态变量赋初始值,否则容易出bug
 	// const EMPTY_ARRAY = [];
 	// const EMPTY_STRING = '';
 
 	/**
+	 * 正确的方式:是给每一个变量一个新对象!
 	 * 默认空值
 	 */
 	var EMPTY_VALUES = {};
@@ -347,6 +349,83 @@
 		},
 
 	};
+
+	/**
+	 * 调用接口,
+	 * 1."直接"调用底层对象的方法和属性.
+	 * 2.直接根据上层方法调用底层相同方法名接口!相当于包装类
+	 */
+	var invoke_interface = {
+
+		/**
+		 * 设置默认原始对象!
+		 */
+		o: function (o) {
+			this.origin = o;
+		},
+		/**
+		 * 返回原始对象
+		 */
+		get: function () {
+			return this.origin;
+		},
+		//tool beginning:
+		/**
+		 * 返回对象属性值
+		 */
+		k: function (key) {
+			return this.get()[key];
+		},
+		/**
+		 * 设置对象属性值
+		 */
+		kv: function (k, v) {
+			this.get()[k] = v;
+			return this;
+		},
+		// fn: function (f, ...ps) {
+		// 	if (fnExist(this.k(f))) {
+		// 		return this.get()[f](...ps);
+		// 	}
+		// },
+		//优秀API工具哈哈哈哈哈！！！简单包装api必备啊
+		/**
+		 * 调用底层的方法
+		 * f:方法名
+		 * 告别"this.方法()"调用,直接this.fn(f,...params);
+		 */
+		fn: function (f) {
+			if (pnl1(arguments) && fnExist(this.k(f))) {
+				f = this.k(f);
+				var ps = EMPTY_VALUES.EMPTY_ARRAY;
+				for (var i = 1; i < arguments.length; i++) {
+					ps.push(arguments[i]);
+				}
+				return f.apply(this.get(), ps);
+			}
+
+		},
+		//优秀API工具哈哈哈哈哈！！！简单包装api必备啊
+		/**
+		 * 直接根据上层方法名调用底层方法名相同的方法.
+		 * 没有其他作用就是手写简单,也不用管参数传递的事情.
+		 * args:Arguments
+		 */
+		invoke: function (args) {
+			var callerName = this.invoke.caller.name;
+			var ps = EMPTY_VALUES.EMPTY_ARRAY;
+			ps[0] = callerName;
+			for (var i = 1; i < args.length; i++) {
+				ps.push(args[i]);
+			}
+			return this.fn.apply(this, ps);
+		},
+
+	};
+	/**
+	 * 包装接口
+	 */
+	var wrapper_interface = invoke_interface;
 
 	/**
 	 * end.
@@ -779,6 +858,14 @@
 	shallowCopyObj(xy, of_interface);
 	shallowCopyObj(xy, extend_interface);
 
+	var public_common_interfaces = {
+		of_interface: of_interface,
+		extend_interface: extend_interface,
+		invoke_interface: invoke_interface,
+		wrapper_interface: wrapper_interface,
+	};
+
+	xy.extend(public_common_interfaces);
 
 	var fn = {
 
@@ -803,6 +890,22 @@
 			return query(document, selector);
 
 		},
+
+
+		addInterface: function (obj, public_common_interface) {
+			if (pnl2(arguments)) {
+				return shallowCopyObj(obj, public_common_interface);
+			}
+		},
+
+		// grantAllCommonInterfaces2Obj: function (obj) {
+		// 	if (pnl1(arguments)) {
+		// 		for (var public_common_interface in public_common_interfaces) {
+		// 			obj = shallowCopyObj(obj, public_common_interface);
+		// 		}
+		// 		return obj;
+		// 	}
+		// },
 
 		defaultValue: defaultValue,
 
@@ -1870,7 +1973,7 @@
 			// console.log(arguments);
 			// console.log(this.invoke.caller);
 			var callerName = this.invoke.caller.name;
-			console.log('callerName=', callerName, ';');
+			//console.log('callerName=', callerName, ';');
 			var ps = EMPTY_VALUES.EMPTY_ARRAY;
 			ps[0] = callerName;
 			for (var i = 1; i < args.length; i++) {
@@ -2032,12 +2135,21 @@
 		createPattern: function (image, repetition) {
 			return this.create('Pattern', image, repetition);
 		},
-		test: function () {
-			this.invoke(arguments);
-		},
 		beginPath: function () {
-			this.invoke(arguments);
+			return this.invoke(arguments);
 		},
+		bp: function () {
+			return this.beginPath();
+		},
+		closePath: function () {
+			return this.invoke(arguments);
+		},
+		cp: function () {
+			return this.closePath();
+		},
+
+
+
 
 	};
 

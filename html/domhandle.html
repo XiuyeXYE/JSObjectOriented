@@ -74,6 +74,28 @@
 				.color('red').lineRect(400, 100, 50, 50);
 		});
 
+		function Up(obj) {
+			this.o(obj);
+		}
+		function Down() {
+			this.f = function (a, b, c) { console.log("I am Down,f params:", a, b, c); return "success"; }
+		}
+
+
+		xy.addInterface(Up.prototype, xy.extend_interface);
+		xy.addInterface(Up.prototype, xy.invoke_interface);
+
+		Up.prototype.extend({
+			f: function () {
+				return this.invoke(arguments);
+			}
+		});
+
+		var down = new Down();
+		var up = new Up(down);
+
+		console.log(up.f(1, 2, 3, 4, 5));
+
 	</script>
 </body>
 

@@ -21,6 +21,9 @@
 	<h1>Hello World!</h1>
 	<div id="out1"></div>
 	<div id="out2"></div>
+
+	<canvas id='c1'></canvas>
+
 	<script type="text/javascript" src="../dom/xy.js"></script>
 	<!-- <script type="text/javascript" src="../dom/xy.min.js"></script> 
 <script type="text/javascript" src="../dom/xy.en.js"></script>  -->
@@ -47,16 +50,28 @@
 		xy((e) => {
 			console.log(2, e);
 		});
-		xy(()=>{
-			
-			for(var i=0;i<10;i++){
-				new xy.Thread(()=>{
+		xy(() => {
+
+			for (var i = 0; i < 10; i++) {
+				new xy.Thread(() => {
 					console.log(i);
 					//xy.sleep(Math.random()*3000);
 				}).start();
 			}
 			console.log("threads created over!");
-			xy.Thread.of(()=>console.log("thread of!")).start();
+			xy.Thread.of(() => console.log("thread of!")).start();
+		});
+
+		xy.of(() => {
+			var c = xy.Canvas.from('#c1');
+			// c.width(500).height(500).css('background-color','#ccc');
+
+			c.css('background-color', '#ccc');
+			c.width(500).height(500);
+			var p = c.pen();
+			//correctly,will go on!
+			p.fillColor('green').fillRect(0, 0, 300, 300).fillColor('blue').fillRect(400, 0, 50, 50)
+				.color('red').lineRect(400, 100, 50, 50);
 		});
 
 	</script>

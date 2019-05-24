@@ -415,7 +415,7 @@
 			var callerName = this.invoke.caller.name;
 			var ps = EMPTY_VALUES.EMPTY_ARRAY;
 			ps[0] = callerName;
-			for (var i = 1; i < args.length; i++) {
+			for (var i = 0; i < args.length; i++) {
 				ps.push(args[i]);
 			}
 			return this.fn.apply(this, ps);
@@ -1935,52 +1935,54 @@
 	shallowCopyObj(pen, extend_interface);
 	shallowCopyObj(pen.prototype, extend_interface);
 
+	pen.prototype.extend(invoke_interface);
 
 	var pen_prototype_extend = {
 		init: function (p) {
-			this.p = p;
+			// this.p = p;
+			this.o(p);
 		},
-		get: function () {
-			return this.p;
-		},
-		//tool beginning:
-		k: function (key) {
-			return this.get()[key];
-		},
-		kv: function (k, v) {
-			this.get()[k] = v;
-			return this;
-		},
-		// fn: function (f, ...ps) {
-		// 	if (fnExist(this.k(f))) {
-		// 		return this.get()[f](...ps);
-		// 	}
+		// get: function () {
+		// 	return this.p;
 		// },
-		//优秀API工具哈哈哈哈哈！！！包装api必备啊
-		fn: function (f) {
-			if (pnl1(arguments) && fnExist(this.k(f))) {
-				f = this.k(f);
-				var ps = EMPTY_VALUES.EMPTY_ARRAY;
-				for (var i = 1; i < arguments.length; i++) {
-					ps.push(arguments[i]);
-				}
-				return f.apply(this.get(), ps);
-			}
-			return this;
-		},
-		//优秀API工具哈哈哈哈哈！！！
-		invoke: function (args) {
-			// console.log(arguments);
-			// console.log(this.invoke.caller);
-			var callerName = this.invoke.caller.name;
-			//console.log('callerName=', callerName, ';');
-			var ps = EMPTY_VALUES.EMPTY_ARRAY;
-			ps[0] = callerName;
-			for (var i = 1; i < args.length; i++) {
-				ps.push(args[i]);
-			}
-			return this.fn.apply(this, ps);
-		},
+		// //tool beginning:
+		// k: function (key) {
+		// 	return this.get()[key];
+		// },
+		// kv: function (k, v) {
+		// 	this.get()[k] = v;
+		// 	return this;
+		// },
+		// // fn: function (f, ...ps) {
+		// // 	if (fnExist(this.k(f))) {
+		// // 		return this.get()[f](...ps);
+		// // 	}
+		// // },
+		// //优秀API工具哈哈哈哈哈！！！包装api必备啊
+		// fn: function (f) {
+		// 	if (pnl1(arguments) && fnExist(this.k(f))) {
+		// 		f = this.k(f);
+		// 		var ps = EMPTY_VALUES.EMPTY_ARRAY;
+		// 		for (var i = 1; i < arguments.length; i++) {
+		// 			ps.push(arguments[i]);
+		// 		}
+		// 		return f.apply(this.get(), ps);
+		// 	}
+		// 	return this;
+		// },
+		// //优秀API工具哈哈哈哈哈！！！
+		// invoke: function (args) {
+		// 	// console.log(arguments);
+		// 	// console.log(this.invoke.caller);
+		// 	var callerName = this.invoke.caller.name;
+		// 	//console.log('callerName=', callerName, ';');
+		// 	var ps = EMPTY_VALUES.EMPTY_ARRAY;
+		// 	ps[0] = callerName;
+		// 	for (var i = 1; i < args.length; i++) {
+		// 		ps.push(args[i]);
+		// 	}
+		// 	return this.fn.apply(this, ps);
+		// },
 		create: function (c) {
 			if (pnl1(arguments)) {
 				var createFunctionStr = 'create' + c;
@@ -2016,11 +2018,14 @@
 			return this;
 		},
 		fillRect: function (x = 0, y = 0, w = 0, h = 0) {
-			this.fn('fillRect', x, y, w, h);
+			// this.fn('fillRect', x, y, w, h);
+			//同名才可以调用!
+			this.invoke(arguments);
 			return this;
 		},
 		clearRect: function (x = 0, y = 0, w = 0, h = 0) {
-			this.fn('clearRect', x, y, w, h);
+			// this.fn('clearRect', x, y, w, h);
+			this.invoke(arguments);
 			return this;
 		},
 		text: function (t, x, y, ops = { fill: true }) {
@@ -2148,7 +2153,7 @@
 			return this.closePath();
 		},
 
-
+		
 
 
 	};

@@ -1909,6 +1909,15 @@
 				return this.fn('measureText', s);
 			}
 		},
+		lineWidth:function(n){
+			if(p0(arguments)){
+				return this.k('lineWidth');
+			}
+			return this.kv('lineWidth',n);
+		},
+		lineCap:function(c){
+			return this.kv('',c);
+		}
 
 
 	};

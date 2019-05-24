@@ -1840,6 +1840,7 @@
 		get: function () {
 			return this.p;
 		},
+		//tool beginning:
 		k: function (key) {
 			return this.get()[key];
 		},
@@ -1852,6 +1853,7 @@
 		// 		return this.get()[f](...ps);
 		// 	}
 		// },
+		//优秀API工具哈哈哈哈哈！！！包装api必备啊
 		fn: function (f) {
 			if (pnl1(arguments) && fnExist(this.k(f))) {
 				f = this.k(f);
@@ -1863,6 +1865,32 @@
 			}
 			return this;
 		},
+		//优秀API工具哈哈哈哈哈！！！
+		invoke: function (args) {
+			// console.log(arguments);
+			// console.log(this.invoke.caller);
+			var callerName = this.invoke.caller.name;
+			console.log('callerName=', callerName, ';');
+			var ps = EMPTY_VALUES.EMPTY_ARRAY;
+			ps[0] = callerName;
+			for (var i = 1; i < args.length; i++) {
+				ps.push(args[i]);
+			}
+			return this.fn.apply(this, ps);
+		},
+		create: function (c) {
+			if (pnl1(arguments)) {
+				var createFunctionStr = 'create' + c;
+				arguments[0] = createFunctionStr;
+				// var ps = EMPTY_VALUES.EMPTY_ARRAY;
+				// ps.push(createFunction);
+				// for (var i = 1; i < arguments.length; i++) {
+				// 	ps.push(arguments[i]);
+				// }
+				return this.fn.apply(this, arguments);
+			}
+		},
+		//tool end.
 		color: function (c) {
 			if (p0(arguments)) {
 				return this.k('strokeStyle');
@@ -1988,17 +2016,7 @@
 			}
 			return this.kv('direction', t);
 		},
-		create: function (c) {
-			if (pnl1(arguments)) {
-				var createFunction = 'create' + c;
-				var ps = EMPTY_VALUES.EMPTY_ARRAY;
-				ps.push(createFunction);
-				for (var i = 1; i < arguments.length; i++) {
-					ps.push(arguments[i]);
-				}
-				return this.fn.apply(this, ps);
-			}
-		},
+
 		//渐变和图案
 		createLinearGradient: function (x0, y0, x1, y1) {
 			return this.create('LinearGradient', x0, y0, x1, y1);
@@ -2014,7 +2032,12 @@
 		createPattern: function (image, repetition) {
 			return this.create('Pattern', image, repetition);
 		},
-
+		test: function () {
+			this.invoke(arguments);
+		},
+		beginPath: function () {
+			this.invoke(arguments);
+		},
 
 	};
 

@@ -314,12 +314,27 @@
 	// };
 	//es6 new feature ...args
 	var of_interface = {
-		valueOf: function (...d) {
-			return new this(...d);
+		// valueOf: function (...d) {
+		// 	return new this(...d);
+		// },
+		// of: function (...d) {
+		// 	return this.valueOf(...d);
+		// },
+		valueOf: function () {
+			var that = this;
+			for (var i = 0; i < arguments.length; i++) {
+				that = that.bind(this/*not useful*/, arguments[i]);
+			}
+			return new that();
 		},
-		of: function (...d) {
-			return this.valueOf(...d);
+		of: function () {
+			var that = this;
+			for (var i = 0; i < arguments.length; i++) {
+				that = that.bind(this/*not useful*/, arguments[i]);
+			}
+			return new that();
 		},
+
 
 	};
 	//extend interface

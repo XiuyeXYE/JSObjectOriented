@@ -227,7 +227,7 @@
 	}
 	// not less than:>=
 	function pnl0(arr) {
-		return arr.length > 0;
+		return arr.length >= 0;
 	}
 	//==1
 	function p1(arr) {
@@ -1909,7 +1909,7 @@
 				return this.fn('measureText', s);
 			}
 		},
-		
+
 
 	};
 

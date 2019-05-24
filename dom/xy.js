@@ -1864,9 +1864,15 @@
 			return this;
 		},
 		color: function (c) {
+			if (p0(arguments)) {
+				return this.k('strokeStyle');
+			}
 			return this.kv('strokeStyle', c);
 		},
 		fillColor: function (c) {
+			if (p0(arguments)) {
+				return this.k('fillStyle');
+			}
 			return this.kv('fillStyle', c);
 		},
 		lineRect: function (x = 0, y = 0, w = 0, h = 0) {
@@ -1957,6 +1963,7 @@
 			}
 			return this.kv('lineDashOffset', m);
 		},
+		//文本样式
 		font: function (f) {
 			if (p0(arguments)) {
 				return this.k('font');
@@ -1980,6 +1987,32 @@
 				return this.k('direction');
 			}
 			return this.kv('direction', t);
+		},
+		create: function (c) {
+			if (pnl1(arguments)) {
+				var createFunction = 'create' + c;
+				var ps = EMPTY_VALUES.EMPTY_ARRAY;
+				ps.push(createFunction);
+				for (var i = 1; i < arguments.length; i++) {
+					ps.push(arguments[i]);
+				}
+				return this.fn.apply(this, ps);
+			}
+		},
+		//渐变和图案
+		createLinearGradient: function (x0, y0, x1, y1) {
+			return this.create('LinearGradient', x0, y0, x1, y1);
+		},
+		createRadialGradient: function (x0, y0, r0, x1, y1, r1) {
+			return this.create('RadialGradient', x0, y0, r0, x1, y1, r1);
+		},
+		/**
+		 * 
+		 * @param {Image} image 
+		 * @param {string} repetition 
+		 */
+		createPattern: function (image, repetition) {
+			return this.create('Pattern', image, repetition);
 		},
 
 

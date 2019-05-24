@@ -1890,10 +1890,11 @@
 			return this;
 		},
 		textSize: function (s) {
-			if (pnl0(arguments)) {
+			if (pnl1(arguments)) {
 				return this.fn('measureText', s);
 			}
-		}
+		},
+		
 
 	};
 
@@ -1923,7 +1924,7 @@
 			}
 		},
 		/**
-		 * 
+		 * @override
 		 * canvas must use width/height attribute!
 		 * 
 		 * real size on canvas
@@ -1941,6 +1942,11 @@
 				return this;
 			}
 		},
+		/**
+		 * @override
+		 * @param {number} h 
+		 * @param {string} u 
+		 */
 		height: function (h, u = 'px') {
 			if (p0(arguments)) {
 				return this.clientHeight();

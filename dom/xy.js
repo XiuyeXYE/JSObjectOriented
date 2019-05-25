@@ -2259,7 +2259,138 @@
 		rect: function () {
 			this.invoke(arguments);
 			return this;
-		}
+		},
+		shadowBlur: function () {
+			return this.property(arguments);
+		},
+		shadowColor: function () {
+			return this.property(arguments);
+		},
+		shadowOffsetX: function () {
+			return this.property(arguments);
+		},
+		shadowOffsetY: function () {
+			return this.property(arguments);
+		},
+		shadowPos: function (x, y) {
+			if (pnl2(arguments)) {
+				this.shadowOffsetX(x);
+				this.shadowOffsetY(y);
+				return this;
+			}
+			return [this.shadowOffsetX(), this.shadowOffsetY()];
+		},
+		moveTo: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		lineTo: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		bezierCurveTo: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		quadraticCurveTo: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		ellipse: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		drawFocusIfNeeded: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		scrollPathIntoView: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		clip: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		isPointInPath: function () {
+			return this.invoke(arguments);
+		},
+		isPointInStroke: function () {
+			return this.invoke(arguments);
+		},
+		rotate: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		scale: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		translate: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		transform: function () {
+			this.invoke(arguments);
+			return this;
+		},
+
+		currentTransform: function () {
+			return this.property(arguments);
+		},
+		globalAlpha: function () {
+			return this.property(arguments);
+		},
+		globalCompositeOperation: function () {
+			return this.property(arguments);
+		},
+		canvas: function () {
+			return this.property(arguments);
+		},
+
+		setTransform: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		resetTransform: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		drawImage: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		createImageData: function () {
+			return this.invoke(arguments);
+		},
+		getImageData: function () {
+			return this.invoke(arguments);
+		},
+		putImageData: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		save: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		restore: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		addHitRegion: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		removeHitRegion: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		clearHitRegions: function () {
+			this.invoke(arguments);
+			return this;
+		},
+
 
 
 

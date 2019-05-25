@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <style type="text/css">
+        .c1 {
+            width: 500px;
+            height: 600px;
+            background-color: red;
+        }
+
+        .c2 {
+            border: 2px solid green;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Canvas Operation!</h1>
+
+
+    <canvas id='c1'></canvas>
+
+    <script type="text/javascript" src="../dom/xy.js"></script>
+    <!-- <script type="text/javascript" src="../dom/xy.min.js"></script> 
+<script type="text/javascript" src="../dom/xy.en.js"></script>  -->
+    <script type="text/javascript">
+
+        xy(() => {
+            let c = xy.Canvas.from('#c1');
+            let p = c.pen();
+            p.fillColor('rgb(200,0,0)').fillRect(10, 10, 55, 50)
+                .fillColor('rgba(0,0,55,50)').fillRect(30, 30, 55, 50);
+
+        });
+
+    </script>
+</body>
+
+</html>

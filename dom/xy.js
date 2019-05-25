@@ -243,6 +243,10 @@
 	function p2(arr) {
 		return arr.length == 2;
 	}
+	function pl2(arr) {
+		return arr.length < 2;
+	}
+
 	function p3(arr) {
 		return arr.length == 3;
 	}
@@ -283,8 +287,9 @@
 		return a < b;
 	}
 
+	//适用任何类型
 	function eq(a, b) {
-		checkNumberType(a, b);
+		// checkNumberType(a, b);
 		return a === b;
 	}
 	//o not instance of c,will raise exception!
@@ -293,6 +298,14 @@
 			throw msg;
 		}
 	}
+	//between start and end!
+	function openInterval(args, start, end) {
+		return args.length > start && args.length < end;
+	}
+	function closedInterval(args, start, end) {
+		return args.length >= start && args.length <= end;
+	}
+
 
 	/**
 	 * End.
@@ -383,6 +396,38 @@
 			this.get()[k] = v;
 			return this;
 		},
+
+		/**
+		 * arguments
+		 * f arguments
+		 * 这个函数还是相当危险的，搞不好会增加底层对象的属性！
+		 * 总之这个很复杂啊，思路还不能理清。
+		 * 如果不考虑容错性，很好写，但是为了够通用还是写写吧。
+		 * @param {string|arguments} p0 
+		 * @param {arguments} p1 
+		 */
+		property: function (p0, p1) {
+			//left => right then right => left
+			//like this:a.b.c => a.b => a then a=>a.b =>b.c
+			//san yuan
+			var key = this.property.caller && this.property.caller.name;
+			var args = key && p0;
+			key = p1 && p0 || key;
+			args = (key == p0 && p1) || args;
+			//er yuan
+			key = key || p0;
+			args = args || EMPTY_VALUES.EMPTY_ARRAY;
+			if (isStr(args) || !oExist(args.length)) {//string, number,boolean,symbol; later 3 not have length!
+				var tmp = EMPTY_VALUES.EMPTY_ARRAY;
+				tmp.push(args);
+				args = tmp;
+			}
+			if (pnl1(args)) {
+				return this.kv(key, args[0]);
+			}
+			return this.k(key);
+		},
+
 		// fn: function (f, ...ps) {
 		// 	if (fnExist(this.k(f))) {
 		// 		return this.get()[f](...ps);
@@ -411,14 +456,24 @@
 		 * 没有其他作用就是手写简单,也不用管参数传递的事情.
 		 * args:Arguments
 		 */
-		invoke: function (args) {
-			var callerName = this.invoke.caller.name;
+		invoke: function (aorf, a) {
 			var ps = EMPTY_VALUES.EMPTY_ARRAY;
-			ps[0] = callerName;
+
+			if (isFunction(this.invoke.caller)) {
+				ps[0] = this.invoke.caller.name;
+			}
+			var args = EMPTY_VALUES.EMPTY_ARRAY;
+			if (p1(arguments)) {
+				args = aorf || EMPTY_VALUES.EMPTY_ARRAY;
+			} else if (pnl2(arguments)) {
+				ps[0] = aorf;
+				args = a || EMPTY_VALUES.EMPTY_ARRAY;
+			}
 			for (var i = 0; i < args.length; i++) {
 				ps.push(args[i]);
 			}
-			return this.fn.apply(this, ps);
+
+			return this.fn.apply(this, ps);//this.fn的第一个参数必须是函数名。
 		},
 
 	};
@@ -1986,27 +2041,32 @@
 		create: function (c) {
 			if (pnl1(arguments)) {
 				var createFunctionStr = 'create' + c;
-				arguments[0] = createFunctionStr;
+				// arguments[0] = createFunctionStr;
 				// var ps = EMPTY_VALUES.EMPTY_ARRAY;
 				// ps.push(createFunction);
 				// for (var i = 1; i < arguments.length; i++) {
 				// 	ps.push(arguments[i]);
 				// }
-				return this.fn.apply(this, arguments);
+				// return this.fn.apply(this, arguments);
+				return this.invoke(createFunctionStr);
 			}
 		},
 		//tool end.
 		color: function (c) {
-			if (p0(arguments)) {
-				return this.k('strokeStyle');
-			}
-			return this.kv('strokeStyle', c);
+			// if (p0(arguments)) {
+			// 	return this.k('strokeStyle');
+			// }
+			// return this.kv('strokeStyle', c);
+			// return this.propertyWithName('strokeStyle', arguments);
+			return this.property('strokeStyle', arguments)
 		},
 		fillColor: function (c) {
-			if (p0(arguments)) {
-				return this.k('fillStyle');
-			}
-			return this.kv('fillStyle', c);
+			// if (p0(arguments)) {
+			// 	return this.k('fillStyle');
+			// }
+			// return this.kv('fillStyle', c);
+			// return this.propertyWithName('fillStyle', arguments);
+			return this.property('fillStyle', arguments);
 		},
 		lineRect: function (x = 0, y = 0, w = 0, h = 0) {
 			// if (fnExist(this.k('strokeRect'))) {
@@ -2014,7 +2074,8 @@
 			// 	this.fn('strokeRect', x, y, w, h);
 			// 	return this;
 			// }
-			this.fn('strokeRect', x, y, w, h);
+			// this.fn('strokeRect', x, y, w, h);
+			this.invoke('strokeRect', arguments);
 			return this;
 		},
 		fillRect: function (x = 0, y = 0, w = 0, h = 0) {
@@ -2047,15 +2108,18 @@
 			return this;
 		},
 		textSize: function (s) {
-			if (pnl1(arguments)) {
-				return this.fn('measureText', s);
-			}
+			// if (pnl1(arguments)) {
+			// 	return this.fn('measureText', s);
+			// }
+			return this.invoke('measureText', arguments);
+			// return this.property(arguments);
 		},
 		lineWidth: function (n) {
-			if (p0(arguments)) {
-				return this.k('lineWidth');
-			}
-			return this.kv('lineWidth', n);
+			// if (p0(arguments)) {
+			// 	return this.k('lineWidth');
+			// }
+			// return this.kv('lineWidth', n);
+			return this.property(arguments);
 		},
 		/**
 		 * ctx.lineCap = "butt";
@@ -2064,10 +2128,11 @@
 		 * @param {string} c 
 		 */
 		lineCap: function (c) {
-			if (p0(arguments)) {
-				return this.k('lineCap');
-			}
-			return this.kv('lineCap', c);
+			// if (p0(arguments)) {
+			// 	return this.k('lineCap');
+			// }
+			// return this.kv('lineCap', c);
+			return this.property(arguments);
 		},
 		/**
 		 * ctx.lineJoin = "bevel";
@@ -2075,54 +2140,62 @@
 		 * ctx.lineJoin = "miter";
 		 */
 		lineJoin: function (j) {
-			if (p0(arguments)) {
-				return this.k('lineJoin');
-			}
-			return this.kv('lineJoin', j);
+			// if (p0(arguments)) {
+			// 	return this.k('lineJoin');
+			// }
+			// return this.kv('lineJoin', j);
+			return this.property(arguments);
 		},
 		miterLimit: function (m) {
-			if (p0(arguments)) {
-				return this.k('miterLimit');
-			}
-			return this.kv('miterLimit', m);
+			// if (p0(arguments)) {
+			// 	return this.k('miterLimit');
+			// }
+			// return this.kv('miterLimit', m);
+			return this.property(arguments);
 		},
 		lineDash: function (arr) {
-			if (p0(arguments)) {
-				return this.fn('getLineDash');
-			}
-			this.fn('setLineDash', arr);
-			return this;
+			// if (p0(arguments)) {
+			// 	return this.fn('getLineDash');
+			// }
+			// this.fn('setLineDash', arr);
+			// return this;
+			return this.property(arguments);
 		},
 		lineDashOffset: function (v) {
-			if (p0(arguments)) {
-				return this.k('lineDashOffset');
-			}
-			return this.kv('lineDashOffset', m);
+			// if (p0(arguments)) {
+			// 	return this.k('lineDashOffset');
+			// }
+			// return this.kv('lineDashOffset', m);
+			return this.property(arguments);
 		},
 		//文本样式
 		font: function (f) {
-			if (p0(arguments)) {
-				return this.k('font');
-			}
-			return this.kv('font', f);
+			// if (p0(arguments)) {
+			// 	return this.k('font');
+			// }
+			// return this.kv('font', f);
+			return this.property(arguments);
 		},
 		textAlign: function (t) {
-			if (p0(arguments)) {
-				return this.k('textAlign');
-			}
-			return this.kv('textAlign', t);
+			// if (p0(arguments)) {
+			// 	return this.k('textAlign');
+			// }
+			// return this.kv('textAlign', t);
+			return this.property(arguments);
 		},
 		textBaseline: function (t) {
-			if (p0(arguments)) {
-				return this.k('textBaseline');
-			}
-			return this.kv('textBaseline', t);
+			// if (p0(arguments)) {
+			// 	return this.k('textBaseline');
+			// }
+			// return this.kv('textBaseline', t);
+			return this.property(arguments);
 		},
 		direction: function (t) {
-			if (p0(arguments)) {
-				return this.k('direction');
-			}
-			return this.kv('direction', t);
+			// if (p0(arguments)) {
+			// 	return this.k('direction');
+			// }
+			// return this.kv('direction', t);
+			return this.property(arguments);
 		},
 
 		//渐变和图案
@@ -2141,19 +2214,43 @@
 			return this.create('Pattern', image, repetition);
 		},
 		beginPath: function () {
-			return this.invoke(arguments);
+			this.invoke(arguments);
+			return this;
 		},
 		bp: function () {
-			return this.beginPath();
+			this.beginPath();
+			return this;
 		},
 		closePath: function () {
-			return this.invoke(arguments);
+			this.invoke(arguments);
+			return this;
 		},
 		cp: function () {
-			return this.closePath();
+			this.closePath();
+			return this;
 		},
+		arc: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		line: function () {
+			this.invoke('stroke', arguments);
+			return this;
+		},
+		fill: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		arcTo: function () {
+			this.invoke(arguments);
+			return this;
+		},
+		rect: function () {
+			this.invoke(arguments);
+			return this;
+		}
 
-		
+
 
 
 	};

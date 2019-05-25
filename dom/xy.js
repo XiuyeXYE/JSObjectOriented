@@ -457,18 +457,29 @@
 		 * args:Arguments
 		 */
 		invoke: function (aorf, a) {
-			var ps = EMPTY_VALUES.EMPTY_ARRAY;
 
-			if (isFunction(this.invoke.caller)) {
-				ps[0] = this.invoke.caller.name;
-			}
-			var args = EMPTY_VALUES.EMPTY_ARRAY;
-			if (p1(arguments)) {
-				args = aorf || EMPTY_VALUES.EMPTY_ARRAY;
-			} else if (pnl2(arguments)) {
-				ps[0] = aorf;
-				args = a || EMPTY_VALUES.EMPTY_ARRAY;
-			}
+			//one parameter,default init
+			var f = this.invoke.caller && this.invoke.caller.name;
+			var args = f && aorf;
+			//two parameter :a exist
+			f = a && aorf || f;
+			args = (f == aorf && a) || args;
+			//two parameter: a not exist
+			f = f || aorf;
+			args = args || EMPTY_VALUES.EMPTY_ARRAY;
+
+			var ps = EMPTY_VALUES.EMPTY_ARRAY;
+			ps[0] = f;
+			// if (isFunction(this.invoke.caller)) {
+			// 	ps[0] = this.invoke.caller.name;
+			// }
+			// var args = EMPTY_VALUES.EMPTY_ARRAY;
+			// if (p1(arguments)) {
+			// 	args = aorf || EMPTY_VALUES.EMPTY_ARRAY;
+			// } else if (pnl2(arguments)) {
+			// 	ps[0] = aorf;
+			// 	args = a || EMPTY_VALUES.EMPTY_ARRAY;
+			// }
 			for (var i = 0; i < args.length; i++) {
 				ps.push(args[i]);
 			}

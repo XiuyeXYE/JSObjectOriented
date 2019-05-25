@@ -2345,7 +2345,7 @@
 			return this.property(arguments);
 		},
 		canvas: function () {
-			return this.property(arguments);
+			return canvas.of(this.property());
 		},
 
 		setTransform: function () {

@@ -22,17 +22,170 @@
 
 
     <canvas id='c1'></canvas>
+    <canvas id='c2'></canvas>
+    <canvas id='c3'></canvas>
+    <br/>
+    <canvas id='c5'></canvas>
+    <canvas id='c6'></canvas>
+    <canvas id='c7'></canvas>
+    <br/>
+    <canvas id='c8'></canvas>
+
 
     <script type="text/javascript" src="../dom/xy.js"></script>
     <!-- <script type="text/javascript" src="../dom/xy.min.js"></script> 
 <script type="text/javascript" src="../dom/xy.en.js"></script>  -->
     <script type="text/javascript">
-
+        //注意：当你调用fill()函数时，所有没有闭合的形状都会自动闭合，所以你不需要调用closePath()函数。但是调用stroke()时不会自动闭合。
         xy(() => {
             let c = xy.Canvas.from('#c1');
             let p = c.pen();
             p.fillColor('rgb(200,0,0)').fillRect(10, 10, 55, 50)
-                .fillColor('rgba(0,0,55,50)').fillRect(30, 30, 55, 50);
+                .fillColor('rgba(0,0,55,0.5)').fillRect(30, 30, 55, 50);
+            c = xy.Canvas.from('#c2');
+            p = c.pen();
+            p.fillColor('green').fillRect(25, 25, 100, 100)
+                .clearRect(45, 45, 60, 60).lineRect(50, 50, 50, 50);
+            c = xy.Canvas.from('#c3');
+            // c.width(500).height(500);
+            p = c.pen();
+            p.fillColor('green').bp().moveTo(100, 100).lineTo(200, 10).lineTo(200, 190).fill();
+            c = xy.Canvas.from('#c5');
+            // c.width(500).height(500);
+            p = c.pen();
+            p.color('green').bp()
+                .arc(75, 75, 50, 0, Math.PI * 2, true)
+                // .moveTo(110, 75)
+                .arc(75, 75, 35, 0, Math.PI, false)
+                // .moveTo(65, 65)
+                .arc(60, 65, 5, 0, Math.PI * 2, true)
+                // .moveTo(95, 65)
+                .arc(90, 65, 5, 0, Math.PI * 2, true)
+                .line();
+            c = xy.Canvas.from('#c6');
+            // c.width(500).height(500);
+            p = c.pen();
+            //你会注意到填充与描边三角形步骤有所不同。正如上面所提到的，
+            //因为路径使用填充（fill）时，路径自动闭合，使用描边（stroke）则不会闭合路径。
+            //如果没有添加闭合路径closePath()到描述三角形函数中，则只绘制了两条线段，并不是一个完整的三角形。
+            p.color('green').fillColor('blue').bp()
+                .moveTo(25, 25)
+                .lineTo(105, 25)
+                .lineTo(25, 105)
+                .fill()
+                .bp()
+                .moveTo(125, 125)
+                .lineTo(125, 45)
+                .lineTo(45, 125)
+                .cp()
+                .line();
+            c = xy.Canvas.from('#c7');
+            p = c.pen();
+            p.canvas().height(200);
+            for (var i = 0; i < 4; i++) {
+                for (var j = 0; j < 3; j++) {
+                    // p.beginPath();
+                    var x = 25 + j * 50; // x 坐标值
+                    var y = 25 + i * 50; // y 坐标值
+                    var radius = 20; // 圆弧半径
+                    var startAngle = 0; // 开始点
+                    var endAngle = Math.PI + (Math.PI * j) / 2; // 结束点
+                    var anticlockwise = i % 2 == 0 ? false : true; // 顺时针或逆时针
+                    p.bp().arc(x, y, radius, startAngle, endAngle, anticlockwise);
+
+                    if (i > 1) {
+                        p.fill();
+                    } else {
+                        p.line();
+                    }
+                }
+            }
+
+
+            c = xy.Canvas.from('#c8');
+            
+            p = c.pen();
+            p.canvas().width(300).height(200);
+            // 封装的一个用于绘制圆角矩形的函数.
+
+            function roundedRect(p, x, y, width, height, radius) {
+                p.beginPath();
+                p.moveTo(x, y + radius);
+                p.lineTo(x, y + height - radius);
+                p.quadraticCurveTo(x, y + height, x + radius, y + height);
+                p.lineTo(x + width - radius, y + height);
+                p.quadraticCurveTo(x + width, y + height, x + width, y + height - radius);
+                p.lineTo(x + width, y + radius);
+                p.quadraticCurveTo(x + width, y, x + width - radius, y);
+                p.lineTo(x + radius, y);
+                p.quadraticCurveTo(x, y, x, y + radius);
+                p.line();
+            }
+
+            roundedRect(p, 12, 12, 150, 150, 15);
+            roundedRect(p, 19, 19, 150, 150, 9);
+            roundedRect(p, 53, 53, 49, 33, 10);
+            roundedRect(p, 53, 119, 49, 16, 6);
+            roundedRect(p, 135, 53, 49, 33, 10);
+            roundedRect(p, 135, 119, 25, 49, 10);
+
+            p.beginPath();
+            p.arc(37, 37, 13, Math.PI / 7, -Math.PI / 7, false);
+            p.lineTo(31, 37);
+            p.fill();
+
+            for (var i = 0; i < 8; i++) {
+                p.fillRect(51 + i * 16, 35, 4, 4);
+            }
+
+            for (i = 0; i < 6; i++) {
+                p.fillRect(115, 51 + i * 16, 4, 4);
+            }
+
+            for (i = 0; i < 8; i++) {
+                p.fillRect(51 + i * 16, 99, 4, 4);
+            }
+
+            p.beginPath();
+            p.moveTo(83, 116);
+            p.lineTo(83, 102);
+            p.bezierCurveTo(83, 94, 89, 88, 97, 88);
+            p.bezierCurveTo(105, 88, 111, 94, 111, 102);
+            p.lineTo(111, 116);
+            p.lineTo(106.333, 111.333);
+            p.lineTo(101.666, 116);
+            p.lineTo(97, 111.333);
+            p.lineTo(92.333, 116);
+            p.lineTo(87.666, 111.333);
+            p.lineTo(83, 116);
+            p.fill();
+
+            p.fillColor("white");
+            p.beginPath();
+            p.moveTo(91, 96);
+            p.bezierCurveTo(88, 96, 87, 99, 87, 101);
+            p.bezierCurveTo(87, 103, 88, 106, 91, 106);
+            p.bezierCurveTo(94, 106, 95, 103, 95, 101);
+            p.bezierCurveTo(95, 99, 94, 96, 91, 96);
+            p.moveTo(103, 96);
+            p.bezierCurveTo(100, 96, 99, 99, 99, 101);
+            p.bezierCurveTo(99, 103, 100, 106, 103, 106);
+            p.bezierCurveTo(106, 106, 107, 103, 107, 101);
+            p.bezierCurveTo(107, 99, 106, 96, 103, 96);
+            p.fill();
+
+            p.fillColor("black");
+            p.beginPath();
+            p.arc(101, 102, 2, 0, Math.PI * 2, true);
+            p.fill();
+
+            p.beginPath();
+            p.arc(89, 102, 2, 0, Math.PI * 2, true);
+            p.fill();
+
+
+
+
 
         });
 

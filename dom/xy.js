@@ -2064,84 +2064,25 @@
 			// this.p = p;
 			this.o(p);
 		},
-		// get: function () {
-		// 	return this.p;
-		// },
-		// //tool beginning:
-		// k: function (key) {
-		// 	return this.get()[key];
-		// },
-		// kv: function (k, v) {
-		// 	this.get()[k] = v;
-		// 	return this;
-		// },
-		// // fn: function (f, ...ps) {
-		// // 	if (fnExist(this.k(f))) {
-		// // 		return this.get()[f](...ps);
-		// // 	}
-		// // },
-		// //优秀API工具哈哈哈哈哈！！！包装api必备啊
-		// fn: function (f) {
-		// 	if (pnl1(arguments) && fnExist(this.k(f))) {
-		// 		f = this.k(f);
-		// 		var ps = EMPTY_VALUES.EMPTY_ARRAY;
-		// 		for (var i = 1; i < arguments.length; i++) {
-		// 			ps.push(arguments[i]);
-		// 		}
-		// 		return f.apply(this.get(), ps);
-		// 	}
-		// 	return this;
-		// },
-		// //优秀API工具哈哈哈哈哈！！！
-		// invoke: function (args) {
-		// 	// console.log(arguments);
-		// 	// console.log(this.invoke.caller);
-		// 	var callerName = this.invoke.caller.name;
-		// 	//console.log('callerName=', callerName, ';');
-		// 	var ps = EMPTY_VALUES.EMPTY_ARRAY;
-		// 	ps[0] = callerName;
-		// 	for (var i = 1; i < args.length; i++) {
-		// 		ps.push(args[i]);
-		// 	}
-		// 	return this.fn.apply(this, ps);
-		// },
+
 		create: function (c) {
 			if (pnl1(arguments)) {
 				var createFunctionStr = 'create' + c;
-				// arguments[0] = createFunctionStr;
-				// var ps = EMPTY_VALUES.EMPTY_ARRAY;
-				// ps.push(createFunction);
-				// for (var i = 1; i < arguments.length; i++) {
-				// 	ps.push(arguments[i]);
-				// }
-				// return this.fn.apply(this, arguments);
+
 				return this.invoke(createFunctionStr);
 			}
 		},
 		//tool end.
 		color: function (c) {
-			// if (p0(arguments)) {
-			// 	return this.k('strokeStyle');
-			// }
-			// return this.kv('strokeStyle', c);
-			// return this.propertyWithName('strokeStyle', arguments);
+
 			return this.property('strokeStyle', arguments)
 		},
 		fillColor: function (c) {
-			// if (p0(arguments)) {
-			// 	return this.k('fillStyle');
-			// }
-			// return this.kv('fillStyle', c);
-			// return this.propertyWithName('fillStyle', arguments);
+
 			return this.property('fillStyle', arguments);
 		},
 		lineRect: function (x = 0, y = 0, w = 0, h = 0) {
-			// if (fnExist(this.k('strokeRect'))) {
-			// 	// this.k('strokeRect')(x, y, w, h);
-			// 	this.fn('strokeRect', x, y, w, h);
-			// 	return this;
-			// }
-			// this.fn('strokeRect', x, y, w, h);
+
 			this.invoke('strokeRect', arguments);
 			return this;
 		},
@@ -2175,17 +2116,10 @@
 			return this;
 		},
 		textSize: function (s) {
-			// if (pnl1(arguments)) {
-			// 	return this.fn('measureText', s);
-			// }
+
 			return this.invoke('measureText', arguments);
-			// return this.property(arguments);
 		},
 		lineWidth: function (n) {
-			// if (p0(arguments)) {
-			// 	return this.k('lineWidth');
-			// }
-			// return this.kv('lineWidth', n);
 			return this.property(arguments);
 		},
 		/**
@@ -2195,10 +2129,6 @@
 		 * @param {string} c 
 		 */
 		lineCap: function (c) {
-			// if (p0(arguments)) {
-			// 	return this.k('lineCap');
-			// }
-			// return this.kv('lineCap', c);
 			return this.property(arguments);
 		},
 		/**
@@ -2207,61 +2137,28 @@
 		 * ctx.lineJoin = "miter";
 		 */
 		lineJoin: function (j) {
-			// if (p0(arguments)) {
-			// 	return this.k('lineJoin');
-			// }
-			// return this.kv('lineJoin', j);
 			return this.property(arguments);
 		},
 		miterLimit: function (m) {
-			// if (p0(arguments)) {
-			// 	return this.k('miterLimit');
-			// }
-			// return this.kv('miterLimit', m);
 			return this.property(arguments);
 		},
 		lineDash: function (arr) {
-			// if (p0(arguments)) {
-			// 	return this.fn('getLineDash');
-			// }
-			// this.fn('setLineDash', arr);
-			// return this;
 			return this.property(arguments);
 		},
 		lineDashOffset: function (v) {
-			// if (p0(arguments)) {
-			// 	return this.k('lineDashOffset');
-			// }
-			// return this.kv('lineDashOffset', m);
 			return this.property(arguments);
 		},
 		//文本样式
 		font: function (f) {
-			// if (p0(arguments)) {
-			// 	return this.k('font');
-			// }
-			// return this.kv('font', f);
 			return this.property(arguments);
 		},
 		textAlign: function (t) {
-			// if (p0(arguments)) {
-			// 	return this.k('textAlign');
-			// }
-			// return this.kv('textAlign', t);
 			return this.property(arguments);
 		},
 		textBaseline: function (t) {
-			// if (p0(arguments)) {
-			// 	return this.k('textBaseline');
-			// }
-			// return this.kv('textBaseline', t);
 			return this.property(arguments);
 		},
 		direction: function (t) {
-			// if (p0(arguments)) {
-			// 	return this.k('direction');
-			// }
-			// return this.kv('direction', t);
 			return this.property(arguments);
 		},
 
@@ -2519,130 +2416,6 @@
 	canvas.prototype.extend(canvas_prototype_extend);
 
 
-
-
-	// function canvas(c) {
-	// 	notInstanceof(this, canvas, 'function canvas is constructor,must using new!')
-	// 	if (p0(arguments)) {
-	// 		throw "less than one parameter!";
-	// 	}
-	// 	else if (pnl1(arguments)) {
-
-	// 		if (strNonEmpty(c)) {
-	// 			c = xy.d(c);
-	// 			if (c.isList()) {
-	// 				c = c.list()[0];
-	// 			}
-	// 		}
-	// 		else if (c instanceof domlist) {
-	// 			c = c.list()[0];
-	// 		}
-	// 		else if (c instanceof HTMLCanvasElement) {
-	// 			c = dom.of(c);
-	// 		} else if (c instanceof HTMLCollection) {
-	// 			c = domlist.of(c)[0];
-
-	// 		} else if (c instanceof NodeList) {
-	// 			c = domlist.of(c)[0];
-	// 		}
-	// 		else {
-	// 			throw 'cannot use ' + c + ' to find one canvas element!';
-	// 		}
-	// 		if (c.get() instanceof HTMLCanvasElement) {
-	// 			this.cv = c;
-	// 		}
-	// 		else {
-	// 			throw c + ' is not a canvas element!';
-	// 		}
-	// 	}
-	// }
-
-	// shallowCopyObj(canvas, of_interface);
-	// shallowCopyObj(canvas, extend_interface);
-	// shallowCopyObj(canvas.prototype, extend_interface);
-
-	// var canvas_prototype_extend = {
-	// 	get: function () {
-	// 		return this.cv;
-	// 	},
-	// 	k: function (key) {
-	// 		return this.get().k(key);
-	// 	},
-	// 	kv: function (key, value) {
-	// 		this.get().kv(key, value);
-	// 	},
-	// 	getPen: function (type = '2d') {
-	// 		var ctx = this.k('getContext');
-	// 		if (fnExist(ctx)) {
-	// 			//Uncaught TypeError: Illegal invocation
-	// 			//return ctx(type);
-	// 			return ctx.call(this.get().get(), type);
-	// 		} else {
-	// 			throw 'this canvas cannot use function getContext!';
-	// 		}
-	// 	},
-	// 	init: function () {
-	// 		this.p = this.getPen();
-	// 	},
-	// 	pen: function () {
-	// 		return this.p;
-	// 	},
-	// 	pk:function(k){
-	// 		return this.pen()[k];
-	// 	},
-	// 	pkv:function(k,v){
-	// 		this.pen()[k] = v;
-	// 		return this;
-	// 	},
-	// 	fillColor: function (c) {
-	// 		this.p.fillStyle = c;
-	// 		return this;
-	// 	},
-	// 	color: function (c) {
-	// 		this.p.strokeStyle = c;
-	// 		return this;
-	// 	},
-	// 	bp: function () {
-	// 		this.p.beginPath();
-	// 		return this;
-	// 	},
-	// 	cp: function () {
-	// 		this.p.closePath();
-	// 		return this;
-	// 	},
-	// 	lineRect: function (x = 0, y = 0, w = 0, h = 0) {
-	// 		this.p.strokeRect(x, y, w, h);
-	// 		return this;
-	// 	},
-	// 	fillRect: function (x = 0, y = 0, w = 0, h = 0) {
-	// 		this.p.fillRect(x, y, w, h);
-	// 		return this;
-	// 	},
-	// 	lineText:function(text, x, y,maxWidth){
-	// 		if(oExist(maxWidth)){
-	// 			this.p.strokeText(text, x, y,maxWidth);
-	// 		}else{
-	// 			this.p.strokeText(text, x, y);
-	// 		}
-	// 		return this;
-	// 	},
-	// 	fillText:function(text, x, y , maxWidth){
-
-	// 		if(oExist(maxWidth)){
-	// 			this.p.fillText(text, x, y,maxWidth);
-	// 		}else{
-	// 			this.p.fillText(text, x, y);
-	// 		}
-	// 		return this;
-	// 	},
-	// 	textSize:function(s){
-	// 		return this.p.measureText(s);
-	// 	}
-
-
-	// };
-
-	// canvas.prototype.extend(canvas_prototype_extend);
 
 
 	xy.extend({

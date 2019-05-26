@@ -329,15 +329,12 @@
             }
             //laste expr =
             //instanceof OK
-            // methods_obj.__proto__ = src.prototype;
-            //可以让impl和extends可以任意顺序
-            shallowCopyObj(methods_obj.__proto__, src.prototype);
-            methods_obj.__proto__.constructor = src.prototype.constructor;
+            methods_obj.__proto__ = src.prototype;
             if (!fnExist(methods_obj.base)) {
                 methods_obj.base = function () {//<=>super
                     var f = this.__proto__.__proto__;//super
                     var fcon = f.constructor;
-                    console.log('fcon=', fcon);
+                    // console.log('fcon=', fcon);
                     fcon.apply(this, arguments);
                 }
             }
@@ -357,7 +354,6 @@
             var finalClass = clazz;
             for (var i = arguments.length - 1; i > 0; i--) {
                 finalClass = impl(clazz, arguments[i]);
-                console.log('finalClass === clazz', finalClass === clazz);
             }
             return finalClass;
         } else if (isFunction(clazz) && oExist(inf)) {
@@ -1290,7 +1286,7 @@
         }
     };
 
-    impl(domlist, dom_impl1);
+    impl(domlist, domlist_impl1);
 
 
 

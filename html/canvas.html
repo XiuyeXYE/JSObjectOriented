@@ -32,9 +32,8 @@
     <canvas id='c8'></canvas>
 
 
-    <script type="text/javascript" src="../dom/xy.js"></script>
-    <!-- <script type="text/javascript" src="../dom/xy.min.js"></script> 
-<script type="text/javascript" src="../dom/xy.en.js"></script>  -->
+    <!--   <script type="text/javascript" src="../dom/xy.js"></script> -->
+    <script type="text/javascript" src="../core/xy.js"></script>
     <script type="text/javascript">
         //注意：当你调用fill()函数时，所有没有闭合的形状都会自动闭合，所以你不需要调用closePath()函数。但是调用stroke()时不会自动闭合。
         xy(() => {
@@ -103,7 +102,7 @@
 
 
             c = xy.Canvas.from('#c8');
-            
+
             p = c.pen();
             p.canvas().width(300).height(200);
             // 封装的一个用于绘制圆角矩形的函数.

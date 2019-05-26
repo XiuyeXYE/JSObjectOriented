@@ -2013,6 +2013,7 @@
 		// console.log(2, 'this.__proto__ == canvas.prototype =', this.__proto__ == canvas.prototype);
 		// this.__proto__.__proto__ = dom.of(c);
 		notInstanceof(this, canvas, 'canvas is a constructor,should "new".');
+		// console.log("canvas");
 		//inherit from dom!
 		this.init(c);
 	}

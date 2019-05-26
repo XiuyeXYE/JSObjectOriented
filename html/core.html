@@ -23,12 +23,12 @@
         }
         var A_impl1 = {
             a2: function () {
-                console.log(this.constructor.name + "a2");
+                console.log(this.constructor.name + ":a2");
             }
         };
         var A_impl2 = {
             a1: function () {
-                console.log(this.constructor.name + "a1");
+                console.log(this.constructor.name + ":a1");
             },
             a3: function () {
                 console.log(this.constructor.name + ":a3");
@@ -39,7 +39,7 @@
         a.a1();
         a.a2();
         a.a3();
-        window.A = A;
+        // window.A = A;
 
         function B() {
             console.log("B");
@@ -61,8 +61,14 @@
         let b = new B();
         b.a1();
         b.a2();
+        b.a3();
+        b.b2();
         b.b1();
+        // static_impl(A,of_interface);
+        // static_impl(A,extend_interface);
         static_impl(A,of_interface,extend_interface);
+        console.log('===========================');
+        console.log(A.of());
 
     </script>
 </body>

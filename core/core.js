@@ -308,10 +308,7 @@ function ext(dest, src) {
         }
         //laste expr =
         //instanceof OK
-        // methods_obj.__proto__ = src.prototype;
-        //可以让impl和extends可以任意顺序
-        shallowCopyObj(methods_obj.__proto__, src.prototype);
-        methods_obj.__proto__.constructor = src.prototype.constructor;
+        methods_obj.__proto__ = src.prototype;
         if (!fnExist(methods_obj.base)) {
             methods_obj.base = function () {//<=>super
                 var f = this.__proto__.__proto__;//super
@@ -336,7 +333,6 @@ function impl(clazz, inf) {
         var finalClass = clazz;
         for (var i = arguments.length - 1; i > 0; i--) {
             finalClass = impl(clazz, arguments[i]);
-            console.log('finalClass === clazz', finalClass === clazz);
         }
         return finalClass;
     } else if (isFunction(clazz) && oExist(inf)) {
@@ -391,6 +387,7 @@ var of_interface = {
         for (var i = 0; i < arguments.length; i++) {
             that = that.bind(this/*not useful*/, arguments[i]);
         }
+        //有个bug 就是在shell控制台的时候,function. 和 function.字符 会执行 new that!
         return new that();
     },
     of: function () {
@@ -503,7 +500,6 @@ var invoke_interface = {
             }
             return f.apply(this.get(), ps);
         }
-
     },
     //优秀API工具哈哈哈哈哈！！！简单包装api必备啊
     /**
@@ -512,7 +508,6 @@ var invoke_interface = {
      * args:Arguments
      */
     invoke: function (aorf, a) {
-
         //one parameter,default init
         var f = this.invoke.caller && this.invoke.caller.name;
         var args = f && aorf;
@@ -522,7 +517,6 @@ var invoke_interface = {
         //two parameter: a not exist
         f = f || aorf;
         args = args || EMPTY_VALUES.EMPTY_ARRAY;
-
         var ps = EMPTY_VALUES.EMPTY_ARRAY;
         ps[0] = f;
         // if (isFunction(this.invoke.caller)) {
@@ -538,7 +532,6 @@ var invoke_interface = {
         for (var i = 0; i < args.length; i++) {
             ps.push(args[i]);
         }
-
         return this.fn.apply(this, ps);//this.fn的第一个参数必须是函数名。
     },
 

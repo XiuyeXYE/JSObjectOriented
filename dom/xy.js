@@ -2055,7 +2055,8 @@
 
 	shallowCopyObj(pen, of_interface);
 	shallowCopyObj(pen, extend_interface);
-	shallowCopyObj(pen.prototype, extend_interface);
+	// shallowCopyObj(pen.prototype, extend_interface);
+	impl(pen,extend_interface);
 
 	pen.prototype.extend(invoke_interface);
 

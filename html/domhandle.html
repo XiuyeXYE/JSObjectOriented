@@ -24,9 +24,7 @@
 
 	<canvas id='c1'></canvas>
 
-	<script type="text/javascript" src="../dom/xy.js"></script>
-	<!-- <script type="text/javascript" src="../dom/xy.min.js"></script> 
-<script type="text/javascript" src="../dom/xy.en.js"></script>  -->
+	<script type="text/javascript" src="../core/xy.js"></script>
 	<script type="text/javascript">
 		xy.ready((e) => {
 			console.log(e);
@@ -82,8 +80,8 @@
 		}
 
 
-		xy.addInterface(Up.prototype, xy.extend_interface);
-		xy.addInterface(Up.prototype, xy.invoke_interface);
+		xy.addInterface(Up.prototype, xy.interfaces.extend_interface);
+		xy.addInterface(Up.prototype, xy.interfaces.invoke_interface);
 
 		Up.prototype.extend({
 			f: function () {

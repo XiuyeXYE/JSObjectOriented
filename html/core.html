@@ -5,19 +5,64 @@
     <meta charset="UTF-8">
     <title>Canvas</title>
     <style type="text/css">
-        
     </style>
 </head>
 
 <body>
-    <h1>Canvas Operation!</h1>
+    <h1>API Operation!</h1>
 
 
-   
+
     <script type="text/javascript" src="../core/core.js"></script>
-   
+
     <script type="text/javascript">
-       
+
+        function A(a) {
+            console.log('A');
+            console.log("A params =", a);
+        }
+        var A_impl1 = {
+            a2: function () {
+                console.log(this.constructor.name + "a2");
+            }
+        };
+        var A_impl2 = {
+            a1: function () {
+                console.log(this.constructor.name + "a1");
+            },
+            a3: function () {
+                console.log(this.constructor.name + ":a3");
+            }
+        };
+        impl(A, A_impl1, A_impl2);
+        let a = new A();
+        a.a1();
+        a.a2();
+        a.a3();
+        window.A = A;
+
+        function B() {
+            console.log("B");
+            this.base('B input');
+        }
+        var B_impl1 = {
+            b1: function () {
+                console.log(this.constructor.name + ":b1");
+            }
+        };
+        var B_impl2 = {
+            b2: function () {
+                console.log(this.constructor.name + ":b2");
+            }
+        };
+        impl(B, B_impl1);
+        ext(B, A);
+        impl(B, B_impl2);
+        let b = new B();
+        b.a1();
+        b.a2();
+        b.b1();
+        static_impl(A,of_interface,extend_interface);
 
     </script>
 </body>

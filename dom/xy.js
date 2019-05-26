@@ -6,9 +6,6 @@
 	factory(global);
 }(typeof window !== "undefined" ? window : this, function (window) {
 
-	function notSupportMethod() {
-		throw "function " + notSupportMethod.caller.name + " not supported by this document.";
-	}
 	//文档对象
 	var document = window.document;
 	//ajax 

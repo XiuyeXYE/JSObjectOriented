@@ -307,6 +307,59 @@
 	}
 
 
+
+	//in general,self -> function.prototype  -> {} -> null
+	//3 level
+	//not extends constructor!
+	//single inheritance
+	function ext(dest, src) {
+		if (isFunction(dest) && isFunction(src)) {
+			//up search
+			var methods_obj = dest.prototype;
+			var sup = methods_obj.__proto__;
+			var supLevel = 0;
+			while (oExist(sup)) {
+				sup = sup.__proto__;
+				supLevel++;
+			}
+			if (gt(supLevel, 1)) {
+				throw dest.name + ' cannot support multiple inheritance!';
+			}
+			//laste expr =
+			//instanceof OK
+			methods_obj.__proto__ = src.prototype;
+			if (!fnExist(methods_obj.base)) {
+				methods_obj.base = function () {//<=>super
+					var f = methods_obj.__proto__;//super
+					var fcon = f.costructor;
+					fcon.apply(this, arguments);
+				}
+			}
+			return dest;
+		} else if (pnl2(arguments)) {
+			var finalClass = dest;
+			for (var i = arguments.length - 1; i > 1; i--) {
+				finalClass = ext(arguments[i - 1], arguments[i]);
+			}
+			return finalClass;
+		}
+	}
+
+	//implements interfaces
+	function impl(d, i) {
+		if (isFunction(d) && oExist(i)) {
+			shallowCopyObj(d.prototype, i);
+			return d;
+		} else if (pnl2(arguments)) {
+			var finalClass = dest;
+			for (var i = arguments.length - 1; i > 1; i--) {
+				finalClass = impl(arguments[i - 1], arguments[i]);
+			}
+			return finalClass;
+		}
+	}
+
+
 	/**
 	 * End.
 	 */
@@ -951,12 +1004,15 @@
 			return domlist.of(document.getElementsByName(n));
 		},
 
+
 		d: function (selector) {
 
 			return query(document, selector);
 
 		},
 
+		ext: ext,
+		impl: impl,
 
 		addInterface: function (obj, public_common_interface) {
 			if (pnl2(arguments)) {

@@ -2245,6 +2245,7 @@
         sleep: sleep,
         ext: ext,
         impl: impl,
+        static_impl,
     };
 
     // set xy static methods

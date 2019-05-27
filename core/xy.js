@@ -296,12 +296,29 @@
         return dest;
     }
 
+    /**
+     * 类设计：
+     * 类 关键字 function
+     * 类继承 关键字 ext，支持单继承
+     * 接口实现 关键字 impl static_impl ，可以多实现，impl 实现类对象成员函数，static_impl 类静态成员函数；
+     *         最好不要在impl中加入变量，这样创建的实例对象会共用，static_impl的实现只能类使用，创建对象不能使用！
+     *              
+     * 简单总结：单继承多实现 关键字 ext impl/static_impl
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     */
+
+
     //in general,self -> function.prototype  -> {} -> null
     //3 level
     //not extends constructor!
     //single inheritance
     /**
-     * 
+     * 类的核心装备
      * superclass : base
      * 只支持单继承!
      * 
@@ -408,6 +425,7 @@
             for (var i = 0; i < arguments.length; i++) {
                 that = that.bind(this/*not useful*/, arguments[i]);
             }
+//有个bug 就是在shell控制台的时候,function. 和 function.字符 会执行 new that!
             return new that();
         },
         of: function () {

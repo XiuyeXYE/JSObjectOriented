@@ -313,7 +313,7 @@ function ext(dest, src) {
             methods_obj.base = function () {//<=>super
                 var f = this.__proto__.__proto__;//super
                 var fcon = f.constructor;
-                console.log('fcon=', fcon);
+                //console.log('fcon=', fcon);
                 fcon.apply(this, arguments);
             }
         }

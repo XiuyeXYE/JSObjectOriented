@@ -459,13 +459,13 @@
     //接口继承 需要返回！有个多态的问题需要解决啊，
     //干脆不支持继承函数多态吧！
     function inf_ext() {
-        var last_inf = {};
+        var last_inf = EMPTY_VALUES.EMPTY_OBJECT;
         var ps = Array.prototype.slice.call(arguments);
         ps.unshift(last_inf);
         return shallowCopyObj.apply(null, ps);
     }
 
-
+    //仍然有些不足，慎用
     //判断实例对象是否继承某个类或者实现
     function inst_of(obj, cOrI) {
 
@@ -484,7 +484,7 @@
                         }
                         //性质检验
                         var inf_m = cOrI[m];
-                        var obj_m = obj[m];
+                        var obj_m = (obj.__proto__)[m];
 
                         var m_type_in_inf = typeof inf_m;
                         var m_type_in_obj = typeof obj_m;
@@ -504,10 +504,11 @@
                             if (obj_m.length !== inf_m.length) {
                                 return false;
                             }
-                            //可能 接口覆盖
-                            if (obj_m !== inf_m) {
-                                return false;
-                            }
+                        }
+                        //值不等，prototype定义变量，是所有对象共用的，值必须一样
+                        //可能 接口覆盖，函数也是引用！
+                        if (obj_m !== inf_m) {
+                            return false;
                         }
                     }
                     return true;

@@ -17,83 +17,83 @@
 
     <script type="text/javascript">
 
-        /*
-                function A(a) {
-                    console.log('A');
-                    console.log("A params =", a);
-                }
-                var A_impl1 = {
-                    a2: function () {
-                        console.log(this.constructor.name + ":a2");
-                    }
-                };
-                var A_impl2 = {
-                    a1: function () {
-                        console.log(this.constructor.name + ":a1");
-                    },
-                    a3: function () {
-                        console.log(this.constructor.name + ":a3");
-                    }
-                };
-                impl(A, A_impl1, A_impl2);
-                let a = new A();
-                a.a1();
-                a.a2();
-                a.a3();
-                // window.A = A;
-        
-                function B() {
-                    console.log("B");
-                    this.base('B input');
-                }
-                var B_impl1 = {
-                    b1: function () {
-                        console.log(this.constructor.name + ":b1");
-                    }
-                };
-                var B_impl2 = {
-                    b2: function () {
-                        console.log(this.constructor.name + ":b2");
-                    }
-                };
-                impl(B, B_impl1);
-                ext(B, A);
-                impl(B, B_impl2);
-                let b = new B();
-                b.a1();
-                b.a2();
-                b.a3();
-                b.b2();
-                b.b1();
-                // static_impl(A,of_interface);
-                // static_impl(A,extend_interface);
-                static_impl(A, of_interface, extend_interface);
-                console.log('===========================');
-                console.log(A.of());
-        
-                var new_inf = inf_ext(of_interface, extend_interface);
-                console.log(new_inf);
-                function C() {
-                    this.c = 100;
-                }
-                impl(C, new_inf);
-                var c = new C();
-                console.log(c);
-                console.log("C instanceof new_inf:", inst_of(c, new_inf));
-                console.log("C instanceof of_interface:", inst_of(c, of_interface));
-                console.log("C instanceof extend_interface:", inst_of(c, extend_interface));
-                console.log("C instanceof invoke_interface:", inst_of(c, invoke_interface));
-                console.log("C instanceof C:", inst_of(c, C));
-                console.log("C instanceof new_inf，of_interface，extend_interface:", inst_of(c, new_inf, of_interface, extend_interface));
-                console.log("C instanceof new_inf，of_interface，extend_interface，invoke_interface:", inst_of(c, new_inf, of_interface, extend_interface, invoke_interface));
-        */
+
+        function A(a) {
+            console.log('A');
+            console.log("A params =", a);
+        }
+        var A_impl1 = {
+            a2: function () {
+                console.log(this.constructor.name + ":a2");
+            }
+        };
+        var A_impl2 = {
+            a1: function () {
+                console.log(this.constructor.name + ":a1");
+            },
+            a3: function () {
+                console.log(this.constructor.name + ":a3");
+            }
+        };
+        impl(A, A_impl1, A_impl2);
+        let a = new A();
+        a.a1();
+        a.a2();
+        a.a3();
+        // window.A = A;
+
+        function B() {
+            console.log("B");
+            this.base('B input');
+        }
+        var B_impl1 = {
+            b1: function () {
+                console.log(this.constructor.name + ":b1");
+            }
+        };
+        var B_impl2 = {
+            b2: function () {
+                console.log(this.constructor.name + ":b2");
+            }
+        };
+        impl(B, B_impl1);
+        ext(B, A);
+        impl(B, B_impl2);
+        let b = new B();
+        b.a1();
+        b.a2();
+        b.a3();
+        b.b2();
+        b.b1();
+        // static_impl(A,of_interface);
+        // static_impl(A,extend_interface);
+        static_impl(A, of_interface, extend_interface);
+        console.log('===========================');
+        console.log(A.of());
+
+        var new_inf = inf_ext(of_interface, extend_interface);
+        console.log(new_inf);
+        function C() {
+            this.c = 100;
+        }
+        impl(C, new_inf);
+        var c = new C();
+        console.log(c);
+        console.log("C instanceof new_inf:", inst_of(c, new_inf));
+        console.log("C instanceof of_interface:", inst_of(c, of_interface));
+        console.log("C instanceof extend_interface:", inst_of(c, extend_interface));
+        console.log("C instanceof invoke_interface:", inst_of(c, invoke_interface));
+        console.log("C instanceof C:", inst_of(c, C));
+        console.log("C instanceof new_inf，of_interface，extend_interface:", inst_of(c, new_inf, of_interface, extend_interface));
+        console.log("C instanceof new_inf，of_interface，extend_interface，invoke_interface:", inst_of(c, new_inf, of_interface, extend_interface, invoke_interface));
+
         function D() {
             // this.base();//error;无继承类没有base！
             this.d = 99;
         }
         function E() {
             this.base();//super class constructor
-            console.log('E:this=',this);
+
             this.e = 87;
         }
         function F() {
@@ -103,13 +103,14 @@
 
         // ext(F,F);//error
         // ext(F,E,F);//error
+        //F extends E ,E extends D
         ext(F, E, D);
         console.log(new D());
         console.log(new E());
         console.log(new F());
-        // console.log(inst_of(new F(), D));
-        // console.log(inst_of(new F(), E));
-        // console.log(inst_of(new F(), F));
+        console.log(inst_of(new F(), D));
+        console.log(inst_of(new F(), E));
+        console.log(inst_of(new F(), F));
 
 
 

@@ -302,7 +302,8 @@
      * 类继承 关键字 ext，支持单继承
      * 接口实现 关键字 impl static_impl ，可以多实现，impl 实现类对象成员函数，static_impl 类静态成员函数；
      *         最好不要在impl中加入变量，这样创建的实例对象会共用，static_impl的实现只能类使用，创建对象不能使用！
-     *              
+     * 接口继承 inf_ext  
+     * 实例对象判断 inst_of <=> instanceof
      * 简单总结：单继承多实现 关键字 ext impl/static_impl
      * 
      * 
@@ -369,11 +370,6 @@
             methods_obj.__proto__ = src.prototype;
             //考虑到单继承，所以下面这个if判断是不需要的
             // if (!fnExist(methods_obj.base)) {
-            // methods_obj.base = function () {//<=>super
-            //     var f = this.__proto__.__proto__;//super
-            //     var fcon = f.constructor;
-            //     // console.log('fcon=', fcon);
-            //     fcon.apply(this, arguments);
             // }
 
             // }

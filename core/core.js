@@ -335,12 +335,6 @@
             methods_obj.__proto__ = src.prototype;
             //考虑到单继承，所以下面这个if判断是不需要的
             // if (!fnExist(methods_obj.base)) {
-            //     methods_obj.base = function () {//<=>super
-            //         var f = this.__proto__.__proto__;//super
-            //         var fcon = f.constructor;
-            //         //console.log('fcon=', fcon);
-            //         fcon.apply(this, arguments);
-            //     }
             // }
             //核心3：inherit static methods and fields
             for (var static_member in src) {

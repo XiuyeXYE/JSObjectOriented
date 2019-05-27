@@ -384,7 +384,7 @@
      * i : {} 
      * d : function
      * 把对象作为接口
-     * 
+     * 接口继承在类中是全局的，非静态
      */
     //implements interfaces
     function impl(clazz, inf) {
@@ -404,7 +404,7 @@
     * i : {} 
     * d : function
     * 把对象作为接口
-    * 
+    * 接口继承，在类上全局的，不能被实例对象使用！静态
     */
     //implements static interfaces
     function static_impl(clazz, inf) {
@@ -418,6 +418,73 @@
             return shallowCopyObj(clazz, inf);
         }
     }
+
+
+    //接口继承 需要返回！有个多态的问题需要解决啊，
+    //干脆不支持继承函数多态吧！
+    function inf_ext() {
+        var last_inf = {};
+        var ps = Array.prototype.slice.call(arguments);
+        ps.unshift(last_inf);
+        return shallowCopyObj.apply(null, ps);
+    }
+
+
+    //判断实例对象是否继承某个类或者实现
+    function inst_of(obj, cOrI) {
+
+        if (p2(arguments)) {
+            if (oExist(obj)) {
+                if (isFunction(cOrI)) {//类
+                    return obj instanceof cOrI;
+                } else {//接口
+                    //成员存在，成员性质
+                    //函数 函数名，函数参数，是函数
+                    //变量 变量名，变量类型
+                    for (var m in cOrI) {//m : 成员 函数或变量！
+                        //存在检验,名字检验
+                        if (!(m in obj)) {
+                            return false;
+                        }
+                        //性质检验
+                        var inf_m = cOrI[m];
+                        var obj_m = obj[m];
+
+                        var m_type_in_inf = typeof inf_m;
+                        var m_type_in_obj = typeof obj_m;
+                        //类型检验
+                        if (m_type_in_obj !== m_type_in_inf) {//
+                            return false;
+                        }
+                        //因为Date Regex都是object，所以constructor是一种比较好的检验方法
+                        //定义检验，也属于类型检验
+                        if (obj_m.constructor !== inf_m.constructor) {
+                            return false;
+                        }
+                        //上面针对变量函数的通用性质已经检验完成且通过检验
+                        //接下来单独检验函数的性质
+                        if (m_type_in_obj === 'function') {
+                            //参数个数
+                            if (obj_m.length !== inf_m.length) {
+                                return false;
+                            }
+                            //可能 接口覆盖
+                            if (obj_m !== inf_m) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                }
+            }
+        } else if (pgt2(arguments)) {
+
+        }
+        return false;
+    }
+
+
+
 
     /**
      * public common interfaces
@@ -469,7 +536,7 @@
             //arguments => array
             var ps = Array.prototype.slice.call(arguments);
             ps.unshift(this);
-            shallowCopyObj.apply(this, ps);
+            return shallowCopyObj.apply(this, ps);
         },
 
     };

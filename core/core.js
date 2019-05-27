@@ -303,20 +303,39 @@ function ext(dest, src) {
             sup = sup.__proto__;
             supLevel++;
         }
+        //核心1：单继承判断！
         if (gt(supLevel, 1)) {
             throw dest.name + ' cannot support multiple inheritance!';
         }
-        //laste expr =
-        //instanceof OK
+        //laste expr = inherit prototype methods and fields
+        //核心2：instanceof OK
         methods_obj.__proto__ = src.prototype;
-        if (!fnExist(methods_obj.base)) {
-            methods_obj.base = function () {//<=>super
-                var f = this.__proto__.__proto__;//super
-                var fcon = f.constructor;
-                //console.log('fcon=', fcon);
-                fcon.apply(this, arguments);
-            }
+        // if (!fnExist(methods_obj.base)) {
+        //     methods_obj.base = function () {//<=>super
+        //         var f = this.__proto__.__proto__;//super
+        //         var fcon = f.constructor;
+        //         //console.log('fcon=', fcon);
+        //         fcon.apply(this, arguments);
+        //     }
+        // }
+        //核心3：inherit static methods and fields
+        for (var static_member in src) {
+            dest[static_member] = src[static_member];
         }
+        //核心4：定义超类构造方法，base() = super()
+        // 重复定义会报错，所以不用if去check base存在不存在
+        Object.defineProperty(methods_obj, 'base', {
+            value: function () {//<=>super 每一个匿名函数都是新的
+                var s = this.__proto__.__proto__;//super constructor
+                var scon = s.constructor;
+                // console.log('fcon=', fcon);
+                //核心5：父类中this变成子类的this
+                scon.apply(this, arguments);
+            },
+            configurable: false,
+            enumerable: false,
+            writable: false,
+        });
         return dest;
     }
 }
@@ -545,7 +564,7 @@ var wrapper_interface = invoke_interface;
 
 
 
-    /**
-     * End.
-     * 
-     */
+/**
+ * End.
+ *
+ */

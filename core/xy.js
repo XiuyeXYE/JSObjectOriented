@@ -327,12 +327,31 @@
      */
     function ext(dest, src) {
         if (pgt2(arguments)) {
+            //check itself multiple
+            var check_m = new Map();
+            for (var i = 0; i < arguments.length; i++) {
+                var clazz = arguments[i];
+                if (!isFunction(clazz)) {
+                    throw arguments[i] + ' is not a function!'
+                }
+                if (oExist(check_m.get(clazz))) {
+                    throw 'class ' + clazz.name + ' only one!'
+                } else {
+                    check_m.set(clazz, 1);
+                }
+
+            }
             var finalClass = dest;
             for (var i = arguments.length - 1; i > 0; i--) {
                 finalClass = ext(arguments[i - 1], arguments[i]);
             }
             return finalClass;
         } else if (isFunction(dest) && isFunction(src)) {
+
+            if (dest === src) {
+                throw 'class cannot inherit from itself!'
+            }
+
             //up search
             var methods_obj = dest.prototype;
             var sup = methods_obj.__proto__;
@@ -364,13 +383,30 @@
             }
             //核心4：定义超类构造方法，base() = super()
             // 重复定义会报错，所以不用if去check base存在不存在
+            //base 只有继承的派生类才有！
+            //methods_obj代表本类的成员定义在其中
             Object.defineProperty(methods_obj, 'base', {
+                //要考虑构造函数执行顺序！！！
+                //从父类到子类依次执行构造
                 value: function () {//<=>super 每一个匿名函数都是新的
-                    var s = this.__proto__.__proto__;//super constructor
-                    var scon = s.constructor;
-                    // console.log('fcon=', fcon);
-                    //核心5：父类中this变成子类的this
-                    scon.apply(this, arguments);
+
+                    var supCon = this.base.caller;
+                    //从本类开始遍历父类链，不停调用构造函数
+                    //保护父类不执行this.base()，由本函数的base，
+                    //亲自遍历父类构造，1亲自调用所有父类构造，
+                    //完成构造函数定义！！！
+                    if (supCon === this.constructor) {
+                        //f.prototype == this.__proto__!
+                        var s = this.__proto__.__proto__;//super prototype
+                        // console.log(s);
+                        while (oExist(s)) {
+                            var scon = s.constructor;//super constructor
+                            //核心5：父类中this变成子类的this
+                            //派生类的sup已经有上面定义了，所以下面执行没问题
+                            scon.apply(this, arguments);
+                            s = s.__proto__;
+                        }
+                    }//父类中this.base()，就是本类的this.base,之所以选择手动遍历构造，是为了防止递归调用！
                 },
                 configurable: false,
                 enumerable: false,
@@ -478,7 +514,13 @@
                 }
             }
         } else if (pgt2(arguments)) {
-
+            for (var i = arguments.length - 1; i > 0; i--) {
+                if (!inst_of(obj, arguments[i])) {
+                    return false;
+                }
+            }
+            //通过所有的校验
+            return true;
         }
         return false;
     }
@@ -688,7 +730,7 @@
 
     //option
     function option(obj) {
-        notInstanceof(this, option, 'option is an class,have to use "new"!');
+        notInstanceof(this, option, 'Constructor option requires "new"!');
         // this.value = obj;
         Object.defineProperty(this, 'value', {
             value: obj,
@@ -738,7 +780,7 @@
 
     //html element
     function dom(node) {
-        notInstanceof(this, dom, 'dom is an class,have to use "new"!');
+        notInstanceof(this, dom, 'Constructor dom requires "new"!');
         this.init(node);
     };
 
@@ -748,7 +790,7 @@
 
     //html elements
     function domlist(nodeList) {
-        notInstanceof(this, domlist, 'domlist is an class,have to use "new"!');
+        notInstanceof(this, domlist, 'Constructor domlist requires "new"!');
         this.init(nodeList);
     }
 
@@ -791,7 +833,7 @@
 
 
     function ajax() {
-        notInstanceof(this, ajax, 'ajax is an class,have to use "new"!');
+        notInstanceof(this, ajax, 'Constructor ajax requires "new"!');
         if (fnExist(XMLHttpRequest)) {
             this.xhr = new XMLHttpRequest;
         }
@@ -815,7 +857,7 @@
 
 
     function thread(c) {
-        notInstanceof(this, thread, 'thread is an class,have to use "new"!');
+        notInstanceof(this, thread, 'Constructor thread requires "new"!');
         if (p0(arguments) || !isFunction(c)) {
             throw 'first param must be function!';
         }
@@ -893,7 +935,7 @@
 
     function timer(c, interval = 1000) {
 
-        notInstanceof(this, timer, 'timer is an class,have to use "new"!');
+        notInstanceof(this, timer, 'Constructor timer requires "new"!');
 
         if (p0(arguments) || !isFunction(c)) {
             throw 'first param must be function!';
@@ -979,7 +1021,7 @@
     };
 
     function fps(c) {
-        notInstanceof(this, fps, 'fps is class,have to use "new"');
+        notInstanceof(this, fps, 'Constructor fps requires "new"!');
         if (p0(arguments) || !isFunction(c)) {
             throw 'first param must be function!';
         }
@@ -1050,7 +1092,7 @@
 
 
     function canvas(c) {
-        notInstanceof(this, canvas, 'canvas is a constructor,should "new".');
+        notInstanceof(this, canvas, 'Constructor canvas requires "new"!');
         // this.init(c);
         this.base(c);
     }
@@ -1061,7 +1103,7 @@
 
 
     function pen(p) {
-        notInstanceof(this, pen, 'pen is a constructor,should "new".');
+        notInstanceof(this, pen, 'Constructor pen requires "new"!');
         this.init(p);
     }
     static_impl(pen, of_interface, extend_interface);

@@ -2,7 +2,7 @@
  * my dom handler API class level function is not equal with obj function. class
  * function cannot be called by obj!!! obj function cannot be called by class!!!
  */
-;(function (global, factory) {
+; (function (global, factory) {
     factory(global);
 }(typeof window !== "undefined" ? window : this, function (window) {
 
@@ -2394,7 +2394,9 @@
         sleep: sleep,
         ext: ext,
         impl: impl,
-        static_impl,
+        static_impl: static_impl,
+        inf_ext: inf_ext,
+        inst_of: inst_of,
     };
 
     // set xy static methods

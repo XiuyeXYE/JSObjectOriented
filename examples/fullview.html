@@ -1,0 +1,77 @@
+<html>
+
+<head>
+    <title>Solar System</title>
+</head>
+
+<body>
+
+    <canvas id='can'></canvas>
+
+    <script src='../core/xy.js'></script>
+
+    <script>
+        xy(() => {
+            let c = xy.Canvas.from('#can');
+            var p = c.pen();
+            var img = new Image();
+            img.src = 'images/park.jpg';
+            var CanvasXSize = 800;
+            var CanvasYSize = 200;
+            var speed = 30; //lower is faster
+            var scale = 1.05;
+            var y = -4.5; //vertical offset
+
+            // Main program
+
+            var dx = 0.75;
+            var imgW;
+            var imgH;
+            var x = 0;
+            var clearX;
+            var clearY;
+            // var p;
+
+            img.onload = function () {
+                imgW = img.width * scale;
+                imgH = img.height * scale;
+                if (imgW > CanvasXSize) { x = CanvasXSize - imgW; } // image larger than canvas
+                if (imgW > CanvasXSize) { clearX = imgW; } // image larger than canvas
+                else { clearX = CanvasXSize; }
+                if (imgH > CanvasYSize) { clearY = imgH; } // image larger than canvas
+                else { clearY = CanvasYSize; }
+                //Get Canvas Element
+                // p = document.getElementById('canvas').getContext('2d');
+                //Set Refresh Rate
+                // return setInterval(draw, speed);
+                xy.FPS.loop(draw);
+            }
+
+            function draw() {
+                //Clear Canvas
+                p.clearRect(0, 0, clearX, clearY);
+                //If image is <= Canvas Size
+                if (imgW <= CanvasXSize) {
+                    //reset, start from beginning
+                    if (x > (CanvasXSize)) { x = 0; }
+                    //draw aditional image
+                    if (x > (CanvasXSize - imgW)) { p.drawImage(img, x - CanvasXSize + 1, y, imgW, imgH); }
+                }
+                //If image is > Canvas Size
+                else {
+                    //reset, start from beginning
+                    if (x > (CanvasXSize)) { x = CanvasXSize - imgW; }
+                    //draw aditional image
+                    if (x > (CanvasXSize - imgW)) { p.drawImage(img, x - imgW + 1, y, imgW, imgH); }
+                }
+                //draw image
+                p.drawImage(img, x, y, imgW, imgH);
+                //amount to move
+                x += dx;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

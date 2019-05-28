@@ -2325,6 +2325,22 @@
      * global xy interfaces
      */
 
+    var extension_interfaces = {
+
+        from_interface: {
+            from: function (s) {
+                if (pnl1(s) && strNonEmpty(s)) {
+                    s = xy.d(s);
+                    //see dom and domlist get function!
+                    s = s.get(0);
+                    return this.of(s);
+                }
+                throw 'first parameter must be string related to canvas element: id,tag name,class and so on.';
+            }
+        },
+
+    };
+
     var public_common_interfaces = {
         of_interface: of_interface,
         extend_interface: extend_interface,
@@ -2443,7 +2459,8 @@
     xy.extend(classes);
 
     var static_values = {
-        interfaces: public_common_interfaces,
+        std_interfaces: public_common_interfaces,
+        ext_interfaces: extension_interfaces,
         EMPTY_VALUES: EMPTY_VALUES,
     };
 

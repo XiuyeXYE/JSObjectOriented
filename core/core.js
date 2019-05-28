@@ -757,7 +757,7 @@
     xy.extend(fn);
 
     var static_values = {
-        interfaces: public_common_interfaces,
+        std_interfaces: public_common_interfaces,
         EMPTY_VALUES: EMPTY_VALUES,
     };
 

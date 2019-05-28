@@ -1,0 +1,91 @@
+<html>
+
+<head>
+    <title>class</title>
+
+</head>
+
+<body>
+
+    <h1>Class</h1>
+    <textarea id='out'></textarea>
+
+    <script type="text/javascript" src='../core/xy.js'></script>
+    <script type="text/javascript">
+        function Output(n) {
+            this.base(n);
+        }
+        xy.ext(Output, xy.Dom);
+        var out_impl = {
+            /**
+             * @override
+             * 
+             */
+            value(s) {
+                s = s && this.kv('value', s);
+                s = s || this.k('value');
+                return s;
+            },
+            println(s) {
+                //text use value
+                //error
+                // this.value(this.value() + "\n" + s.toString() + "\n");
+                //value property OK!
+                // this.kv('value', this.k('value') + "\n" + s.toString() + "\n");
+                this.value(this.value() + '\n' + s.toString() + '\n');
+            },
+        };
+        // console.log(xy.ext_interfaces.from_interface);
+        xy.impl(Output, out_impl);
+        xy.static_impl(Output, xy.std_interfaces.of_interface, xy.ext_interfaces.from_interface);
+        xy(() => {
+            function A(a) {
+                this.a = a;
+            }
+            function B(a, b) {
+                this.base(a);
+                this.b = b;
+            }
+            function C(a, b, c) {
+                this.base(a, b);
+                this.c = c;
+            }
+            function D(a, b, c, d) {
+                this.base(a, b, c);
+                this.d = d;
+            }
+            function E(e = 'E') {
+                this.base('A', 'B', 'C', 'D');
+                this.e = e;
+            }
+            function F(f = 'F') {
+                this.base();
+                this.f = f;
+            }
+            var A_impl = {
+                toString() {
+                    return JSON.stringify(this);
+                }
+            };
+            xy.impl(A, A_impl);
+            xy.static_impl(A, xy.std_interfaces.of_interface);
+            xy.ext(F, E, D, C, B, A);
+            let out = Output.from('#out');
+            out.attr('rows', 30).attr('cols', 30);
+            out.println(new E());
+            out.println(E.of());
+            out.println(new F());
+            out.println(F.of());
+            let f = new F();
+            // console.log(JSON.stringify(f));
+            out.println("f instanceof A:" + xy.inst_of(f, A));
+            out.println("f instanceof B:" + xy.inst_of(f, B));
+            out.println("f instanceof C:" + xy.inst_of(f, C));
+            out.println("f instanceof D:" + xy.inst_of(f, D));
+            out.println("f instanceof E:" + xy.inst_of(f, E));
+            out.println("f instanceof F:" + xy.inst_of(f, F));
+        });
+    </script>
+</body>
+
+</html>

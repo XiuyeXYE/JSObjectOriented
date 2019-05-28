@@ -2365,7 +2365,7 @@
         d: function (selector) {
             return query(document, selector);
         },
-        createAjax: function createAjax() {
+        createAjax: function () {
             return ajax.of();
         },
         q: function (params) {

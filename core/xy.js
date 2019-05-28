@@ -306,12 +306,21 @@
      * 实例对象判断 inst_of <=> instanceof
      * 简单总结：单继承多实现 关键字 ext impl/static_impl
      * 
-     * 
+     * javascript 全部是公有继承！
      * 
      * 
      * 
      * 
      */
+    //super
+    // function base() {
+    //     var supCon = base.caller;
+    //     if (fnExist(supCon)) {
+    //         supCon = supCon.prototype.__proto__.constructor;
+    //         console.log("sup constructor:", supCon);
+    //         supCon.apply(this, arguments);
+    //     }
+
 
 
     //in general,self -> function.prototype  -> {} -> null
@@ -381,28 +390,36 @@
             // 重复定义会报错，所以不用if去check base存在不存在
             //base 只有继承的派生类才有！
             //methods_obj代表本类的成员定义在其中
+            //内部定义base有传参数问题所以不能用这个！
             Object.defineProperty(methods_obj, 'base', {
                 //要考虑构造函数执行顺序！！！
                 //从父类到子类依次执行构造
-                value: function () {//<=>super 每一个匿名函数都是新的
-
+                //<=>super 每一个匿名函数都是新的
+                value: function () {
                     var supCon = this.base.caller;
-                    //从本类开始遍历父类链，不停调用构造函数
-                    //保护父类不执行this.base()，由本函数的base，
-                    //亲自遍历父类构造，1亲自调用所有父类构造，
-                    //完成构造函数定义！！！
-                    if (supCon === this.constructor) {
-                        //f.prototype == this.__proto__!
-                        var s = this.__proto__.__proto__;//super prototype
-                        // console.log(s);
-                        while (oExist(s)) {
-                            var scon = s.constructor;//super constructor
-                            //核心5：父类中this变成子类的this
-                            //派生类的sup已经有上面定义了，所以下面执行没问题
-                            scon.apply(this, arguments);
-                            s = s.__proto__;
-                        }
-                    }//父类中this.base()，就是本类的this.base,之所以选择手动遍历构造，是为了防止递归调用！
+                    if (fnExist(supCon)) {
+                        supCon = supCon.prototype.__proto__.constructor;
+                        // console.log("sup constructor:", supCon);
+                        supCon.apply(this, arguments);
+                    }
+                    //  这种实现会有传参问题，所以上面那种是对的！
+                    // var supCon = this.base.caller;
+                    // 从本类开始遍历父类链，不停调用构造函数
+                    // 保护父类不执行this.base()，由本函数的base，
+                    // 亲自遍历父类构造，1亲自调用所有父类构造，
+                    // 完成构造函数定义！！！
+                    // if (supCon === this.constructor) {
+                    //     f.prototype == this.__proto__!
+                    //     var s = this.__proto__.__proto__;//super prototype
+                    //      console.log(s);
+                    //     while (oExist(s)) {
+                    //         var scon = s.constructor;//super constructor
+                    //         核心5：父类中this变成子类的this
+                    //         派生类的sup已经有上面定义了，所以下面执行没问题
+                    //         scon.apply(this, arguments);
+                    //         s = s.__proto__;
+                    //     }
+                    // }//父类中this.base()，就是本类的this.base,之所以选择手动遍历构造，是为了防止递归调用！
                 },
                 configurable: false,
                 enumerable: false,

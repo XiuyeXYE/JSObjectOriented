@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Canvas</title>
+    <title>Core</title>
     <style type="text/css">
     </style>
 </head>
@@ -97,6 +97,7 @@
 
         function D() {
             // this.base();//error;无继承类没有base！
+            // this.base();//第一个类如果用base就是抽象类无法使用base
             this.d = 99;
         }
         function E() {
@@ -112,12 +113,12 @@
         // ext(F,E,F);//error
         //F extends E ,E extends D
         xy.ext(F, E, D);
-        console.log(new D());
-        console.log(new E());
+        // console.log(new D());
+        // console.log(new E());
         console.log(new F());
-        console.log(xy.inst_of(new F(), D));
-        console.log(xy.inst_of(new F(), E));
-        console.log(xy.inst_of(new F(), F));
+        // console.log(xy.inst_of(new F(), D));
+        // console.log(xy.inst_of(new F(), E));
+        // console.log(xy.inst_of(new F(), F));
 
 
 

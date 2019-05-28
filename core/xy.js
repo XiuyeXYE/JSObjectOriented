@@ -2194,7 +2194,9 @@
         canvas: function () {
             return canvas.of(this.property());
         },
-
+        enableImageSmoothing: function () {
+            return this.property('imageSmoothingEnabled', arguments);
+        },
         setTransform: function () {
             this.invoke(arguments);
             return this;

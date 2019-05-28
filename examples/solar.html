@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <title>Solar System</title>
+</head>
+
+<body>
+
+    <canvas id='can'></canvas>
+
+    <script src='../core/xy.js'></script>
+
+    <script>
+        xy(() => {
+            let c = xy.Canvas.from('#can');
+            var sun = new Image();
+            var moon = new Image();
+            var earth = new Image();
+            // c.width(300).height(300);
+            // console.log(c.size);
+            c.size(300, 300);
+            function init() {
+                sun.src = 'images/Canvas_sun.png';
+                moon.src = 'images/Canvas_moon.png';
+                earth.src = 'images/Canvas_earth.png';
+            }
+            let p = c.pen();
+            init();
+            xy.FPS.loop(() => {
+                // console.log(sun.complete);
+                // console.log(moon.complete);
+                // console.log(earth.complete);
+                if (sun.complete && moon.complete && earth.complete) {
+
+
+                    // var p = document.getElementById('canvas').getContext('2d');
+
+                    p.globalCompositeOperation('destination-over');
+                    p.clearRect(0, 0, 300, 300); // clear canvas
+
+                    p.fillColor('rgba(0,0,0,0.4)');
+                    p.color('rgba(0,153,255,0.4)');
+                    p.save();
+                    p.translate(150, 150);
+
+                    // Earth
+                    var time = new Date();
+                    p.rotate(((2 * Math.PI) / 60) * time.getSeconds() + ((2 * Math.PI) / 60000) * time.getMilliseconds());
+                    p.translate(105, 0);
+                    p.fillRect(0, -12, 50, 24); // Shadow
+                    p.drawImage(earth, -12, -12);
+
+                    // Moon
+                    p.save();
+                    p.rotate(((2 * Math.PI) / 6) * time.getSeconds() + ((2 * Math.PI) / 6000) * time.getMilliseconds());
+                    p.translate(0, 28.5);
+                    p.drawImage(moon, -3.5, -3.5);
+                    p.restore();
+
+                    p.restore();
+
+                    p.beginPath();
+                    p.arc(150, 150, 105, 0, Math.PI * 2, false); // Earth orbit
+                    p.line();
+
+                    p.drawImage(sun, 0, 0, 300, 300);
+                }
+            });
+
+
+        });
+    </script>
+
+</body>
+
+</html>

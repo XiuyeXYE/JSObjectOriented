@@ -2302,6 +2302,15 @@
             }
         },
 
+        size: function (w, h) {
+            if (p0(arguments)) {
+                return [this.width(), this.height()];
+            } else if (pnl2(arguments) && isNumber(w) && isNumber(h)) {
+                this.width(w);
+                this.height(h);
+                return this;
+            }
+        }
 
     };
     impl(canvas, canvas_impl);

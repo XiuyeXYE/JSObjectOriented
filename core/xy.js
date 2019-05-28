@@ -1961,8 +1961,9 @@
         create: function (c) {
             if (pnl1(arguments)) {
                 var createFunctionStr = 'create' + c;
-
-                return this.invoke(createFunctionStr);
+                var ps = Array.prototype.slice.call(arguments);
+                ps.shift();
+                return this.invoke(createFunctionStr, ps);
             }
         },
         //tool end.

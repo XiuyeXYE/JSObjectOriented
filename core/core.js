@@ -3,7 +3,7 @@
     factory(global);
 }(typeof window !== "undefined" ? window : this, function (window) {
 
-
+    // 'use strict';//not use caller
     /**
 	 * 正确的方式:是给每一个变量一个新对象!
 	 * 默认空值

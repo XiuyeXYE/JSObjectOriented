@@ -6,6 +6,8 @@
     factory(global);
 }(typeof window !== "undefined" ? window : this, function (window) {
 
+    // 'use strict';//not use caller
+
     //文档对象
     var document = window.document;
     //ajax 

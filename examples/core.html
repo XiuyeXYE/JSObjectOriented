@@ -120,6 +120,24 @@
         // console.log(xy.inst_of(new F(), E));
         // console.log(xy.inst_of(new F(), F));
 
+        function G(a, b, c) {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+        }
+
+        function H(e, f, a, b, c) {
+            this.base(a, b, c);
+            this.e = e;
+            this.f = f;
+        }
+
+        xy.ext(H, G);
+        let h = new H('e', 'f', 'a', 'b', 'c');
+        console.log(h);
+        console.log("is G:", xy.inst_of(h, G));
+        console.log("is H:", xy.inst_of(h, H));
+
 
 
     </script>

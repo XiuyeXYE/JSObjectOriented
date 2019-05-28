@@ -332,6 +332,7 @@
      * superclass : base
      * 只支持单继承!
      * 可以继承父类的静态，非静态的成员
+     * 这个类继承不要打破 原型链，比如父类的prototype类型是无法成功的！
      * @param {function|class} dest 
      * @param {function|class} src 
      */

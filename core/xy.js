@@ -2329,14 +2329,12 @@
     };
     static_impl(xy, of_interface, extend_interface);
 
-
     var fn = {
         ready: function (f) {
             if (isFunction(f)) {
                 // dom.of(document).on('DOMContentLoaded', f);
                 this(f);
             }
-
         },
         crt: function (tag) {
             return dom.create(tag);

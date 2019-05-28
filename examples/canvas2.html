@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+    <style type="text/css">
+        .c1 {
+            width: 500px;
+            height: 600px;
+            background-color: red;
+        }
+
+        .c2 {
+            border: 2px solid green;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Canvas Operation!</h1>
+
+
+    <canvas id='img'></canvas>
+
+
+    <!--   <script type="text/javascript" src="../dom/xy.js"></script> -->
+    <script type="text/javascript" src="../core/xy.js"></script>
+    <script type="text/javascript">
+        xy(() => {
+            let c = xy.Canvas.from('#img');
+            let p = c.pen();
+            let img = new Image();
+            img.onload = function () {
+                p.drawImage(img, 0, 0).bp().moveTo(30, 96).lineTo(70, 66).lineTo(103, 76).lineTo(170, 15).line();
+                console.log(img.naturalWidth, img.naturalHeight);
+                console.log(img.width, img.height);
+                c.width(img.width).height(img.height);
+                p.drawImage(img, 0, 0).bp().moveTo(30, 96).lineTo(70, 66).lineTo(103, 76).lineTo(170, 15).line();
+
+                for (var i = 0; i < 6; i++) {
+                    for (var j = 0; j < 6; j++) {
+                        p.fillColor('rgb(' + Math.floor(255 - 42.5 * i) + ',' +
+                            Math.floor(255 - 42.5 * j) + ',0)');
+                        p.fillRect(j * 25, i * 25, 25, 25);
+                    }
+                }
+                for (var i = 0; i < 6; i++) {
+                    for (var j = 0; j < 6; j++) {
+                        p.color('rgb(0,' + Math.floor(255 - 42.5 * i) + ',' +
+                            Math.floor(255 - 42.5 * j) + ')');
+                        p.beginPath();
+                        p.arc(12.5 + j * 25, 12.5 + i * 25, 10, 0, Math.PI * 2, true);
+                        p.line();
+                    }
+                }
+
+            };
+            img.src = 'images/img1.png';
+
+
+        });
+
+    </script>
+</body>
+
+</html>

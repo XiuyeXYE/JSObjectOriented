@@ -2325,7 +2325,7 @@
      * global xy interfaces
      */
 
-    var extension_interfaces = {
+    var dom_interfaces = {
 
         from_interface: {
             from: function (s) {
@@ -2460,7 +2460,7 @@
 
     var static_values = {
         std_interfaces: public_common_interfaces,
-        ext_interfaces: extension_interfaces,
+        dom_interfaces: dom_interfaces,
         EMPTY_VALUES: EMPTY_VALUES,
     };
 

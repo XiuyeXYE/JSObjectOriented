@@ -35,9 +35,9 @@
                 this.value(this.value() + '\n' + s.toString() + '\n');
             },
         };
-        // console.log(xy.ext_interfaces.from_interface);
+        // console.log(xy.dom_interfaces.from_interface);
         xy.impl(Output, out_impl);
-        xy.static_impl(Output, xy.std_interfaces.of_interface, xy.ext_interfaces.from_interface);
+        xy.static_impl(Output, xy.std_interfaces.of_interface, xy.dom_interfaces.from_interface);
         xy(() => {
             function A(a) {
                 this.a = a;

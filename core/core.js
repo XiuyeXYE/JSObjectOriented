@@ -281,7 +281,22 @@
         return dest;
     }
 
-    //javascript 全部是公有继承！
+    /**
+         * 类设计：
+         * 类 关键字 function
+         * 类继承 关键字 ext，支持单继承
+         * 接口实现 关键字 impl static_impl ，可以多实现，impl 实现类对象成员函数，static_impl 类静态成员函数；
+         *         最好不要在impl中加入变量，这样创建的实例对象会共用，static_impl的实现只能类使用，创建对象不能使用！
+         * 接口继承 inf_ext  
+         * 实例对象判断 inst_of <=> instanceof
+         * 简单总结：单继承多实现 关键字 ext impl/static_impl
+         * 
+         * javascript 全部是公有继承！
+         * 一般的函数地调用是不会继承原型链，所以new的时候会
+         * 
+         * 
+         * 
+         */
     // super
     // function base() {
     //     var supCon = base.caller;
@@ -301,6 +316,7 @@
      * superclass : base
      * 只支持单继承!
      * 可以继承父类的静态，非静态的成员
+     * 这个类继承不要打破 原型链，比如父类的prototype类型是无法成功的！
      * @param {function|class} dest 
      * @param {function|class} src 
      */
@@ -311,10 +327,10 @@
             for (var i = 0; i < arguments.length; i++) {
                 var clazz = arguments[i];
                 if (!isFunction(clazz)) {
-                    throw arguments[i] + ' is not a function!'
+                    throw arguments[i] + ' is not a function!';
                 }
                 if (oExist(check_m.get(clazz))) {
-                    throw 'class ' + clazz.name + ' only one!'
+                    throw 'class ' + clazz.name + ' only one!';
                 } else {
                     check_m.set(clazz, 1);
                 }
@@ -327,7 +343,7 @@
             return finalClass;
         } else if (isFunction(dest) && isFunction(src)) {
             if (dest === src) {
-                throw 'class cannot inherit from itself!'
+                throw 'class cannot inherit from itself!';
             }
             //up search
             var methods_obj = dest.prototype;
@@ -355,6 +371,7 @@
             // 重复定义会报错，所以不用if去check base存在不存在
             //base 只有继承的派生类才有！
             //methods_obj代表本类的成员定义在其中
+            //内部定义base有传参数问题所以不能用这个！
             Object.defineProperty(methods_obj, 'base', {
                 //要考虑构造函数执行顺序！！！
                 //从父类到子类依次执行构造
@@ -569,6 +586,7 @@
      * 1."直接"调用底层对象的方法和属性.
      * 2.直接根据上层方法调用底层相同方法名接口!相当于包装类
      */
+
     var invoke_interface = {
 
         /**

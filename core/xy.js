@@ -346,10 +346,10 @@
             for (var i = 0; i < arguments.length; i++) {
                 var clazz = arguments[i];
                 if (!isFunction(clazz)) {
-                    throw arguments[i] + ' is not a function!'
+                    throw arguments[i] + ' is not a function!';
                 }
                 if (oExist(check_m.get(clazz))) {
-                    throw 'class ' + clazz.name + ' only one!'
+                    throw 'class ' + clazz.name + ' only one!';
                 } else {
                     check_m.set(clazz, 1);
                 }
@@ -363,7 +363,7 @@
         } else if (isFunction(dest) && isFunction(src)) {
 
             if (dest === src) {
-                throw 'class cannot inherit from itself!'
+                throw 'class cannot inherit from itself!';
             }
 
             //up search

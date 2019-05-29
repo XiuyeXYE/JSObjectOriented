@@ -1,0 +1,79 @@
+<html>
+
+<head>
+
+
+
+</head>
+
+<body>
+
+    <canvas id='stt'></canvas>
+
+    <script type="text/javascript" src="../core/xy.js"></script>
+
+    <script type='text/javascript'>
+
+
+        xy(() => {
+
+            let stt = xy.Canvas.from('#stt');
+            stt.css('border', '1px solid black');
+            stt.width(800).height(600);
+            let p = stt.pen();
+            p.fillColor('rgb(200,0,0)');
+            p.fillRect(10, 10, 55, 50);
+            p.fillColor('rgba(0,0,200,0.5)');
+
+            p.fillRect(30, 30, 55, 50);
+            p.fillColor('red');
+            p.fillRect(100, 100, 100, 100);
+            p.clearRect(120, 120, 60, 60);
+            p.lineRect(130, 130, 40, 40);
+
+            p.bp().color('black').moveTo(100, 100)
+                .lineTo(135, 500)
+                .lineTo(150, 100)
+                .line();
+            p.bp().fillColor('green').moveTo(100 + 100, 100)
+                .lineTo(135 + 100, 500)
+                .lineTo(150 + 100, 100)
+                .fill();
+            p.bp().fillColor('blue')./*moveTo(300,300).*/arc(300, 300, 50, Math.PI / 2, Math.PI * 2)
+                .lineTo(300, 300)
+                .fill();
+            // p.fillColor('yellow').bp()./*moveTo(300,500).*/arc(300,300+200,50,0,Math.PI/2,true)
+            // .lineTo(300,500)
+            // .line();
+            let i = Math.PI * 2;
+            let lp = xy.FPS.loop(() => {
+
+                i -= 0.25;
+                console.log(i);
+                if (i < 0) {
+                    lp.stop();
+                    i = 0;
+                }
+                xy.sleep(1000);
+                p.clearRect(249, 449, 101, 101).color('green').bp()
+                    ./*moveTo(300,500).*/arc(300, 300 + 200, 50, 0, i, false)
+                    // .lineTo(300, 500)
+                    .line();
+            });
+
+            // p.fillColor("black");
+            // p.beginPath();
+            // p.arc(101, 102, 20, 0, Math.PI * 2, true);
+            // p.fill();
+
+            // p.beginPath();
+            // p.arc(200, 102, 20, 0, Math.PI * 2, true);
+            // p.fill();
+
+        });
+
+    </script>
+
+</body>
+
+</html>

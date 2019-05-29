@@ -1827,11 +1827,11 @@
                     } else {
                         that.status = TIMER_STATUS.RUNNING;
                         that.run(p);
-                        that.status = TIMER_STATUS.RUN;
+                        // that.status = TIMER_STATUS.RUN;
                         that.releasePrevTimer();
-                        that.status = TIMER_STATUS.STARTING;
+                        // that.status = TIMER_STATUS.STARTING;
                         that.id = setTimeout(timer_fn, that.interval, that.params);
-                        that.status = TIMER_STATUS.STARTED;
+                        // that.status = TIMER_STATUS.STARTED;
                     }
                 };
                 this.id = setTimeout(timer_fn, this.interval, this.params);
@@ -1918,11 +1918,11 @@
                     else {
                         that.status = FPS_STATUS.RUNNING;
                         that.run(p);
-                        that.status = FPS_STATUS.RUN;
+                        // that.status = FPS_STATUS.RUN;
                         that.cancel();
-                        that.status = FPS_STATUS.STARTING;
+                        // that.status = FPS_STATUS.STARTING;
                         that.id = requestAnimationFrame(frame_fn);
-                        that.status = FPS_STATUS.STARTED;
+                        // that.status = FPS_STATUS.STARTED;
                     }
                 };
                 this.id = requestAnimationFrame(frame_fn);

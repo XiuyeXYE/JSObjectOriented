@@ -44,7 +44,7 @@
         return s === null;
     }
     //check undefined
-    function isUndefinded(s) {
+    function isUndefined(s) {
         // 注意null==undefined:true
         // 所以用"==="
         return s === undefined;
@@ -716,7 +716,7 @@
         isNull: isNull,
         isArray: isArray,
         // 判断变量是否未定义
-        isUndefinded: isUndefinded,
+        isUndefined: isUndefined,
         // 判断变量是否是字符串
         isStr: isStr,
         isBoolean: isBoolean,

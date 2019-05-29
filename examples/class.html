@@ -21,8 +21,11 @@
              * @override
              * 
              */
+            clear() {
+                this.value('');
+            },
             value(s) {
-                s = s && this.kv('value', s);
+                s = !xy.isNull(s) && !xy.isUndefined(s) && this.kv('value', s);
                 s = s || this.k('value');
                 return s;
             },
@@ -84,6 +87,24 @@
             out.println("f instanceof D:" + xy.inst_of(f, D));
             out.println("f instanceof E:" + xy.inst_of(f, E));
             out.println("f instanceof F:" + xy.inst_of(f, F));
+
+            out.clear();
+
+            function Class1() {
+                this.class1 = 'class1';
+            }
+            function Class2() {
+                this.base();
+                this.class2 = 'class2';
+            }
+
+            xy.impl(Class1, xy.std_interfaces.string_interface);
+            xy.ext(Class2, Class1);
+
+            out.println(new Class2());
+
+
+
         });
     </script>
 </body>

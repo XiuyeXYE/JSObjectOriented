@@ -48,14 +48,14 @@
             let i = Math.PI * 2;
             let lp = xy.FPS.loop(() => {
 
-                i -= 0.25;
-                console.log(i);
+                i -= 0.01;
+                // console.log(i);
                 if (i < 0) {
-                    lp.stop();
-                    i = 0;
+                    // lp.stop();
+                    i = Math.PI * 2;;
                 }
-                xy.sleep(1000);
-                p.clearRect(249, 449, 101, 101).color('green').bp()
+                // xy.sleep(1000);
+                p.clearRect(240, 440, 110, 110).color('green').bp()
                     ./*moveTo(300,500).*/arc(300, 300 + 200, 50, 0, i, false)
                     // .lineTo(300, 500)
                     .line();

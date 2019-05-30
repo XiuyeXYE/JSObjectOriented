@@ -2243,9 +2243,10 @@
             this.invoke(arguments);
             return this;
         },
-        clear:function(){
-            return this.clearRect(0,0,this.canvas().width(),this.canvas().height());
-        }
+        clear: function () {
+            return this.clearRect(0, 0, this.canvas().width(), this.canvas().height());
+        },
+
 
 
     };
@@ -2312,7 +2313,7 @@
 
         size: function (w, h) {
             if (p0(arguments)) {
-                return [this.width(), this.height()];
+                return { w: this.width(), h: this.height() };
             } else if (pnl2(arguments) && isNumber(w) && isNumber(h)) {
                 this.width(w);
                 this.height(h);

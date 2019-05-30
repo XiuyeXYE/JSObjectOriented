@@ -2243,7 +2243,9 @@
             this.invoke(arguments);
             return this;
         },
-
+        clear:function(){
+            return this.clearRect(0,0,this.canvas().width,this.canvas().height());
+        }
 
 
     };

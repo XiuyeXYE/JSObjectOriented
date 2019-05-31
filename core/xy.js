@@ -892,7 +892,7 @@
             }
         }
         this.run = c;
-        this.delay = 0;
+        // this.delay = 0;
         var that = this;
         Object.defineProperty(this, 'status', {
             set: function (v) {
@@ -1855,28 +1855,32 @@
     var thread_impl = {
         start: function () {
 
-            if (fnExist(setTimeout)) {
-                this.status = THREAD_STATUS.STARTING;
-                var that = this;
-                this.id = setTimeout(function (p) {
-                    that.status = THREAD_STATUS.RUNNING;
-                    that.run(p);
-                    that.status = THREAD_STATUS.RUN;
-                    that.status = THREAD_STATUS.STOPPED;
-                    that.release();
-                }
-                    , this.delay, this.params);
-                this.status = THREAD_STATUS.STARTED;
-            }
+            // if (fnExist(setTimeout)) {
+            this.status = THREAD_STATUS.STARTING;
+            // var that = this;
+            this.status = THREAD_STATUS.RUNNING;
+            this.run(this.params);
+            this.status = THREAD_STATUS.RUN;
+            this.status = THREAD_STATUS.STOPPED;
+            // this.id = setTimeout(function (p) {
+            //     that.status = THREAD_STATUS.RUNNING;
+            //     that.run(p);
+            //     that.status = THREAD_STATUS.RUN;
+            //     that.status = THREAD_STATUS.STOPPED;
+            //     that.release();
+            // }
+            //     , this.delay, this.params);
+            // this.status = THREAD_STATUS.STARTED;
+            // }
 
             return this;
         },
-        release: function () {
-            if (fnExist(clearTimeout)) {
-                clearTimeout(this.id);
-            }
-            return this;
-        },
+        // release: function () {
+        //     if (fnExist(clearTimeout)) {
+        //         clearTimeout(this.id);
+        //     }
+        //     return this;
+        // },
         sleep: function (n) {
             sleep(n);
         },
@@ -2246,8 +2250,6 @@
         clear: function () {
             return this.clearRect(0, 0, this.canvas().width(), this.canvas().height());
         },
-
-
 
     };
     impl(pen, pen_impl);

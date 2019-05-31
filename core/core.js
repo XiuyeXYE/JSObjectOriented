@@ -708,11 +708,65 @@
      */
     var wrapper_interface = invoke_interface;
 
+    var string_interface = {
+        toString: function () {
+            return JSON.stringify(this);
+        },
+    };
+    //option
+    function option(obj) {
+        notInstanceof(this, option, 'Constructor option requires "new"!');
+        // this.value = obj;
+        Object.defineProperty(this, 'value', {
+            value: obj,
+            // default
+            // configurable:false,
+            // writable:false,
+        });
+        this.get = function () {
+            return this.value;
+        };
+        this.ifPresent = function (f) {
+            if (isFunction(f)) {
+                if (this.ifPresent()) {
+                    f(this.value);
+                }
+            }
+            return oExist(this.value);
+        };
+    }
+
+    //implements common interfaces
+    static_impl(option, of_interface, extend_interface);
+    impl(option, extend_interface);
+
+    //define empty option
+    option = Object.defineProperties(option, {
+        EMPTY_OBJECT: {
+            get: function () {
+                return option.of(EMPTY_VALUES.EMPTY_OBJECT);
+            }
+        },
+        EMPTY_ARRAY: {
+            get: function () {
+                return option.of(EMPTY_VALUES.EMPTY_ARRAY);
+            }
+        },
+        EMPTY_STRING: {
+            get: function () {
+                return option.of(EMPTY_VALUES.EMPTY_STRING);
+            }
+        },
+        EMPTY_OPTION: {
+            value: option.of(null)
+        }
+    });
     var public_common_interfaces = {
         of_interface: of_interface,
         extend_interface: extend_interface,
         invoke_interface: invoke_interface,
         wrapper_interface: wrapper_interface,
+        string_interface: string_interface
     };
 
     var xy = function () {

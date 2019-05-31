@@ -1927,7 +1927,7 @@
                     }
                 };
                 this.id = requestAnimationFrame(frame_fn);
-                this.status = FPS_STATUS.STARTED;
+                // this.status = FPS_STATUS.STARTED;
             }
             return this;
         },
@@ -1942,7 +1942,7 @@
                     that.cancel();
                     that.status = FPS_STATUS.STOPPED;
                 });
-                this.status = FPS_STATUS.STARTED;
+                // this.status = FPS_STATUS.STARTED;
             }
             return this;
         },

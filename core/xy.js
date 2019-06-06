@@ -1490,15 +1490,19 @@
                 }
                 this.xhr.responseType = dataType;
 
-                if (fnExist(error)) {
-                    this.xhr.onerror = error;
-                }
+                // if (fnExist(error)) {
+                //     this.xhr.onerror = error;
+                // }
 
                 this.xhr.onreadystatechange = function (e) {
                     var xhrt = e.target;
-                    if (xhrt.readyState == XMLHttpRequest.DONE && xhrt.status == 200) {
-                        if (fnExist(success))
+                    if (xhrt.readyState == XMLHttpRequest.DONE) {
+                        if (xhrt.status == 200 && fnExist(success)) {
                             success(xhrt.response, xhrt);
+                        }
+                        else if(fnExist(error)){
+                            error(xhrt.response, xhrt);
+                        }
                     }
                 };
                 this.xhr.send(data);
@@ -2343,23 +2347,23 @@
     function opr() {
         // this.history = history;
         this.o(history);
-        Object.defineProperty(this,'length',{
-            get:function(){
+        Object.defineProperty(this, 'length', {
+            get: function () {
                 return history.length;
             }
         });
-        
+
     }
-    impl(opr,invoke_interface)
+    impl(opr, invoke_interface)
     var opr_impl = {
         push: function (data, title, url) {
             // this.history.pushState(data, title, url);
-            this.invoke('pushState',arguments);
+            this.invoke('pushState', arguments);
             return this;
         },
         replace: function (data, title, url) {
             // this.history.replaceState(data, title, url);
-            this.invoke('replaceState',arguments);
+            this.invoke('replaceState', arguments);
             return this;
         },
         add: function (c) {
@@ -2368,17 +2372,17 @@
         },
         go: function (n) {
             // this.history.go(n);
-            this.invoke('go',arguments);
+            this.invoke('go', arguments);
             return this;
         },
         back: function () {
             // this.history.back();
-            this.invoke('back',arguments);
+            this.invoke('back', arguments);
             return this;
         },
         forward: function () {
             // this.history.forward();
-            this.invoke('forward',arguments);
+            this.invoke('forward', arguments);
             return this;
         }
     };

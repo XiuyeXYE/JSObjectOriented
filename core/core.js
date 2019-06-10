@@ -774,7 +774,7 @@
     };
 
     var xy = function () {
-
+        
     };
     static_impl(xy, extend_interface);
 

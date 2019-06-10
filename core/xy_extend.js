@@ -387,9 +387,6 @@
             //laste expr = inherit prototype methods and fields
             //核心2：instanceof OK
             methods_obj.__proto__ = src.prototype;
-            // dest.prototype = Object.create(src.prototype);
-            // dest.prototype.constructor = dest;
-            // methods_obj = dest.prototype;//re eq
             //考虑到单继承，所以下面这个if判断是不需要的
             // if (!fnExist(methods_obj.base)) {
             // }
@@ -580,22 +577,17 @@
         valueOf: function () {
             var that = this;
             for (var i = 0; i < arguments.length; i++) {
-                that = that.bind(null/*not useful*/, arguments[i]);
+                that = that.bind(this/*not useful*/, arguments[i]);
             }
-
-            // 有个bug 就是在shell控制台的时候,function. 和 function.字符 会执行 new that!
+            //有个bug 就是在shell控制台的时候,function. 和 function.字符 会执行 new that!
             return new that();
-
-            // var o = new this.apply(o,arguments);
-            // return o;
         },
         of: function () {
-            // var that = this;
-            // for (var i = 0; i < arguments.length; i++) {
-            //     that = that.bind(this/*not useful*/, arguments[i]);
-            // }
-            // return new that();
-            return this.valueOf.apply(this, arguments);
+            var that = this;
+            for (var i = 0; i < arguments.length; i++) {
+                that = that.bind(this/*not useful*/, arguments[i]);
+            }
+            return new that();
         },
 
 
@@ -971,7 +963,7 @@
         STOPPED: 7
     };
 
-    function timer(c, interval) {
+    function timer(c, interval = 1000) {
 
         notInstanceof(this, timer, 'Constructor timer requires "new"!');
 
@@ -985,7 +977,7 @@
             }
         }
         this.run = c;
-        this.interval = interval || 1000;
+        this.interval = interval;
 
         var that = this;
 
@@ -1257,8 +1249,7 @@
                 return this.attr('style', list2StrWithJoint(cssExprs, ';'));
             }
         },
-        cls: function (c, append) {
-            append = append || true;
+        cls: function (c, append = true) {
             if (arguments.length == 0) {
                 return convertStr2ListByWs(this.attr('class'));
             }
@@ -1336,8 +1327,7 @@
             }
             return EMPTY_VALUES.EMPTY_OBJECT;
         },
-        width: function (w, u) {
-            u = u || 'px';
+        width: function (w, u = 'px') {
             if (p0(arguments)) {
                 return this.clientWidth();
             }
@@ -1346,8 +1336,7 @@
                 return this;
             }
         },
-        height: function (h, u) {
-            u = u || 'px';
+        height: function (h, u = 'px') {
             if (p0(arguments)) {
                 return this.clientHeight();
             }
@@ -1451,8 +1440,7 @@
                 return this;
             }
         },
-        cls: function (c, append) {
-            append = append || true;
+        cls: function (c, append = true) {
             if (p0(arguments)) {
                 var clses = EMPTY_VALUES.EMPTY_ARRAY;
                 for (var i = 0; i < this.nodeList.length; i++) {
@@ -1514,7 +1502,7 @@
                         if (xhrt.status == 200 && fnExist(success)) {
                             success(xhrt.response, xhrt);
                         }
-                        else if (fnExist(error)) {
+                        else if(fnExist(error)){
                             error(xhrt.response, xhrt);
                         }
                     }
@@ -1565,8 +1553,7 @@
             }
             return this;
         },
-        click: function (c, o) {
-            o = o || false;
+        click: function (c, o = false) {
             if (p0(arguments)) {
                 this.trigger('click');
             }
@@ -1616,8 +1603,7 @@
             }
             return this;
         },
-        click: function (c, o) {
-            o = o || false;
+        click: function (c, o = false) {
             if (p0(arguments)) {
                 this.forEach(function (n) {
                     n.click();
@@ -2007,24 +1993,23 @@
 
             return this.property('fillStyle', arguments);
         },
-        lineRect: function () {
+        lineRect: function (x = 0, y = 0, w = 0, h = 0) {
 
             this.invoke('strokeRect', arguments);
             return this;
         },
-        fillRect: function () {
+        fillRect: function (x = 0, y = 0, w = 0, h = 0) {
             // this.fn('fillRect', x, y, w, h);
             //同名才可以调用!
             this.invoke(arguments);
             return this;
         },
-        clearRect: function () {
+        clearRect: function (x = 0, y = 0, w = 0, h = 0) {
             // this.fn('clearRect', x, y, w, h);
             this.invoke(arguments);
             return this;
         },
-        text: function (t, x, y, ops) {
-            ops = ops || { fill: true };
+        text: function (t, x, y, ops = { fill: true }) {
             var maxWidth = ops.maxWidth;
             var fill = ops.fill || true;
             if (fill) {
@@ -2296,8 +2281,7 @@
 
 
     var canvas_impl = {
-        pen: function (type) {
-            type = type || '2d';
+        pen: function (type = '2d') {
             if (this.exist() && fnExist(this.k('getContext'))) {
                 //Illegal invocation
                 // return this.k('getContext')('2d');
@@ -2313,8 +2297,7 @@
          * it's very important!
          * 
          */
-        width: function (w, u) {
-            u = u || 'px';
+        width: function (w, u = 'px') {
             if (p0(arguments)) {
                 return this.clientWidth();
             }
@@ -2329,8 +2312,7 @@
          * @param {number} h 
          * @param {string} u 
          */
-        height: function (h, u) {
-            u = u || 'px';
+        height: function (h, u = 'px') {
             if (p0(arguments)) {
                 return this.clientHeight();
             }

@@ -1,8 +1,8 @@
-<html>
+<!DOCTYPE html>
 
 <head>
 
-
+    <meta charset="utf-8">
     <title>ImageData</title>
 </head>
 
@@ -15,33 +15,33 @@
     <script type='text/javascript'>
         var c = null;
 
-        xy(() => {
+        xy(function () {
 
-            let img = new Image();
+            var img = new Image();
             img.crossOrigin = "anonymous";
-            img.onload = (e) => {
-                let stt = xy.Canvas.from('#stt');
+            img.onload = function(e){
+                var stt = xy.Canvas.from('#stt');
                 stt.css('border', '1px solid black');
-                stt.width(img.width).height(img.height*2+20);
-                let p = stt.pen();
-                p.drawImage(img,0,0);
+                stt.width(img.width).height(img.height * 2 + 20);
+                var p = stt.pen();
+                p.drawImage(img, 0, 0);
                 // p.rect(10, 10, 100, 100);
                 // p.fill();
 
                 c = p;
                 // console.log(p.createImageData(100, 100));
-                let size = stt.size();
-                let imageData = p.getImageData(0, 0, size.w, size.h);
-                let w = imageData.width;
-                let h = imageData.height;
-                let data = imageData.data;
-                for (let i = 0; i < data.length; i++) {//rgba
+                var size = stt.size();
+                var imageData = p.getImageData(0, 0, size.w, size.h);
+                var w = imageData.width;
+                var h = imageData.height;
+                var data = imageData.data;
+                for (var i = 0; i < data.length; i++) {//rgba
                     // console.log(data[4*i+4]);
-                    let r = data[4 * i];
-                    let g = data[4 * i + 1];
-                    let b = data[4 * i + 2];
+                    var r = data[4 * i];
+                    var g = data[4 * i + 1];
+                    var b = data[4 * i + 2];
 
-                    let grey = r * 0.3 + g * 0.59 + b * 0.11;
+                    var grey = r * 0.3 + g * 0.59 + b * 0.11;
 
                     data[4 * i] = grey;
                     data[4 * i + 1] = grey;
@@ -51,7 +51,7 @@
             };
             img.src = 'images/img1.png';
 
-            
+
 
         });
 

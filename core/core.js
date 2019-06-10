@@ -360,6 +360,9 @@
             //laste expr = inherit prototype methods and fields
             //核心2：instanceof OK
             methods_obj.__proto__ = src.prototype;
+            // dest.prototype = Object.create(src.prototype);
+            // dest.prototype.constructor = dest;
+            // methods_obj = dest.prototype;//re eq
             //考虑到单继承，所以下面这个if判断是不需要的
             // if (!fnExist(methods_obj.base)) {
             // }
@@ -551,17 +554,18 @@
         valueOf: function () {
             var that = this;
             for (var i = 0; i < arguments.length; i++) {
-                that = that.bind(this/*not useful*/, arguments[i]);
+                that = that.bind(null/*not useful*/, arguments[i]);
             }
             //有个bug 就是在shell控制台的时候,function. 和 function.字符 会执行 new that!
             return new that();
         },
         of: function () {
-            var that = this;
-            for (var i = 0; i < arguments.length; i++) {
-                that = that.bind(this/*not useful*/, arguments[i]);
-            }
-            return new that();
+            // var that = this;
+            // for (var i = 0; i < arguments.length; i++) {
+            //     that = that.bind(this/*not useful*/, arguments[i]);
+            // }
+            // return new that();
+            return this.valueOf.apply(this, arguments);
         },
 
 

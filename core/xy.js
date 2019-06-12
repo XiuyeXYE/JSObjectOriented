@@ -560,7 +560,7 @@
      * definition:
      */
 
-    // var of_interface = {
+    // var static_of_interface = {
     // 	valueOf: function (d) {
     // 		return new this(d);
     // 	},
@@ -570,7 +570,7 @@
 
     // };
     //es6 new feature ...args
-    var of_interface = {
+    var static_of_interface = {
         // valueOf: function (...d) {
         // 	return new this(...d);
         // },
@@ -620,7 +620,7 @@
      * 1."直接"调用底层对象的方法和属性.
      * 2.直接根据上层方法调用底层相同方法名接口!相当于包装类
      */
-    var invoke_interface = {
+    var inst_invoke_interface = {
 
         /**
          * 设置默认原始对象!
@@ -743,10 +743,10 @@
     /**
      * 包装接口
      */
-    var wrapper_interface = invoke_interface;
+    var inst_wrapper_interface = inst_invoke_interface;
 
 
-    var string_interface = {
+    var inst_string_interface = {
         toString: function () {
             return JSON.stringify(this);
         },
@@ -790,7 +790,7 @@
     }
 
     //implements common interfaces
-    static_impl(option, of_interface, extend_interface);
+    static_impl(option, static_of_interface, extend_interface);
     impl(option, extend_interface);
 
     //define empty option
@@ -822,7 +822,7 @@
         this.init(node);
     };
 
-    static_impl(dom, of_interface, extend_interface);
+    static_impl(dom, static_of_interface, extend_interface);
     impl(dom, extend_interface);
 
 
@@ -832,7 +832,7 @@
         this.init(nodeList);
     }
 
-    static_impl(domlist, of_interface, extend_interface);
+    static_impl(domlist, static_of_interface, extend_interface);
     impl(domlist, extend_interface);
 
 
@@ -877,7 +877,7 @@
         }
     }
 
-    static_impl(ajax, of_interface, extend_interface);
+    static_impl(ajax, static_of_interface, extend_interface);
     impl(ajax, extend_interface);
     ajax.extend(AJAX_TYPE);
 
@@ -952,7 +952,7 @@
         this.status = THREAD_STATUS.RUNABLE;
     }
 
-    static_impl(thread, of_interface, extend_interface);
+    static_impl(thread, static_of_interface, extend_interface);
     impl(thread, extend_interface);
     thread.extend(THREAD_STATUS);
 
@@ -1039,7 +1039,7 @@
         this.status = TIMER_STATUS.NEW;
     }
 
-    static_impl(timer, of_interface, extend_interface);
+    static_impl(timer, static_of_interface, extend_interface);
     impl(timer, extend_interface);
     timer.extend(TIMER_STATUS);
 
@@ -1120,7 +1120,7 @@
         this.status = FPS_STATUS.READY;
     }
 
-    static_impl(fps, of_interface, extend_interface);
+    static_impl(fps, static_of_interface, extend_interface);
     impl(fps, extend_interface);
 
     /**
@@ -1136,7 +1136,7 @@
     }
 
     ext(canvas, dom);
-    // static_impl(canvas, of_interface, extend_interface);
+    // static_impl(canvas, static_of_interface, extend_interface);
     // impl(canvas, extend_interface);
 
 
@@ -1144,8 +1144,8 @@
         notInstanceof(this, pen, 'Constructor pen requires "new"!');
         this.init(p);
     }
-    static_impl(pen, of_interface, extend_interface);
-    impl(pen, extend_interface, invoke_interface);
+    static_impl(pen, static_of_interface, extend_interface);
+    impl(pen, extend_interface, inst_invoke_interface);
 
     /**
      * end.
@@ -2374,7 +2374,7 @@
         });
 
     }
-    impl(opr, invoke_interface)
+    impl(opr, inst_invoke_interface)
     var opr_impl = {
         push: function (data, title, url) {
             // this.history.pushState(data, title, url);
@@ -2443,12 +2443,27 @@
 
     };
 
+    var static_create_interface = {
+        create: function () {
+            if (isFunction(this)) {
+                var that = this;
+                for (var i = 0; i < arguments.length; i++) {
+                    that = that.bind(this, arguments[i]);
+                }
+                return new that();
+            }
+        },
+
+    };
+
+
     var public_common_interfaces = {
-        of_interface: of_interface,
+        static_of_interface: static_of_interface,
         extend_interface: extend_interface,
-        invoke_interface: invoke_interface,
-        wrapper_interface: wrapper_interface,
-        string_interface: string_interface,
+        inst_invoke_interface: inst_invoke_interface,
+        inst_wrapper_interface: inst_wrapper_interface,
+        inst_string_interface: inst_string_interface,
+        static_create_interface: static_create_interface,
     };
 
     // 为了解决和jQuery等框架的冲突，必须是函数，真操蛋！！！
@@ -2460,7 +2475,7 @@
             return xy.d(p);
         }
     };
-    static_impl(xy, of_interface, extend_interface);
+    static_impl(xy, static_of_interface, extend_interface);
 
     var fn = {
         ready: function (f) {
@@ -2469,7 +2484,7 @@
                 this(f);
             }
         },
-        crt: function (tag) {
+        crtDom: function (tag) {
             return dom.create(tag);
         },
         // 根据元素ID找到html对象
@@ -2500,8 +2515,13 @@
                 return shallowCopyObj(obj, public_common_interface);
             }
         },
-        crt: function (tag) {
+        crtDom: function (tag) {
             return dom.create(tag);
+        },
+        crtObj: function (f) {
+            if (isFunction(f)) {
+                return new f();
+            }
         },
 
         isSymbol: isSymbol,

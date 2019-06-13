@@ -2518,9 +2518,9 @@
         crtDom: function (tag) {
             return dom.create(tag);
         },
-        crtObj: function (f) {
+        crtObj: function (f, ...args) {
             if (isFunction(f)) {
-                return new f();
+                return new f(args);
             }
         },
 

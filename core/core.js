@@ -544,7 +544,7 @@
 
     // };
     //es6 new feature ...args
-    var of_interface = {
+    var static_of_interface = {
         // valueOf: function (...d) {
         // 	return new this(...d);
         // },
@@ -591,7 +591,7 @@
      * 2.直接根据上层方法调用底层相同方法名接口!相当于包装类
      */
 
-    var invoke_interface = {
+    var inst_invoke_interface = {
 
         /**
          * 设置默认原始对象!
@@ -710,9 +710,9 @@
     /**
      * 包装接口
      */
-    var wrapper_interface = invoke_interface;
+    var inst_wrapper_interface = inst_invoke_interface;
 
-    var string_interface = {
+    var inst_string_interface = {
         toString: function () {
             return JSON.stringify(this);
         },
@@ -741,7 +741,7 @@
     }
 
     //implements common interfaces
-    static_impl(option, of_interface, extend_interface);
+    static_impl(option, static_of_interface, extend_interface);
     impl(option, extend_interface);
 
     //define empty option
@@ -765,12 +765,25 @@
             value: option.of(null)
         }
     });
+    var static_create_interface = {
+        create: function () {
+            if (isFunction(this)) {
+                var that = this;
+                for (var i = 0; i < arguments.length; i++) {
+                    that = that.bind(this, arguments[i]);
+                }
+                return new that();
+            }
+        },
+
+    };
     var public_common_interfaces = {
-        of_interface: of_interface,
+        static_of_interface: static_of_interface,
         extend_interface: extend_interface,
-        invoke_interface: invoke_interface,
-        wrapper_interface: wrapper_interface,
-        string_interface: string_interface
+        inst_invoke_interface: inst_invoke_interface,
+        inst_wrapper_interface: inst_wrapper_interface,
+        inst_string_interface: inst_string_interface,
+        static_create_interface: static_create_interface,
     };
 
     var xy = function () {
@@ -780,6 +793,11 @@
 
     var fn = {
 
+        crtObj: function (f, ...args) {
+            if (isFunction(f)) {
+                return new f(args);
+            }
+        },
         addInterface: function (obj, public_common_interface) {
             if (pnl2(arguments)) {
                 return shallowCopyObj(obj, public_common_interface);

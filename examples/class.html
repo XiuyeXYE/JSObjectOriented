@@ -38,9 +38,9 @@
                 this.value(this.value() + '\n' + s.toString() + '\n');
             },
         };
-        // console.log(xy.dom_interfaces.from_interface);
+        // console.log(xy.dom_interfaces.static_from_interface);
         xy.impl(Output, out_impl);
-        xy.static_impl(Output, xy.std_interfaces.of_interface, xy.dom_interfaces.from_interface);
+        xy.static_impl(Output, xy.std_interfaces.static_of_interface, xy.dom_interfaces.static_from_interface);
         xy(() => {
             function A(a) {
                 this.a = a;
@@ -71,7 +71,7 @@
                 }
             };
             xy.impl(A, A_impl);
-            xy.static_impl(A, xy.std_interfaces.of_interface);
+            xy.static_impl(A, xy.std_interfaces.static_of_interface);
             xy.ext(F, E, D, C, B, A);
             let out = Output.from('#out');
             out.attr('rows', 30).attr('cols', 30);
@@ -88,7 +88,7 @@
             out.println("f instanceof E:" + xy.inst_of(f, E));
             out.println("f instanceof F:" + xy.inst_of(f, F));
 
-            out.clear();
+            // out.clear();
 
             function Class1() {
                 this.class1 = 'class1';
@@ -98,7 +98,7 @@
                 this.class2 = 'class2';
             }
 
-            xy.impl(Class1, xy.std_interfaces.string_interface);
+            xy.impl(Class1, xy.std_interfaces.inst_string_interface);
             xy.ext(Class2, Class1);
 
             out.println(new Class2());

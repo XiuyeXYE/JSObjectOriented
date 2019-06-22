@@ -2429,7 +2429,7 @@
 
     var dom_interfaces = {
 
-        from_interface: {
+        static_from_interface: {
             from: function (s) {
                 if (pnl1(s) && strNonEmpty(s)) {
                     s = xy.d(s);

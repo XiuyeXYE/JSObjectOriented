@@ -18,7 +18,8 @@
         xy(function () {
 
             var img = new Image();
-            img.crossOrigin = "anonymous";
+            img.setAttribute('crossOrigin', 'anonymous');
+            // img.crossOrigin = "anonymous";
             img.onload = function(e){
                 var stt = xy.Canvas.from('#stt');
                 stt.css('border', '1px solid black');

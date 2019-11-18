@@ -2515,9 +2515,7 @@
                 return shallowCopyObj(obj, public_common_interface);
             }
         },
-        crtDom: function (tag) {
-            return dom.create(tag);
-        },
+       
         crtObj: function (f, ...args) {
             if (isFunction(f)) {
                 return new f(args);

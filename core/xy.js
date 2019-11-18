@@ -2437,7 +2437,7 @@
                     s = s.get(0);
                     return this.of(s);
                 }
-                throw 'first parameter must be string related to canvas element: id,tag name,class and so on.';
+                throw 'first parameter must be string related: id,tag name,class and so on.';
             }
         },
 

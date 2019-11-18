@@ -571,32 +571,32 @@
     // };
     //es6 new feature ...args
     var static_of_interface = {
-        // valueOf: function (...d) {
-        // 	return new this(...d);
-        // },
-        // of: function (...d) {
-        // 	return this.valueOf(...d);
-        // },
-        valueOf: function () {
-            var that = this;
-            for (var i = 0; i < arguments.length; i++) {
-                that = that.bind(null/*not useful*/, arguments[i]);
-            }
-
-            // 有个bug 就是在shell控制台的时候,function. 和 function.字符 会执行 new that!
-            return new that();
-
-            // var o = new this.apply(o,arguments);
-            // return o;
+        valueOf: function (...d) {
+            return new this(...d);
         },
-        of: function () {
-            // var that = this;
-            // for (var i = 0; i < arguments.length; i++) {
-            //     that = that.bind(this/*not useful*/, arguments[i]);
-            // }
-            // return new that();
-            return this.valueOf.apply(this, arguments);
+        of: function (...d) {
+            return this.valueOf(...d);
         },
+        // valueOf: function () {
+        //     var that = this;
+        //     for (var i = 0; i < arguments.length; i++) {
+        //         that = that.bind(null/*not useful*/, arguments[i]);
+        //     }
+
+        //     // 有个bug 就是在shell控制台的时候,function. 和 function.字符 会执行 new that!
+        //     return new that();
+
+        //     // var o = new this.apply(o,arguments);
+        //     // return o;
+        // },
+        // of: function () {
+        //     // var that = this;
+        //     // for (var i = 0; i < arguments.length; i++) {
+        //     //     that = that.bind(this/*not useful*/, arguments[i]);
+        //     // }
+        //     // return new that();
+        //     return this.valueOf.apply(this, arguments);
+        // },
 
 
     };

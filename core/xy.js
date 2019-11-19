@@ -183,7 +183,7 @@
 
 
 
-    //check multiple number type is?
+    //check multiple number type is all number!
     function checkNumberType(a) {
         if (p1(arguments)) {
             if (!isNumber(a)) throw 'params must be number!';
@@ -240,6 +240,7 @@
     function pnl3(arr) {
         return arr.length >= 3;
     }
+
     function gt(a, b) {
         checkNumberType(a, b);
         return a > b;
@@ -255,6 +256,72 @@
         // checkNumberType(a, b);
         return a === b;
     }
+
+    /**
+    * very good deeply equals tools!!!
+    * hey,hey,hey !!!
+    */
+    function deepEQ(a, b) {
+
+        var at = typeof a;
+        var bt = typeof b;
+
+        if (!eq(at, bt)) {
+            return false;
+        }
+        //
+        switch (at) {
+            case "string":
+            case "number":
+            case "bigint":
+            case "boolean":
+            case "symbol":
+            case "undefined":
+            case "function":
+                if (!eq(a, b)) {
+                    return false;
+                }
+                break;
+            case "object":
+
+                if (eq(a, b)) {
+                    return true;
+                }
+
+                if (isArray(a) && isArray(b)) {
+                    var alen = a.length;
+                    var blen = b.length;
+                    if (!eq(alen, blen)) {
+                        return false;
+                    }
+                    else {
+                        for (var i = 0; i < alen; i++) {
+                            if (!deepEQ(a[i], b[i])) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                else {
+                    var akeys = Object.keys(a);
+                    var bkeys = Object.keys(b);
+                    var alen = akeys.length;
+                    var blen = bkeys.length;
+                    if (!eq(alen, blen)) {
+                        return false;
+                    }
+                    for (var i = 0; i < alen; i++) {
+                        var key = akeys[i];
+                        if (!oExist(b[key]) || !deepEQ(a[key], b[key])) {
+                            return false;
+                        }
+                    }
+                }
+                break;
+        }
+        return true;
+    }
+
 
 
     //between start and end!
@@ -484,6 +551,7 @@
 
     //接口继承 需要返回！有个多态的问题需要解决啊，
     //干脆不支持继承函数多态吧！
+    //interface1 extends interface2
     function inf_ext() {
         var last_inf = EMPTY_VALUES.EMPTY_OBJECT;
         var ps = Array.prototype.slice.call(arguments);
@@ -2515,7 +2583,7 @@
                 return shallowCopyObj(obj, public_common_interface);
             }
         },
-       
+
         crtObj: function (f, ...args) {
             if (isFunction(f)) {
                 return new f(args);
@@ -2562,6 +2630,8 @@
         static_impl: static_impl,
         inf_ext: inf_ext,
         inst_of: inst_of,
+        notInstanceof: notInstanceof,
+        deepEQ: deepEQ,
     };
 
     // set xy static methods
@@ -2594,6 +2664,179 @@
      * end
      */
 
+    function Set(arr) {
+        notInstanceof(this, Set, "Set using new!!!");
+        this.data = EMPTY_VALUES.EMPTY_ARRAY;
+        arr = arr || EMPTY_VALUES.EMPTY_ARRAY;
+        if (pnl0(arr)) {
+            for (var i = 0; i < arr; i++) {
+                if (!this.has(arr[i])) this.add(arr[i]);
+            }
+        }
+    }
+
+    var Set_impl = {
+        has: function (d) {
+            for (var i = 0; i < this.data.length; i++) {
+                if (Object.is(this.data[i], d)) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        add: function (d) {
+            if (!this.has(d)) {
+                this.data.push(d);
+            }
+
+        },
+        list: function () {
+            return this.data;
+        }
+    }
+
+    impl(Set, Set_impl);
+
+
+
+
+    function ValueSet(arr) {
+        //       notInstanceof(this, ValueSet, "Set using new!!!");
+        this.base(arr);
+    }
+
+    ext(ValueSet, Set);
+
+    var ValueSet_impl = {
+        has: function (d) {
+            for (var i = 0; i < this.data.length; i++) {
+                if (deepEQ(this.data[i], d)) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        //        add: function (d) {
+        //            if (!this.has(d)) {
+        //                this.data.push(d);
+        //            }
+        //        },
+        //        list: function () {
+        //            return this.data;
+        //        }
+    };
+
+    impl(ValueSet, ValueSet_impl);
+
+    function Entry(k, v) {
+        notInstanceof(this, Entry, "Entry using new!!!");
+        this.k = k;
+        this.v = v;
+    }
+    var Entry_impl = {
+        getK: function () {
+            return this.k;
+        },
+        setK: function (k) {
+            this.k = k;
+        },
+        getV: function () {
+            return this.v;
+        },
+        setV: function (v) {
+            this.v = v;
+        }
+    };
+
+    impl(Entry, Entry_impl);
+
+    function Map() {
+        notInstanceof(this, Map, "Map using new!!!");
+        this.keys = EMPTY_VALUES.EMPTY_ARRAY;
+        this.data = EMPTY_VALUES.EMPTY_ARRAY;
+    }
+
+    var Map_impl = {
+        has: function (k) {
+            for (var i = 0; i < this.keys; i++) {
+                if (eq(k, this.keys[i])) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        add: function (k, v) {
+            if (this.has(k)) {
+                for (var i = 0; i < this.data.length; i++) {
+                    var en = this.data[i];
+                    if (eq(k, en.getK())) {
+                        en.setV(v);
+                    }
+                }
+            } else {
+                this.data.push(new Entry(k, v));
+                this.keys.push(k);
+            }
+        },
+        get: function (k) {
+            for (var i = 0; i < this.data.length; i++) {
+                var en = this.data[i];
+                if (eq(k, en.getK())) {
+                    return en.getV();
+                }
+            }
+        }
+
+    };
+
+    impl(Map, Map_impl);
+
+    function ValueMap() {
+        this.base();
+    }
+
+    ext(ValueMap, Map);
+
+    var ValueMap_impl = {
+        has: function (k) {
+            for (var i = 0; i < this.keys.length; i++) {
+                if (deepEQ(k, this.keys[i])) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        add: function (k, v) {
+            if (this.has(k)) {
+                for (var i = 0; i < this.data.length; i++) {
+                    var en = this.data[i];
+                    if (deepEQ(k, en.getK())) {
+                        en.setV(v);
+                    }
+                }
+            } else {
+                this.data.push(new Entry(k, v));
+                this.keys.push(k);
+            }
+            return this;
+        },
+        get: function (k) {
+            for (var i = 0; i < this.data.length; i++) {
+                var en = this.data[i];
+                if (deepEQ(k, en.getK())) {
+                    return en.getV();
+                }
+            }
+        }
+    }
+
+    impl(ValueMap, ValueMap_impl);
+
+    xy.extend({
+        ValueSet: ValueSet,
+        ValueMap: ValueMap,
+
+    });
 
 
     window.xy = xy;

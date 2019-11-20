@@ -351,6 +351,10 @@
         }
     }
 
+    function ntfs(o, c) {
+        notInstanceof(o, c, "Constructor requires 'new'!!!");
+    }
+
     /**
      * core Class API
     */
@@ -501,7 +505,7 @@
         if (pgt2(arguments)) {
             //check itself multiple
             var check_m = new Map();
-            console.log(504,Map);
+            // console.log(504,Map);
             for (var i = 0; i < arguments.length; i++) {
                 var clazz = arguments[i];
                 if (!isFunction(clazz)) {
@@ -885,7 +889,7 @@
 
     //11.Common data structure
     function Set(arr) {
-        notInstanceof(this, Set, "Set using new!!!");
+        notInstanceof(this, Set, "Constructor Set requires 'new' at Set!!!");
         this.data = EMPTY_VALUES.EMPTY_ARRAY;
         arr = arr || EMPTY_VALUES.EMPTY_ARRAY;
         if (pnl1(arr)) {
@@ -981,9 +985,15 @@
     impl(ValueSet, ValueSet_impl);
 
 
-    function Map() {
-        notInstanceof(this, Map, "Map using new!!!");
+    function Map(arr) {
+        notInstanceof(this, Map, "Constructor Map requires 'new' at Map!!!");
         this.data = EMPTY_VALUES.EMPTY_ARRAY;
+        arr = arr || EMPTY_VALUES.EMPTY_ARRAY;
+        if (pnl1(arr)) {
+            for (var i = 0; i < len(arr); i++) {
+                this.add(arr[i][0], arr[i][1]);
+            }
+        }
     }
 
     var Map_impl = {
@@ -1080,8 +1090,8 @@
 
     impl(Map, Map_impl);
 
-    function ValueMap() {
-        this.base();
+    function ValueMap(arr) {
+        this.base(arr);
     }
 
     ext(ValueMap, Map);

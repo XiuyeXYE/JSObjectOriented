@@ -128,6 +128,14 @@
         return typeof a === 'object';
     }
 
+    //Keys include symbol!
+    function enumKeys(a) {
+        var keys = Object.keys(a);
+        if (fnExist(Object.getOwnPropertySymbols)) {
+            keys = keys.concat(Object.getOwnPropertySymbols(a));
+        }
+        return keys;
+    }
 
     //手写！！容易出错和漏掉，还是用函数吧
     function fnExist(c) {
@@ -294,8 +302,8 @@
                     }
                 }
                 else {
-                    var akeys = Object.keys(a);
-                    var bkeys = Object.keys(b);
+                    var akeys = enumKeys(a);
+                    var bkeys = enumKeys(b);
                     var alen = akeys.length;
                     var blen = bkeys.length;
                     if (!eq(alen, blen)) {
@@ -369,7 +377,7 @@
                     else {
 
                         dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.EMPTY_OBJECT;
-                        var keys = Object.keys(src);
+                        var keys = enumKeys(src);
                         for (var i = 0; i < len(keys); i++) {
                             var key = keys[i];
                             dest[key] = src[key];
@@ -428,7 +436,7 @@
                     else {
 
                         dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.EMPTY_OBJECT;
-                        var keys = Object.keys(src);
+                        var keys = enumKeys(src);
                         for (var i = 0; i < len(keys); i++) {
                             var key = keys[i];
                             dest[key] = deepCopy(dest[key], src[key]);
@@ -866,6 +874,66 @@
     };
 
 
+    //11.Common data structure
+    function Set(arr) {
+        notInstanceof(this, Set, "Set using new!!!");
+        this.data = EMPTY_VALUES.EMPTY_ARRAY;
+        arr = arr || EMPTY_VALUES.EMPTY_ARRAY;
+        if (pnl1(arr)) {
+            for (var i = 0; i < len(arr); i++) {
+                this.add(arr[i]);
+            }
+        }
+    }
+
+    var Set_impl = {
+        size: function () {
+            return this.data.length;
+        },
+        clear: function () {
+            this.data.length = 0;
+        },
+        delete: function () {
+
+        },
+        entries: function () {
+
+        },
+        forEach: function () {
+
+        },
+        keys: function () {
+
+        },
+        values: function () {
+
+        },
+        has: function (d) {
+            for (var i = 0; i < this.data.length; i++) {
+                if (Object.is(this.data[i], d)) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        add: function (d) {
+            if (!this.has(d)) {
+                this.data.push(d);
+            }
+
+        },
+        list: function () {
+            return this.data;
+        },
+        [Symbol.iterator]: function* () {
+            for (var i = 0; i < len(this.data); i++) {
+                yield this.data[i];
+            }
+        }
+    }
+
+    impl(Set, Set_impl);
+
     //9.Open API functions
 
     var fn = {
@@ -890,6 +958,7 @@
         isFunction: isFunction,
         isBigInt: isBigInt,
         isObject: isObject,
+        enumKeys: enumKeys,
         // 过滤数组生成新的数组
         arrayFilter: arrayFilter,
         arrayMap: arrayMap,
@@ -935,6 +1004,10 @@
         std_interfaces: std_interfaces,
     }
 
+    var classes = {
+        Set: Set,
+    };
+
     // For nothing of conflict of JQuery ... frameworks, it must be function.
     // xy is open and outside API.
     function xy(p) {
@@ -948,7 +1021,11 @@
     static_impl(xy, extend_interface);
 
     xy.extend(fn);
+    xy.extend(classes);
     xy.extend(interfaces);
+
+
+
 
     window.xy = xy;
     return xy;

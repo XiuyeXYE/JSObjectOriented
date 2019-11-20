@@ -921,11 +921,6 @@
             }
             return false;
         },
-        entries: function* () {
-            for (var i = 0; i < len(this.data); i++) {
-                yield [this.data[i], this.data[i]];
-            }
-        },
         forEach: function (f, a) {
             if (isFunction(f)) {
                 for (var i = 0; i < this.size(); i++) {
@@ -959,6 +954,11 @@
         },
         list: function () {
             return this.data;
+        },
+        entries: function* () {
+            for (var i = 0; i < len(this.data); i++) {
+                yield [this.data[i], this.data[i]];
+            }
         },
         [Symbol.iterator]: function* () {
             for (var i = 0; i < len(this.data); i++) {
@@ -1018,11 +1018,6 @@
             }
             return false;
         },
-        entries: function* () {
-            for (var i = 0; i < len(this.data); i++) {
-                yield this.data[i];
-            }
-        },
         forEach: function (f, a) {
             if (isFunction(f)) {
                 for (var i = 0; i < this.size(); i++) {
@@ -1081,11 +1076,16 @@
                 }
             }
         },
+        entries: function* () {
+            for (var i = 0; i < len(this.data); i++) {
+                yield this.data[i];
+            }
+        },
         [Symbol.iterator]: function* () {
             for (var i = 0; i < len(this.data); i++) {
                 yield this.data[i];
             }
-        }
+        },
     };
 
     impl(Map, Map_impl);

@@ -880,11 +880,22 @@
     var inst_wrapper_interface = inst_invoke_interface;
 
 
+    var inst_string_interface = {
+        toString: function () {
+            if (oExist(JSON)) {
+                return JSON.stringify(this);
+            }
+            return this;
+        },
+    };
+
     var std_interfaces = {
         static_of_interface: static_of_interface,
         extend_interface: extend_interface,
         inst_wrapper_interface: inst_wrapper_interface,
+        inst_string_interface: inst_string_interface,
     };
+
 
 
     //11.Common data structure

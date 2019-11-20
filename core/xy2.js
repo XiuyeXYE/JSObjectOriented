@@ -1115,6 +1115,76 @@
 
     impl(ValueMap, ValueMap_impl);
 
+    //12.Plugins dev
+
+    var plugins = EMPTY_VALUES.EMPTY_ARRAY;
+    var pluginId = 0;
+
+
+    function Plugin(t, f) {
+        ntfs(this, Plugin);
+        if (oExist(t) && fnExist(f)) {
+            this.t = t;
+            this.f = f;
+            this.loaded = false;
+            this.pId = pluginId++;
+        } else {
+            throw "Plugin must have two parameters:type and function";
+        }
+    }
+
+    Plugin.TYPE_CALL = 1;
+    // Plugin.TYPE_MEMBER = 2;
+    Plugin.TYPE_FUNCTION = 3;
+    Plugin.TYPE_CLASS = 5;
+
+    function allPlugins() {
+        return plugins;
+    }
+
+    function addPlugin(t, f) {
+        if (!eq(t, Plugin.TYPE_CALL)) {
+            if (oExist(xy[f.name])) {
+                throw "Plugin exists or plugin name conflicts !!!";
+            }
+            xy[f.name] = f;
+        }
+        var ot = new Plugin(t, f);
+        ot.loaded = true;
+        plugins.push(ot);
+        return ot.pId;
+    }
+
+    function rmPlugin(iOrF) {
+        plugins = arrayFilter(plugins, function (v, i, a) {
+
+            if (isFunction(iOrF)) {
+                var flag = eq(v.f, iOrF);
+            } else {
+                var flag = eq(v.pId, iOrF);
+            }
+            if (flag && !eq(v.t, Plugin.TYPE_CALL)) {
+                delete xy[v.f.name];
+            }
+            return flag;
+        });
+
+    }
+
+    function clearPlugins() {
+        arrayForEach(plugins, function (v, i, a) {
+            if (!eq(v.t, Plugin.TYPE_CALL)) {
+                delete xy[v.f.name];
+            }
+        });
+        plugins.length = 0;
+    }
+
+
+
+
+
+
     //9.Open API functions
 
     var fn = {
@@ -1192,9 +1262,24 @@
         ValueMap: ValueMap,
     };
 
+    var pluginsDEV = {
+        // plugins: plugins,
+        Plugin: Plugin,
+        allPlugins: allPlugins,
+        addPlugin: addPlugin,
+        rmPlugin: rmPlugin,
+        clearPlugins: clearPlugins,
+    }
+
     // For nothing of conflict of JQuery ... frameworks, it must be function.
     // xy is open and outside API.
     function xy(p) {
+        for (var i = 0; i < len(plugins); i++) {
+            var plugin = plugins[i];
+            if (eq(Plugin.TYPE_CALL, plugin.t)) {
+                plugin.f(p);
+            }
+        }
         // if (isFunction(p)) {
         //     dom.of(document).on('DOMContentLoaded', p);
         // } else if (strNonEmpty(p)) {
@@ -1207,6 +1292,8 @@
     xy.extend(fn);
     xy.extend(classes);
     xy.extend(interfaces);
+    xy.extend(pluginsDEV);
+
 
 
 

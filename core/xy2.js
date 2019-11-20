@@ -258,8 +258,8 @@
     * hey,hey,hey !!!
     */
     function deepEQ(a, b) {
-        var at = typeof a;
-        var bt = typeof b;
+        var at = whatType(a);
+        var bt = whatType(b);
         if (!eq(at, bt)) {
             return false;
         }
@@ -339,23 +339,113 @@
      * core Class API
     */
     //copy obj
-    function shallowCopyObj(dest, src) {
-        var pNum = arguments.length;
+    function simpleCopy(dest, src) {
+        var pNum = len(arguments);
         if (pNum == 0) {
             return EMPTY_VALUES.EMPTY_OBJECT;
         }
         else if (pNum == 2) {
+            var st = whatType(src);
+            switch (st) {
+                case "string":
+                case "number":
+                case "bigint":
+                case "boolean":
+                case "symbol":
+                case "undefined":
+                case "function":
+                    dest = src;
+                    break;
+                case "object":
+
+                    if (isArray(src)) {
+                        dest = isArray(dest) ? dest : EMPTY_VALUES.EMPTY_ARRAY;
+                        // dest.length = src.length;
+                        for (var i = 0; i < len(src); i++) {
+                            dest[i] = src[i];
+                        }
+
+                    }
+                    else {
+
+                        dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.EMPTY_OBJECT;
+                        var keys = Object.keys(src);
+                        for (var i = 0; i < len(keys); i++) {
+                            var key = keys[i];
+                            dest[key] = src[key];
+                        }
+
+                    }
+                    break;
+            }
+
             for (var key in src) {
                 dest[key] = src[key];
             }
         } else {// >2
             for (var i = 1; i < pNum; i++) {
-                dest = shallowCopyObj(dest, arguments[i]);
+                dest = simpleCopy(dest, arguments[i]);
             }
         }
         return dest;
     }
 
+    /**
+     * 深度拷贝，但是可能会有属性类型转换问题，
+     * 比如 [] -> {}
+     *  {} -> []
+     * @param {*} dest 
+     * @param {*} src 
+     */
+    function deepCopy(dest, src) {
+        var pNum = len(arguments);
+        if (pNum == 0) {
+            return EMPTY_VALUES.EMPTY_OBJECT;
+        }
+        else if (pNum == 2) {
+
+            var st = whatType(src);
+            switch (st) {
+                case "string":
+                case "number":
+                case "bigint":
+                case "boolean":
+                case "symbol":
+                case "undefined":
+                case "function":
+                    dest = src;
+                    break;
+                case "object":
+
+                    if (isArray(src)) {
+                        dest = isArray(dest) ? dest : EMPTY_VALUES.EMPTY_ARRAY;
+                        // dest.length = src.length;
+                        for (var i = 0; i < len(src); i++) {
+                            dest[i] = deepCopy(dest[i], src[i]);
+                        }
+
+                    }
+                    else {
+
+                        dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.EMPTY_OBJECT;
+                        var keys = Object.keys(src);
+                        for (var i = 0; i < len(keys); i++) {
+                            var key = keys[i];
+                            dest[key] = deepCopy(dest[key], src[key]);
+                        }
+
+                    }
+                    break;
+            }
+
+
+        } else {// >2
+            for (var i = 1; i < pNum; i++) {
+                dest = deepCopy(dest, arguments[i]);
+            }
+        }
+        return dest;
+    }
 
     //6.Class definition keywords
 
@@ -430,7 +520,8 @@
             if (gt(supLevel, 1)) {
                 throw dest.name + ' cannot support multiple inheritance!';
             }
-            //laste expr = inherit prototype methods and fields
+            //last expr = inherit prototype methods and fields
+            //为了 impl实现不背覆盖 ，this is OK ，out of order for impl and ext.
             //核心2：instanceof OK
             methods_obj.__proto__ = src.prototype;
             // dest.prototype = Object.create(src.prototype);
@@ -478,7 +569,7 @@
             }
             return finalClass;
         } else if (isFunction(clazz) && oExist(inf)) {
-            shallowCopyObj(clazz.prototype, inf);
+            simpleCopy(clazz.prototype, inf);
             return clazz;
         }
     }
@@ -498,7 +589,7 @@
             }
             return finalClass;
         } else if (isFunction(clazz) && oExist(inf)) {
-            return shallowCopyObj(clazz, inf);
+            return simpleCopy(clazz, inf);
         }
     }
 
@@ -510,7 +601,7 @@
         var last_inf = EMPTY_VALUES.EMPTY_OBJECT;
         var ps = Array.prototype.slice.call(arguments);
         ps.unshift(last_inf);
-        return shallowCopyObj.apply(null, ps);
+        return simpleCopy.apply(null, ps);
     }
 
     //仍然有些不足，慎用
@@ -625,12 +716,12 @@
 
         extend: function () {
             // for (var i = 0; i < arguments.length; i++) {
-            //     shallowCopyObj(this, arguments[i]);
+            //     simpleCopy(this, arguments[i]);
             // }
             //arguments => array
             var ps = arrayLike2Array(arguments);
             ps.unshift(this);
-            return shallowCopyObj.apply(null, ps);
+            return simpleCopy.apply(null, ps);
         },
 
     };
@@ -784,7 +875,7 @@
         //         this(f);
         //     }
         // },
-        whatType: whatType,
+        t: whatType,
         isSymbol: isSymbol,
         // 判断对象是否为空
         isNumber: isNumber,
@@ -806,7 +897,9 @@
         arrayForEach: arrayForEach,
         arrayLike2Array: arrayLike2Array,
         // 浅拷贝
-        shallowCopyObj: shallowCopyObj,
+        simpleCopy: simpleCopy,
+        //深度拷贝
+        deepCopy: deepCopy,
         // 判断字符串是否是为空
         strIsEmpty: strIsEmpty,
         // 非空字符串
@@ -856,7 +949,7 @@
 
     xy.extend(fn);
     xy.extend(interfaces);
-    
+
     window.xy = xy;
     return xy;
 }));

@@ -416,6 +416,7 @@
         if (pgt2(arguments)) {
             //check itself multiple
             var check_m = new Map();
+            // console.log(419,Map);
             for (var i = 0; i < arguments.length; i++) {
                 var clazz = arguments[i];
                 if (!isFunction(clazz)) {
@@ -2764,6 +2765,9 @@
                 }
             }
             return false;
+        },
+        set:function(k,v){
+            return this.add(k,v);
         },
         add: function (k, v) {
             if (this.has(k)) {

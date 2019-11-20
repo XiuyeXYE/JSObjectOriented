@@ -257,8 +257,16 @@
     }
 
     //适用任何类型
-    function eq(a, b) {
-        return a === b;
+    function eq(x, y) {
+        // SameValue algorithm
+        if (x === y) { // Steps 1-5, 7-10
+            // Steps 6.b-6.e: +0 != -0
+            return x !== 0 || 1 / x === 1 / y;
+        } else {
+            // Step 6.a: NaN == NaN
+            return x !== x && y !== y;
+        }
+        // return a === b;
     }
 
     /**
@@ -493,6 +501,7 @@
         if (pgt2(arguments)) {
             //check itself multiple
             var check_m = new Map();
+            console.log(504,Map);
             for (var i = 0; i < arguments.length; i++) {
                 var clazz = arguments[i];
                 if (!isFunction(clazz)) {
@@ -888,29 +897,51 @@
 
     var Set_impl = {
         size: function () {
-            return this.data.length;
+            return len(this.data);
         },
         clear: function () {
             this.data.length = 0;
         },
-        delete: function () {
-
+        elemEQ: function (a, b) {
+            return eq(a, b);
         },
-        entries: function () {
-
+        delete: function (v) {
+            for (var i = 0; i < this.size(); i++) {
+                if (this.elemEQ(v, this.data[i])) {
+                    for (var j = i; j < this.size() - 1; j++) {
+                        this.data[j] = this.data[j + 1];
+                    }
+                    this.data.length--;
+                    return true;
+                }
+            }
+            return false;
         },
-        forEach: function () {
-
+        entries: function* () {
+            for (var i = 0; i < len(this.data); i++) {
+                yield [this.data[i], this.data[i]];
+            }
+        },
+        forEach: function (f, a) {
+            if (isFunction(f)) {
+                for (var i = 0; i < this.size(); i++) {
+                    if (oExist(a)) {
+                        f.call(a, this.data[i], this.data[i], this);
+                    } else {
+                        f(this.data[i], this.data[i], this);
+                    }
+                }
+            }
         },
         keys: function () {
-
+            return this.list();
         },
         values: function () {
-
+            return this.list();
         },
         has: function (d) {
             for (var i = 0; i < this.data.length; i++) {
-                if (Object.is(this.data[i], d)) {
+                if (this.elemEQ(this.data[i], d)) {
                     return true;
                 }
             }
@@ -933,6 +964,135 @@
     }
 
     impl(Set, Set_impl);
+
+    function ValueSet(arr) {
+        //       notInstanceof(this, ValueSet, "Set using new!!!");
+        this.base(arr);
+    }
+
+    ext(ValueSet, Set);
+
+    var ValueSet_impl = {
+        elemEQ: function (a, b) {
+            return deepEQ(a, b);
+        },
+    };
+
+    impl(ValueSet, ValueSet_impl);
+
+
+    function Map() {
+        notInstanceof(this, Map, "Map using new!!!");
+        this.data = EMPTY_VALUES.EMPTY_ARRAY;
+    }
+
+    var Map_impl = {
+        elemEQ: function (a, b) {
+            return eq(a, b);
+        },
+        size: function () {
+            return len(this.data);
+        },
+        clear: function () {
+            this.data.length = 0;
+        },
+        delete: function (k) {
+            for (var i = 0; i < this.size(); i++) {
+                if (this.elemEQ(k, this.data[i][0])) {
+                    for (var j = i; j < this.size() - 1; j++) {
+                        this.data[j] = this.data[j + 1];
+                    }
+                    this.data.length--;
+                    return true;
+                }
+            }
+            return false;
+        },
+        entries: function* () {
+            for (var i = 0; i < len(this.data); i++) {
+                yield this.data[i];
+            }
+        },
+        forEach: function (f, a) {
+            if (isFunction(f)) {
+                for (var i = 0; i < this.size(); i++) {
+                    if (oExist(a)) {
+                        f.call(a, this.data[i][0], this.data[i][1], this);
+                    } else {
+                        f(this.data[i], this.data[i], this);
+                    }
+                }
+            }
+        },
+        keys: function () {
+            var keyss = EMPTY_VALUES.EMPTY_ARRAY;
+            for (var i = 0; i < this.size(); i++) {
+                keyss.push(this.data[i][0]);
+            }
+            return keyss;
+        },
+        values: function () {
+            var valuess = EMPTY_VALUES.EMPTY_ARRAY;
+            for (var i = 0; i < this.size(); i++) {
+                valuess.push(this.data[i][1]);
+            }
+            return valuess;
+        },
+        has: function (k) {
+            for (var i = 0; i < this.size(); i++) {
+                if (this.elemEQ(k, this.data[i][0])) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        set: function (k, v) {
+            return this.add(k, v);
+        },
+        add: function (k, v) {
+            var nonHave = true;
+            for (var i = 0; i < this.size(); i++) {
+                var en = this.data[i];
+                if (this.elemEQ(k, en[0])) {
+                    en[1] = v;
+                    nonHave = false;
+                }
+            }
+            if (nonHave) {
+                this.data.push([k, v]);
+            }
+            return this;
+        },
+        get: function (k) {
+            for (var i = 0; i < this.size(); i++) {
+                var en = this.data[i];
+                if (this.elemEQ(k, en[0])) {
+                    return en[1];
+                }
+            }
+        },
+        [Symbol.iterator]: function* () {
+            for (var i = 0; i < len(this.data); i++) {
+                yield this.data[i];
+            }
+        }
+    };
+
+    impl(Map, Map_impl);
+
+    function ValueMap() {
+        this.base();
+    }
+
+    ext(ValueMap, Map);
+
+    var ValueMap_impl = {
+        elemEQ: function (a, b) {
+            return deepEQ(a, b);
+        },
+    }
+
+    impl(ValueMap, ValueMap_impl);
 
     //9.Open API functions
 
@@ -1006,6 +1166,9 @@
 
     var classes = {
         Set: Set,
+        ValueSet: ValueSet,
+        Map: Map,
+        ValueMap: ValueMap,
     };
 
     // For nothing of conflict of JQuery ... frameworks, it must be function.

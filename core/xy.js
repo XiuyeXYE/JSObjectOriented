@@ -2669,7 +2669,7 @@
         this.data = EMPTY_VALUES.EMPTY_ARRAY;
         arr = arr || EMPTY_VALUES.EMPTY_ARRAY;
         if (pnl0(arr)) {
-            for (var i = 0; i < arr; i++) {
+            for (var i = 0; i < arr.length; i++) {
                 if (!this.has(arr[i])) this.add(arr[i]);
             }
         }

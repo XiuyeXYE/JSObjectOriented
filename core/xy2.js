@@ -5,6 +5,13 @@
     factory(global);
 }(typeof window !== "undefined" ? window : this, function (window) {
 
+
+
+    //1.System definition:
+    var Array = window.Array;
+    var JSON = window.JSON;
+
+
     //5.Array length op!
     //==0
     function p0(arr) {
@@ -51,10 +58,6 @@
     function pnl3(arr) {
         return arr.length >= 3;
     }
-
-    //1.System definition:
-    var Array = window.Array;
-    var JSON = window.JSON;
 
     //2.Value definition:
     /**

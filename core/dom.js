@@ -6,24 +6,131 @@
     factory(global);
 }(typeof window !== "undefined" ? window : this, function (window) {
 
+    var document = window.document || xy.EMPTY_VALUES.EMPTY_OBJECT;
 
-    xy = window.xy;
+
+    var xy = window.xy;
+
     if (!xy) {
         throw "Need xy.js framework!!!";
     }
 
-    //document selector query dom
-    function query(d, selector) {
+    function hasString(str, subStr) {
 
-        //default []
-        var elems = d.querySelectorAll(selector);
+        return xy.isStr(str) && xy.isStr(subStr) && !x.eq(str.indexOf(subStr), -1);
+    }
 
-        if (pnl2(elems)) {
-            return domlist.of(elems);
+    function hasComma(s) {
+        return hasString(s, ',');
+    }
+
+    function hasGtSign(s) {
+        return hasString(s, '>');
+    }
+
+    function hasWS(s) {
+        return hasString(s, ' ');
+    }
+
+    function hasWellSign(s) {
+        return hasString(s, '#');
+    }
+
+    function hasDotSign(s) {
+        return hasString(s, '.');
+    }
+
+    function bySingleId(node, s) {
+        return node.getElementById(s);
+    }
+
+    function bySingleClass(node, s) {
+        return node.getElementsByClassName(s);
+    }
+
+    function bySingleTagName(node, s) {
+        return node.getElementsByTagName(s);
+    }
+
+    function preSelectorHandler(selector) {
+        selector = selector.replace(/^,|,$/, '');
+        selector = selector.trim();
+        return selector;
+    }
+
+    function push(elems, node) {
+        if (xy.oExist(node)) {
+            if (xy.isArray(node)) {
+                elems.concat(node);
+            } else {
+                elems.push(node);
+            }
+        }
+    }
+
+    function query(selector, node = document, elems = []) {
+
+        //预处理
+        if (xy.strNonEmpty(selector) || !xy.oExist(node)) {
+            return null;
+        }
+        selector = preSelectorHandler(selector);
+        //分割
+
+        if (hasComma(selector)) {
+            var subSeletors = selector.split(/\s*,\s*/);
+            for (var i = 0; i < xy.len(subSeletors); i++) {
+                node = query(subSeletors[i], document, elems);
+                push(elems, node);
+            }
+        } else if (hasGtSign(selector)) {
+            var subSeletors = selector.split(/\s*>\s*/);
+            for (var i = 0; i < xy.len(subSeletors); i++) {
+                node = query(subSeletors[i], node, elems);
+            }
+            // return node;
+        } else if (hasWS(selector)) {
+            var subSeletors = selector.split(/\s+/);
+            for (var i = 0; i < xy.len(subSeletors); i++) {
+                node = query(subSeletors[i], node, elems);
+            }
+            // return node;
         }
 
-        return dom.of(elems[0]);
+        //求元素
+        if (xy.isArray(node)) {
+            for (var i = 0; i < xy.len(node); i++) {
+                push(elems,query(selector, node[i], elems));
+            }
+        } else if (hasWellSign(selector)) {
+            selector = selector.replace('#', '');
+            return bySingleId(node, selector);
+        } else if (hasDotSign(selector)) {
+            selector = selector.replace('.', '');
+            return bySingleClass(node, selector);
+        } else {
+            return bySingleTagName(node, selector);
+        }
+
+
+        return elems;
     }
+
+    //document selector query dom
+    // function query(d, selector) {
+
+    //     //default []
+    //     var elems = d.querySelectorAll(selector);
+
+    //     if (pnl2(elems)) {
+    //         return domlist.of(elems);
+    //     }
+
+    //     return dom.of(elems[0]);
+    // }
+
+
+
 
 
     //html element

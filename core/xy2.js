@@ -1205,7 +1205,7 @@
         name = name || f.name;
         for (var i = 0; i < len(plugins); i++) {
             var v = plugins[i];
-            if (eq(v.f, f) || eq(v.name, name)) {
+            if (eq(v.f, f) || eq(v.name, name) || oExist(xy[name])) {
                 throw "Plugin exists or plugin name conflicts !!!";
                 // return false;
             }

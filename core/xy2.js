@@ -14,50 +14,50 @@
 
     //5.Array length op!
     //==0
-    function p0(arr) {
-        return arr.length == 0;
-    }
+    // function p0(arr) {
+    //     return arr.length == 0;
+    // }
     //>0
-    function pgt0(arr) {
-        return arr.length > 0;
-    }
+    // function pgt0(arr) {
+    //     return arr.length > 0;
+    // }
     // not less than:>=
-    function pnl0(arr) {
-        return arr.length >= 0;
-    }
+    // function pnl0(arr) {
+    //     return arr.length >= 0;
+    // }
     //==1
     function p1(arr) {
         return arr.length == 1;
     }
     //>=1
-    function pnl1(arr) {
-        return arr.length >= 1;
-    }
+    // function pnl1(arr) {
+    //     return arr.length >= 1;
+    // }
 
     function p2(arr) {
         return arr.length == 2;
     }
-    function pl2(arr) {
-        return arr.length < 2;
-    }
+    // function pl2(arr) {
+    //     return arr.length < 2;
+    // }
 
-    function p3(arr) {
-        return arr.length == 3;
-    }
-    function pgt2(arr) {
-        return arr.length > 2;
-    }
-    function pgt3(arr) {
-        return arr.length > 3;
-    }
+    // function p3(arr) {
+    //     return arr.length == 3;
+    // }
+    // function pgt2(arr) {
+    //     return arr.length > 2;
+    // }
+    // function pgt3(arr) {
+    //     return arr.length > 3;
+    // }
     // not less than : >=
     function pnl2(arr) {
         return arr.length >= 2;
     }
 
-    function pnl3(arr) {
-        return arr.length >= 3;
-    }
+    // function pnl3(arr) {
+    //     return arr.length >= 3;
+    // }
 
     //2.Value definition:
     /**
@@ -240,7 +240,7 @@
         if (p1(arguments)) {
             if (!isNumber(a)) throw 'params must be number!';
         }
-        else if (pnl2(arguments)) {
+        else if (pnl2(arguments)) {//because of pnl depends on checkNumberType,so do this.
             for (var i = 0; i < arguments.length; i++) {
                 checkNumberType(arguments[i]);
             }
@@ -254,9 +254,17 @@
         return a > b;
     }
 
+    function ngt(a, b) {
+        return !gt(a, b);
+    }
+
     function lt(a, b) {
         checkNumberType(a, b);
         return a < b;
+    }
+
+    function nlt(a, b) {
+        return !lt(a, b);
     }
 
     //适用任何类型
@@ -337,6 +345,20 @@
             return arr.length;
         }
         return 0;
+    }
+
+    //greater than
+    function pgt(arr, n) {
+        return gt(len(arr), n);//len(arr) > n;
+    }
+
+    //not less than
+    function pnl(arr, n) {
+        return nlt(len(arr), n);//len(arr) >= n;
+    }
+
+    function peq(arr, n) {
+        return eq(len(arr), n);
     }
 
     //between start and end!
@@ -505,7 +527,7 @@
      * @param {function|class} src 
      */
     function ext(dest, src) {
-        if (pgt2(arguments)) {
+        if (pgt(arguments, 2)) {
             //check itself multiple
             var check_m = new Map();
             // console.log(504,Map);
@@ -586,7 +608,7 @@
      */
     //implements interfaces
     function impl(clazz, inf) {
-        if (pgt2(arguments)) {
+        if (pgt(arguments, 2)) {
             var finalClass = clazz;
             for (var i = arguments.length - 1; i > 0; i--) {
                 finalClass = impl(clazz, arguments[i]);
@@ -606,7 +628,7 @@
     */
     //implements static interfaces
     function static_impl(clazz, inf) {
-        if (pgt2(arguments)) {
+        if (pgt(arguments, 2)) {
             var finalClass = clazz;
             for (var i = arguments.length - 1; i > 0; i--) {
                 finalClass = static_impl(clazz, arguments[i]);
@@ -676,7 +698,7 @@
                     return true;
                 }
             }
-        } else if (pgt2(arguments)) {
+        } else if (pgt(arguments, 2)) {
             for (var i = arguments.length - 1; i > 0; i--) {
                 if (!inst_of(obj, arguments[i])) {
                     return false;
@@ -811,7 +833,7 @@
                 tmp.push(args);
                 args = tmp;
             }
-            if (pnl1(args)) {
+            if (pnl(args, 1)) {
                 return this.kv(key, args[0]);
             }
             return this.k(key);
@@ -829,7 +851,7 @@
          * 告别"this.方法()"调用,直接this.fn(f,...params);
          */
         fn: function (f) {
-            if (pnl1(arguments) && fnExist(this.k(f))) {
+            if (pnl(arguments, 1) && fnExist(this.k(f))) {
                 f = this.k(f);
                 var ps = EMPTY_VALUES.EMPTY_ARRAY;
                 for (var i = 1; i < arguments.length; i++) {
@@ -906,7 +928,7 @@
         notInstanceof(this, Set, "Constructor Set requires 'new' at Set!!!");
         this.data = EMPTY_VALUES.EMPTY_ARRAY;
         arr = arr || EMPTY_VALUES.EMPTY_ARRAY;
-        if (pnl1(arr)) {
+        if (pnl(arr, 1)) {
             for (var i = 0; i < len(arr); i++) {
                 this.add(arr[i]);
             }
@@ -1003,7 +1025,7 @@
         notInstanceof(this, Map, "Constructor Map requires 'new' at Map!!!");
         this.data = EMPTY_VALUES.EMPTY_ARRAY;
         arr = arr || EMPTY_VALUES.EMPTY_ARRAY;
-        if (pnl1(arr)) {
+        if (pnl(arr, 1)) {
             for (var i = 0; i < len(arr); i++) {
                 this.add(arr[i][0], arr[i][1]);
             }
@@ -1237,9 +1259,14 @@
         convertList2StrWithWs: convertList2StrWithWs,
         defaultValue: defaultValue,
         lt: lt,
+        nlt: nlt,
         gt: gt,
+        ngt: ngt,
         len: len,
         eq: eq,
+        pgt: pgt,
+        pnl: pnl,
+        p: peq,
         deepEQ: deepEQ,
         fnExist: fnExist,
         oExist: oExist,

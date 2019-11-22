@@ -1159,8 +1159,8 @@
             this.t = t;
             this.f = f;
             this.name = name || f.name;
-            if (!isStr(this.name) && /^\d/.test(this.name)) {
-                throw "Plugin name must be string!";
+            if (!isStr(this.name) || strIsEmpty(this.name) || /^\d/.test(this.name)) {
+                throw "Plugin name must be string and not start with number!";
             }
             this.loaded = false;
             this.pId = uuid();

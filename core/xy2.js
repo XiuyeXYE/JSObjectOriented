@@ -1219,7 +1219,7 @@
         return ot.pId;
     }
 
-    function rmPlugin(iOrFOrN) {
+    function removePlugin(iOrFOrN) {
         var a = len(plugins);
         plugins = arrayFilter(plugins, function (v, i, a) {
             var flag = false;//true:exist!
@@ -1343,7 +1343,7 @@
         Plugin: Plugin,
         allPlugins: allPlugins,
         addPlugin: addPlugin,
-        rmPlugin: rmPlugin,
+        removePlugin: removePlugin,
         clearPlugins: clearPlugins,
         hasPlugin: hasPlugin
     }

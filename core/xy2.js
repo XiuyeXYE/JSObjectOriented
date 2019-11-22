@@ -10,6 +10,7 @@
     //1.System definition:
     var Array = window.Array;
     var JSON = window.JSON;
+    // var Date = window.Date;
 
 
     //5.Array length op!
@@ -1145,6 +1146,10 @@
     var plugins = EMPTY_VALUES.EMPTY_ARRAY;
     var pluginId = 0;
 
+    function uuid() {
+        // return new Date().getTime();
+        return pluginId++;
+    }
 
     function Plugin(t, f) {
         ntfs(this, Plugin);
@@ -1152,7 +1157,7 @@
             this.t = t;
             this.f = f;
             this.loaded = false;
-            this.pId = pluginId++;
+            this.pId = uuid();
         } else {
             throw "Plugin must have two parameters:type and function";
         }

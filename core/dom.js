@@ -6,7 +6,7 @@
     factory(global);
 }(typeof window !== "undefined" ? window : this, function (window) {
 
-    var document = window.document || xy.EMPTY_VALUES.EMPTY_OBJECT;
+    var document = window.document || xy.EMPTY.OBJECT;
 
 
     var xy = window.xy;
@@ -17,7 +17,7 @@
 
     function hasString(str, subStr) {
 
-        return xy.isStr(str) && xy.isStr(subStr) && !x.eq(str.indexOf(subStr), -1);
+        return xy.xy.isStr(str) && xy.xy.isStr(subStr) && !x.eq(str.indexOf(subStr), -1);
     }
 
     function hasComma(s) {
@@ -71,7 +71,7 @@
     function query(selector, node = document, elems = []) {
 
         //预处理
-        if (xy.strNonEmpty(selector) || !xy.oExist(node)) {
+        if (xy.xy.strNonEmpty(selector) || !xy.oExist(node)) {
             return null;
         }
         selector = preSelectorHandler(selector);
@@ -100,7 +100,7 @@
         //求元素
         if (xy.isArray(node)) {
             for (var i = 0; i < xy.len(node); i++) {
-                push(elems,query(selector, node[i], elems));
+                push(elems, query(selector, node[i], elems));
             }
         } else if (hasWellSign(selector)) {
             selector = selector.replace('#', '');
@@ -134,22 +134,22 @@
 
 
     //html element
-    function dom(node) {
-        notInstanceof(this, dom, 'Constructor dom requires "new"!');
+    function Dom(node) {
+        xy.notInstanceof(this, Dom, 'Constructor Dom requires "new"!');
         this.init(node);
     }
 
 
 
     //basic
-    var dom_impl = {
+    var Dom_impl = {
         //real constructor
         init: function (n) {
             this.node = n;
         },
-        d: function (selector) {
-            return query(this.node, selector);
-        },
+        // d: function (selector) {
+        //     return query(this.node, selector);
+        // },
         exist: function () {
             return xy.oExist(this.node);
         },
@@ -178,7 +178,7 @@
                 if (xy.oExist(this.node) && xy.fnExist(this.node.getAttribute)) {
                     return this.node.getAttribute(k);
                 }
-                return EMPTY_VALUES.EMPTY_STRING;
+                return xy.EMPTY.STRING;
             } else if (arguments.length >= 2) {
                 if (xy.oExist(this.node) && xy.fnExist(this.node.setAttribute)) {
                     this.node.setAttribute(k, v);
@@ -199,11 +199,11 @@
         // 操作html元素的style属性
         css: function (k, v) {
             if (arguments.length == 0) {
-                return str2ListBySeparator(this.attr('style'), /\s*;\s*/);
+                return xy.str2ListBySeparator(this.attr('style'), /\s*;\s*/);
             } else if (arguments.length == 1) {
-                var cssExprs = str2ListBySeparator(this.attr('style'), /\s*;\s*/);
-                cssExprs = arrayFilter(cssExprs, function (cssExpr) {
-                    if (strNonEmpty(cssExpr) && cssExpr.indexOf(k) != -1) {
+                var cssExprs = xy.str2ListBySeparator(this.attr('style'), /\s*;\s*/);
+                cssExprs = xy.arrayFilter(cssExprs, function (cssExpr) {
+                    if (xy.strNonEmpty(cssExpr) && cssExpr.indexOf(k) != -1) {
                         return true;
                     }
                     else {
@@ -212,9 +212,9 @@
                 });
 
                 if (cssExprs.length >= 1) {
-                    var vs = EMPTY_VALUES.EMPTY_ARRAY;
-                    arrayForEach(cssExprs, function (cssExpr) {
-                        var cssKV = str2ListBySeparator(cssExpr, /\s*:\s*/);
+                    var vs = xy.EMPTY.ARRAY;
+                    xy.arrayForEach(cssExprs, function (cssExpr) {
+                        var cssKV = xy.str2ListBySeparator(cssExpr, /\s*:\s*/);
                         if (cssKV.length == 2) {
                             vs.push(cssKV[1]);
                         }
@@ -226,12 +226,12 @@
                         return vs;
                     }
                 }
-                return EMPTY_VALUES.EMPTY_STRING;
+                return xy.EMPTY.STRING;
             } else if (arguments.length >= 2) {
                 var newCssExpr = k + ':' + v;
-                var cssExprs = str2ListBySeparator(this.attr('style'), /\s*;\s*/);
-                cssExprs = arrayFilter(cssExprs, function (cssExpr) {
-                    var cssKV = str2ListBySeparator(cssExpr, /\s*:\s*/);
+                var cssExprs = xy.str2ListBySeparator(this.attr('style'), /\s*;\s*/);
+                cssExprs = xy.arrayFilter(cssExprs, function (cssExpr) {
+                    var cssKV = xy.str2ListBySeparator(cssExpr, /\s*:\s*/);
                     if (cssKV.length == 2) {
                         return cssKV[0] !== k;
                     }
@@ -239,28 +239,28 @@
                     return false;
                 });
                 cssExprs.push(newCssExpr);
-                return this.attr('style', list2StrWithJoint(cssExprs, ';'));
+                return this.attr('style', xy.list2StrWithJoint(cssExprs, ';'));
             }
         },
         cls: function (c, append) {
             append = append || true;
             if (arguments.length == 0) {
-                return convertStr2ListByWs(this.attr('class'));
+                return xy.convertStr2ListByWs(this.attr('class'));
             }
-            else if (isStr(c)) {
+            else if (xy.isStr(c)) {
                 // 如果是空字符串直接返回!
-                if (strIsEmpty(c)) {
+                if (xy.strIsEmpty(c)) {
                     return;
                 }
-                var classList = convertStr2ListByWs(this.attr('class'));
-                classList = arrayFilter(classList,
+                var classList = xy.convertStr2ListByWs(this.attr('class'));
+                classList = xy.arrayFilter(classList,
                     function (d) {
                         return d !== c;
                     });
                 if (append) {
                     classList.push(c);
                 }
-                var classStr = convertList2StrWithWs(classList);
+                var classStr = xy.convertList2StrWithWs(classList);
                 return this.attr('class', classStr);
 
             } else {
@@ -319,11 +319,11 @@
             if (this.exist() && xy.fnExist(this.node.getBoundingClientRect)) {
                 return this.node.getBoundingClientRect();
             }
-            return EMPTY_VALUES.EMPTY_OBJECT;
+            return xy.EMPTY.OBJECT;
         },
         width: function (w, u) {
             u = u || 'px';
-            if (p0(arguments)) {
+            if (xy.p(arguments, 0)) {
                 return this.clientWidth();
             }
             else if (pnl1(arguments) && isNumber(w)) {
@@ -333,7 +333,7 @@
         },
         height: function (h, u) {
             u = u || 'px';
-            if (p0(arguments)) {
+            if (xy.p(arguments, 0)) {
                 return this.clientHeight();
             }
             else if (pnl1(arguments) && isNumber(h)) {
@@ -342,7 +342,7 @@
             }
         },
         full: function (h) {
-            if (p0(arguments)) {
+            if (xy.p(arguments, 0)) {
                 return this.k('outerHTML');
             } else {
                 //will changes node,no return!
@@ -350,13 +350,13 @@
             }
         },
         html: function (h) {
-            h = defaultValue(h, EMPTY_VALUES.EMPTY_STRING);
+            h = xy.defaultValue(h, xy.EMPTY.STRING);
             if (this.exist()) {
                 //bug: 不是所有的属性，都可以用这种方式检验属性啊
                 //因为空字符串''也是false！！！
                 //直接用吧，即可
                 // if (!!this.node.innerHTML) {
-                if (p0(arguments)) {
+                if (xy.p(arguments, 0)) {
                     return this.node.innerHTML;
                 }
                 this.node.innerHTML = h;
@@ -365,10 +365,10 @@
 
         },
         text: function (t) {
-            t = defaultValue(t, EMPTY_VALUES.EMPTY_STRING);
+            t = xy.defaultValue(t, xy.EMPTY.STRING);
             if (this.exist()) {
                 // if (!!this.node.innerText) {
-                if (p0(arguments)) {
+                if (xy.p(arguments, 0)) {
                     return this.node.innerText;
                 }
                 this.node.innerText = t;
@@ -378,9 +378,9 @@
         },
         //fix bug:var v and function v conflict!!!
         value: function (v) {
-            v = defaultValue(v, EMPTY_VALUES.EMPTY_STRING);
+            v = xy.defaultValue(v, xy.EMPTY.STRING);
             if (this.exist()) {
-                if (p0(arguments)) {
+                if (xy.p(arguments, 0)) {
                     return this.attr('value');
                 }
                 this.attr('value', v);
@@ -389,22 +389,25 @@
 
     };
 
-    xy.impl(dom, dom_impl);
+    xy.impl(Dom, Dom_impl);
 
-    var dom_static_impl = {
+    var Dom_static_impl = {
         create: function (tag) {
             return new this(document.createElement(tag));
         }
     };
 
-    xy.static_impl(dom, dom_static_impl);
+    xy.static_impl(Dom, Dom_static_impl);
 
     function crtDom(tag) {
-        return dom.create(tag);
+        return Dom.create(tag);
     }
 
 
+    xy.addPlugin(xy.Plugin.TYPE_CLASS, Dom);
+    xy.addPlugin(xy.Plugin.TYPE_FUNCTION, crtDom);
 
 
+    return xy;
 
 }));

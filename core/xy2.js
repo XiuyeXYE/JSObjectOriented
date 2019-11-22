@@ -65,23 +65,26 @@
 	 */
     var EMPTY_VALUES = {};
     EMPTY_VALUES = Object.defineProperties(EMPTY_VALUES, {
-        EMPTY_OBJECT: {
+        OBJECT: {
             get: function () {
                 return {}
             }
         },
-        EMPTY_ARRAY: {
+        ARRAY: {
             get: function () {
                 return [];
             }
         },
-        EMPTY_STRING: {
+        STRING: {
             get: function () {
                 return '';
             }
         }
-
     });
+
+    if (fnExist(Object.freeze)) {
+        Object.freeze(EMPTY_VALUES);
+    }
 
     //3.Basic core function:
 
@@ -170,7 +173,7 @@
         if (strNonEmpty(s)) {
             return s.split(separator);
         }
-        return EMPTY_VALUES.EMPTY_ARRAY;
+        return EMPTY_VALUES.ARRAY;
     }
     //string to array using ' ' to split
     function convertStr2ListByWs(s) {
@@ -181,7 +184,7 @@
         if (isArray(a)) {
             return a.join(joint);
         }
-        return EMPTY_VALUES.EMPTY_STRING;
+        return EMPTY_VALUES.STRING;
     }
     //array to string using ' ' to link
     function convertList2StrWithWs(a) {
@@ -190,13 +193,13 @@
     //array filter
     function arrayFilter(a, f) {
         if (isArray(a) && isFunction(f)) {
-            var tmp = EMPTY_VALUES.EMPTY_ARRAY;
+            var tmp = EMPTY_VALUES.ARRAY;
             for (var i = 0; i < a.length; i++) {
                 if (f(a[i], i, a)) tmp.push(a[i]);
             }
             return tmp;
         }
-        return EMPTY_VALUES.EMPTY_ARRAY;
+        return EMPTY_VALUES.ARRAY;
     }
     //array for each
     function arrayForEach(a, f) {
@@ -210,7 +213,7 @@
     }
     //array map
     function arrayMap(a, f) {
-        var tmp = EMPTY_VALUES.EMPTY_ARRAY;
+        var tmp = EMPTY_VALUES.ARRAY;
         arrayForEach(a, function (n, idx, arr) {
             tmp.push(f(n, idx, arr));
         });
@@ -387,7 +390,7 @@
     function simpleCopy(dest, src) {
         var pNum = len(arguments);
         if (pNum == 0) {
-            return EMPTY_VALUES.EMPTY_OBJECT;
+            return EMPTY_VALUES.OBJECT;
         }
         else if (pNum == 2) {
             var st = whatType(src);
@@ -404,7 +407,7 @@
                 case "object":
 
                     if (isArray(src)) {
-                        dest = isArray(dest) ? dest : EMPTY_VALUES.EMPTY_ARRAY;
+                        dest = isArray(dest) ? dest : EMPTY_VALUES.ARRAY;
                         // dest.length = src.length;
                         for (var i = 0; i < len(src); i++) {
                             dest[i] = src[i];
@@ -413,7 +416,7 @@
                     }
                     else {
 
-                        dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.EMPTY_OBJECT;
+                        dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.OBJECT;
                         var keys = enumKeys(src);
                         for (var i = 0; i < len(keys); i++) {
                             var key = keys[i];
@@ -445,7 +448,7 @@
     function deepCopy(dest, src) {
         var pNum = len(arguments);
         if (pNum == 0) {
-            return EMPTY_VALUES.EMPTY_OBJECT;
+            return EMPTY_VALUES.OBJECT;
         }
         else if (pNum == 2) {
 
@@ -463,7 +466,7 @@
                 case "object":
 
                     if (isArray(src)) {
-                        dest = isArray(dest) ? dest : EMPTY_VALUES.EMPTY_ARRAY;
+                        dest = isArray(dest) ? dest : EMPTY_VALUES.ARRAY;
                         // dest.length = src.length;
                         for (var i = 0; i < len(src); i++) {
                             dest[i] = deepCopy(dest[i], src[i]);
@@ -472,7 +475,7 @@
                     }
                     else {
 
-                        dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.EMPTY_OBJECT;
+                        dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.OBJECT;
                         var keys = enumKeys(src);
                         for (var i = 0; i < len(keys); i++) {
                             var key = keys[i];
@@ -644,7 +647,7 @@
     //干脆不支持继承函数多态吧！
     //interface1 extends interface2
     function inf_ext() {
-        var last_inf = EMPTY_VALUES.EMPTY_OBJECT;
+        var last_inf = EMPTY_VALUES.OBJECT;
         var ps = Array.prototype.slice.call(arguments);
         ps.unshift(last_inf);
         return simpleCopy.apply(null, ps);
@@ -827,9 +830,9 @@
             args = (key == p0 && p1) || args;
             //er yuan
             key = key || p0;
-            args = args || EMPTY_VALUES.EMPTY_ARRAY;
+            args = args || EMPTY_VALUES.ARRAY;
             if (isStr(args) || !oExist(args.length)) {//string, number,boolean,symbol; later 3 not have length!
-                var tmp = EMPTY_VALUES.EMPTY_ARRAY;
+                var tmp = EMPTY_VALUES.ARRAY;
                 tmp.push(args);
                 args = tmp;
             }
@@ -853,7 +856,7 @@
         fn: function (f) {
             if (pnl(arguments, 1) && fnExist(this.k(f))) {
                 f = this.k(f);
-                var ps = EMPTY_VALUES.EMPTY_ARRAY;
+                var ps = EMPTY_VALUES.ARRAY;
                 for (var i = 1; i < arguments.length; i++) {
                     ps.push(arguments[i]);
                 }
@@ -877,19 +880,19 @@
             args = (f == aorf && a) || args;
             //two parameter: a not exist
             f = f || aorf;
-            args = args || EMPTY_VALUES.EMPTY_ARRAY;
+            args = args || EMPTY_VALUES.ARRAY;
 
-            var ps = EMPTY_VALUES.EMPTY_ARRAY;
+            var ps = EMPTY_VALUES.ARRAY;
             ps[0] = f;
             // if (isFunction(this.invoke.caller)) {
             // 	ps[0] = this.invoke.caller.name;
             // }
-            // var args = EMPTY_VALUES.EMPTY_ARRAY;
+            // var args = EMPTY_VALUES.ARRAY;
             // if (p1(arguments)) {
-            // 	args = aorf || EMPTY_VALUES.EMPTY_ARRAY;
+            // 	args = aorf || EMPTY_VALUES.ARRAY;
             // } else if (pnl2(arguments)) {
             // 	ps[0] = aorf;
-            // 	args = a || EMPTY_VALUES.EMPTY_ARRAY;
+            // 	args = a || EMPTY_VALUES.ARRAY;
             // }
             for (var i = 0; i < args.length; i++) {
                 ps.push(args[i]);
@@ -926,8 +929,8 @@
     //11.Common data structure
     function Set(arr) {
         notInstanceof(this, Set, "Constructor Set requires 'new' at Set!!!");
-        this.data = EMPTY_VALUES.EMPTY_ARRAY;
-        arr = arr || EMPTY_VALUES.EMPTY_ARRAY;
+        this.data = EMPTY_VALUES.ARRAY;
+        arr = arr || EMPTY_VALUES.ARRAY;
         if (pnl(arr, 1)) {
             for (var i = 0; i < len(arr); i++) {
                 this.add(arr[i]);
@@ -1023,8 +1026,8 @@
 
     function Map(arr) {
         notInstanceof(this, Map, "Constructor Map requires 'new' at Map!!!");
-        this.data = EMPTY_VALUES.EMPTY_ARRAY;
-        arr = arr || EMPTY_VALUES.EMPTY_ARRAY;
+        this.data = EMPTY_VALUES.ARRAY;
+        arr = arr || EMPTY_VALUES.ARRAY;
         if (pnl(arr, 1)) {
             for (var i = 0; i < len(arr); i++) {
                 this.add(arr[i][0], arr[i][1]);
@@ -1066,14 +1069,14 @@
             }
         },
         keys: function () {
-            var keyss = EMPTY_VALUES.EMPTY_ARRAY;
+            var keyss = EMPTY_VALUES.ARRAY;
             for (var i = 0; i < this.size(); i++) {
                 keyss.push(this.data[i][0]);
             }
             return keyss;
         },
         values: function () {
-            var valuess = EMPTY_VALUES.EMPTY_ARRAY;
+            var valuess = EMPTY_VALUES.ARRAY;
             for (var i = 0; i < this.size(); i++) {
                 valuess.push(this.data[i][1]);
             }
@@ -1142,7 +1145,7 @@
 
     //12.Plugins dev
 
-    var plugins = EMPTY_VALUES.EMPTY_ARRAY;
+    var plugins = EMPTY_VALUES.ARRAY;
     var pluginId = 0;
 
     function uuid() {
@@ -1328,6 +1331,7 @@
     }
 
     var classes = {
+        EMPTY: EMPTY_VALUES,
         Set: Set,
         ValueSet: ValueSet,
         Map: Map,

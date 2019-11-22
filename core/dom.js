@@ -11,7 +11,7 @@
     var xy = window.xy;
     
     if (!xy) {
-        throw "Need xy.js framework!!!";
+        throw "Need xy2.js framework!!!";
     }
     
     var document = window.document || {};

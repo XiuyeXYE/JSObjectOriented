@@ -10,7 +10,6 @@
     //1.System definition:
     var Array = window.Array;
     var JSON = window.JSON;
-    // var Date = window.Date;
 
 
     //5.Array length op!
@@ -1151,15 +1150,19 @@
         return pluginId++;
     }
 
-    function Plugin(t, f) {
+    function Plugin(t, f, name) {
         ntfs(this, Plugin);
         if (oExist(t) && fnExist(f)) {
             this.t = t;
             this.f = f;
+            this.name = name || f.name;
+            if (!isStr(this.name) && /^\d/.test(this.name)) {
+                throw "Plugin name must be string!";
+            }
             this.loaded = false;
             this.pId = uuid();
         } else {
-            throw "Plugin must have two parameters:type and function";
+            throw "Plugin must have two parameters:type and function!";
         }
     }
 
@@ -1172,42 +1175,76 @@
         return plugins;
     }
 
-    function addPlugin(t, f) {
-        if (!eq(t, Plugin.TYPE_CALL)) {
-            if (oExist(xy[f.name])) {
-                throw "Plugin exists or plugin name conflicts !!!";
+    function hasPlugin(iOrFOrN) {
+        for (var i = 0; i < len(plugins); i++) {
+            var v = plugins[i];
+            var flag = false;
+            if (isFunction(iOrFOrN)) {
+                flag = eq(v.f, iOrFOrN);
             }
-            xy[f.name] = f;
+            else if (isNumber(iOrFOrN)) {
+                flag = eq(v.pId, iOrFOrN);
+            }
+            else if (isStr(iOrFOrN)) {
+                flag = eq(v.name, iOrFOrN);
+            }
+            if (flag) {
+                return flag;
+            }
         }
-        var ot = new Plugin(t, f);
+        return false;
+    }
+
+    function addPlugin(t, f, name) {
+        if (!oExist(t) || !isFunction(f)) {
+            throw "first plugin type,second plugin function,indeed!";
+        }
+        name = name || f.name;
+        for (var i = 0; i < len(plugins); i++) {
+            var v = plugins[i];
+            if (eq(v.f, f) || eq(v.name, name)) {
+                throw "Plugin exists or plugin name conflicts !!!";
+                // return false;
+            }
+        }
+        if (!eq(t, Plugin.TYPE_CALL)) {
+            xy[name] = f;
+        }
+        var ot = new Plugin(t, f, name);
         ot.loaded = true;
         plugins.push(ot);
         return ot.pId;
     }
 
-    function rmPlugin(iOrF) {
+    function rmPlugin(iOrFOrN) {
+        var a = len(plugins);
         plugins = arrayFilter(plugins, function (v, i, a) {
-
-            if (isFunction(iOrF)) {
-                var flag = eq(v.f, iOrF);
-            } else {
-                var flag = eq(v.pId, iOrF);
+            var flag = false;//true:exist!
+            if (isFunction(iOrFOrN)) {
+                flag = eq(v.f, iOrFOrN);
+            }
+            else if (isNumber(iOrFOrN)) {
+                flag = eq(v.pId, iOrFOrN);
+            }
+            else if (isStr(iOrFOrN)) {
+                flag = eq(v.name, iOrFOrN);
             }
             if (flag && !eq(v.t, Plugin.TYPE_CALL)) {
-                delete xy[v.f.name];
+                delete xy[v.name];
             }
-            return flag;
+            return !flag;
         });
-
+        return gt(a, len(plugins));
     }
 
     function clearPlugins() {
         arrayForEach(plugins, function (v, i, a) {
             if (!eq(v.t, Plugin.TYPE_CALL)) {
-                delete xy[v.f.name];
+                delete xy[v.name];
             }
         });
         plugins.length = 0;
+        return peq(plugins, 0);
     }
 
 
@@ -1282,19 +1319,19 @@
         static_impl: static_impl,
         inf_ext: inf_ext,
         inst_of: inst_of,
-        notInstanceof: notInstanceof,
+        notInstanceof: notInstanceof
 
     };
 
     var interfaces = {
-        std_interfaces: std_interfaces,
+        std_interfaces: std_interfaces
     }
 
     var classes = {
         Set: Set,
         ValueSet: ValueSet,
         Map: Map,
-        ValueMap: ValueMap,
+        ValueMap: ValueMap
     };
 
     var pluginsDEV = {
@@ -1304,6 +1341,7 @@
         addPlugin: addPlugin,
         rmPlugin: rmPlugin,
         clearPlugins: clearPlugins,
+        hasPlugin: hasPlugin
     }
 
     // For nothing of conflict of JQuery ... frameworks, it must be function.

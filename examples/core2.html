@@ -15,6 +15,7 @@
 
     <script type="text/javascript" src="../core/xy2.js"></script>
     <script type="text/javascript" src="../core/dom.js"></script>
+    <script type="text/javascript" src="../core/ajax.js"></script>
 
 
     <script>
@@ -77,11 +78,11 @@
         b.b1();
         // static_impl(A,of_interface);
         // static_impl(A,extend_interface);
-        xy.static_impl(A, xy.std_interfaces.static_of_interface, xy.std_interfaces.extend_interface);
+        xy.static_impl(A, xy.std.static_of_interface, xy.std.extend_interface);
         console.log('===========================');
         console.log(A.of());
 
-        var new_inf = xy.inf_ext(xy.std_interfaces.of_interface, xy.std_interfaces.extend_interface);
+        var new_inf = xy.inf_ext(xy.std.of_interface, xy.std.extend_interface);
         console.log(new_inf);
         function C() {
             this.c = 100;
@@ -90,12 +91,12 @@
         var c = new C();
         console.log(c);
         console.log("C instanceof new_inf:", xy.inst_of(c, new_inf));
-        console.log("C instanceof of_interface:", xy.inst_of(c, xy.std_interfaces.of_interface));
-        console.log("C instanceof extend_interface:", xy.inst_of(c, xy.std_interfaces.extend_interface));
-        console.log("C instanceof invoke_interface:", xy.inst_of(c, xy.std_interfaces.invoke_interface));
+        console.log("C instanceof of_interface:", xy.inst_of(c, xy.std.of_interface));
+        console.log("C instanceof extend_interface:", xy.inst_of(c, xy.std.extend_interface));
+        console.log("C instanceof invoke_interface:", xy.inst_of(c, xy.std.invoke_interface));
         console.log("C instanceof C:", xy.inst_of(c, C));
-        console.log("C instanceof new_inf，of_interface，extend_interface:", xy.inst_of(c, new_inf, xy.std_interfaces.of_interface, xy.std_interfaces.extend_interface));
-        console.log("C instanceof new_inf，of_interface，extend_interface，invoke_interface:", xy.inst_of(c, new_inf, xy.std_interfaces.of_interface, xy.std_interfaces.extend_interface, xy.std_interfaces.invoke_interface));
+        console.log("C instanceof new_inf，of_interface，extend_interface:", xy.inst_of(c, new_inf, xy.std.of_interface, xy.std.extend_interface));
+        console.log("C instanceof new_inf，of_interface，extend_interface，invoke_interface:", xy.inst_of(c, new_inf, xy.std.of_interface, xy.std.extend_interface, xy.std.invoke_interface));
 
         function D() {
             // this.base();//error;无继承类没有base！

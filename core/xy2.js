@@ -1302,7 +1302,7 @@
         convertStr2ListByWs: convertStr2ListByWs,
         // 把字符串数组合并字符串
         convertList2StrWithWs: convertList2StrWithWs,
-        defaultValue: defaultValue,
+        dv: defaultValue,
         lt: lt,
         nlt: nlt,
         gt: gt,
@@ -1327,7 +1327,7 @@
     };
 
     var interfaces = {
-        std_interfaces: std_interfaces
+        std: std_interfaces
     }
 
     var classes = {

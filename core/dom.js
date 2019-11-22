@@ -6,15 +6,17 @@
     factory(global);
 }(typeof window !== "undefined" ? window : this, function (window) {
 
-    var document = window.document || xy.EMPTY.OBJECT;
-
-
+    
+    
     var xy = window.xy;
-
+    
     if (!xy) {
         throw "Need xy.js framework!!!";
     }
+    
+    var document = window.document || {};
 
+    
     function hasString(str, subStr) {
 
         return xy.xy.isStr(str) && xy.xy.isStr(subStr) && !x.eq(str.indexOf(subStr), -1);
@@ -350,7 +352,7 @@
             }
         },
         html: function (h) {
-            h = xy.defaultValue(h, xy.EMPTY.STRING);
+            h = xy.dv(h, xy.EMPTY.STRING);
             if (this.exist()) {
                 //bug: 不是所有的属性，都可以用这种方式检验属性啊
                 //因为空字符串''也是false！！！
@@ -365,7 +367,7 @@
 
         },
         text: function (t) {
-            t = xy.defaultValue(t, xy.EMPTY.STRING);
+            t = xy.dv(t, xy.EMPTY.STRING);
             if (this.exist()) {
                 // if (!!this.node.innerText) {
                 if (xy.p(arguments, 0)) {
@@ -378,7 +380,7 @@
         },
         //fix bug:var v and function v conflict!!!
         value: function (v) {
-            v = xy.defaultValue(v, xy.EMPTY.STRING);
+            v = xy.dv(v, xy.EMPTY.STRING);
             if (this.exist()) {
                 if (xy.p(arguments, 0)) {
                     return this.attr('value');

@@ -19,7 +19,7 @@
     
     function hasString(str, subStr) {
 
-        return xy.xy.isStr(str) && xy.xy.isStr(subStr) && !x.eq(str.indexOf(subStr), -1);
+        return xy.isStr(str) && xy.isStr(subStr) && !x.eq(str.indexOf(subStr), -1);
     }
 
     function hasComma(s) {

@@ -689,8 +689,8 @@
                         var inf_m = cOrI[m];
                         var obj_m = (obj.__proto__)[m];
 
-                        var m_type_in_inf = typeof inf_m;
-                        var m_type_in_obj = typeof obj_m;
+                        var m_type_in_inf = whatType(inf_m);
+                        var m_type_in_obj = whatType(obj_m);
                         //类型检验
                         if (m_type_in_obj !== m_type_in_inf) {//
                             return false;
@@ -933,11 +933,46 @@
         },
     };
 
+    var inst_of_insterface = {
+        inst_of: function (superClazz) {
+            return inst_of(this, superClazz);
+        }
+    };
+
+    // var static_ext_insterface = {
+    //     ext: function (superClazz) {
+    //         return ext(this, superClazz);
+    //     }
+    // };
+
+    // var static_impl_interface = {
+    //     static_impl: function () {
+    //         var ps = arrayLike2Array(arguments);
+    //         ps.unshift(this);
+    //         return static_impl.apply(this, ps);
+    //     },
+    //     impl: function () {
+    //         var ps = arrayLike2Array(arguments);
+    //         ps.unshift(this);
+    //         return impl.apply(this, ps);
+    //     }
+    // };
+
+
+
+    var object_default_insterfaces = inf_ext(
+        inst_of_insterface,
+        inst_string_interface);
+
     var std_interfaces = {
         static_of_interface: static_of_interface,
         extend_interface: extend_interface,
         inst_wrapper_interface: inst_wrapper_interface,
         inst_string_interface: inst_string_interface,
+        inst_of_insterface: inst_of_insterface,
+        // static_ext_insterface: static_ext_insterface,
+        // static_impl_interface: static_impl_interface,
+        object_default_insterfaces: object_default_insterfaces
     };
 
 

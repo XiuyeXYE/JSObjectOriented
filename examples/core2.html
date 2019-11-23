@@ -116,9 +116,9 @@
         // ext(F,E,F);//error
         //F extends E ,E extends D
         xy.ext(F, E, D);
-        console.log('D base=',D.prototype.base);
-        console.log('E base=',E.prototype.base);
-        console.log('F base=',F.prototype.base);
+        console.log('D base=', D.prototype.base);
+        console.log('E base=', E.prototype.base);
+        console.log('F base=', F.prototype.base);
         // console.log(new D());
         // console.log(new E());
         console.log(new F());
@@ -169,7 +169,8 @@
 
         var C1_impl = {
             f1: function () {
-                this.base();
+                // this.base();//error
+                console.log('this.base=', this.base);
                 console.log("C1::f1");
             }
         };
@@ -177,6 +178,31 @@
         // C1.prototype.f1.prototype.__proto__.constructor = A;
         var c = new C1();
         c.f1();
+
+        xy.impl(C1, xy.std.object_default_insterfaces);
+        xy.static_impl(C1, xy.std.static_impl_interface);
+        var inf1 = {
+            toString: function () { return "inf1::toString()"; }
+        };
+
+        console.log(c.inst_of(C1));
+        console.log(c.inst_of(B1));
+        console.log(c.inst_of(A1));
+        console.log(c.inst_of(Function));
+        console.log(c.inst_of(xy.std.object_default_insterfaces));
+        console.log(c.inst_of(inf1));
+        console.log(c.toString());
+
+        // C1.impl(inf1);
+        // console.log(c.toString());
+        // console.log(c.inst_of(xy.std.object_default_insterfaces));
+        // console.log(c.inst_of(inf1));
+
+        // C1.static_impl(inf1);
+        // C1.static_impl(xy.std.static_ext_insterface);
+        // console.log(C1.toString());
+
+        // C1.ext(A);
 
     </script>
 </body>

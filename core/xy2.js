@@ -92,6 +92,12 @@
         return typeof a;
     }
 
+    function whatClass(o) {
+        if (oExist(o)) {
+            return o.constructor;
+        }
+    }
+
     //check boolean
     function isBoolean(b) {
         return typeof b === 'boolean';
@@ -404,6 +410,7 @@
                 case "function":
                     dest = src;
                     break;
+		default:
                 case "object":
 
                     if (isArray(src)) {
@@ -425,11 +432,11 @@
 
                     }
                     break;
+		    
+			    
             }
 
-            for (var key in src) {
-                dest[key] = src[key];
-            }
+            
         } else {// >2
             for (var i = 1; i < pNum; i++) {
                 dest = simpleCopy(dest, arguments[i]);
@@ -463,6 +470,7 @@
                 case "function":
                     dest = src;
                     break;
+		default:
                 case "object":
 
                     if (isArray(src)) {
@@ -484,6 +492,7 @@
 
                     }
                     break;
+		
             }
 
 
@@ -540,7 +549,7 @@
                     throw arguments[i] + ' is not a function!';
                 }
                 if (oExist(check_m.get(clazz))) {
-                    throw 'class ' + clazz.name + ' only one!';
+                    throw 'Class ' + clazz.name + ' only one!';
                 } else {
                     check_m.set(clazz, 1);
                 }
@@ -554,7 +563,7 @@
         } else if (isFunction(dest) && isFunction(src)) {
 
             if (dest === src) {
-                throw 'class cannot inherit from itself!';
+                throw 'Class cannot inherit from itself!';
             }
 
             //up search
@@ -577,9 +586,14 @@
             // dest.prototype.constructor = dest;
             // methods_obj = dest.prototype;//re eq
             //核心3：inherit static methods and fields
-            for (var static_member in src) {
+            var static_members = enumKeys(src);
+            for (var i = 0; i < len(static_members); i++) {
+                var static_member = static_members[i];
                 dest[static_member] = src[static_member];
             }
+            // for (var static_member in src) {
+            //     dest[static_member] = src[static_member];
+            // }
             //核心4：定义超类构造方法，base() = super()
             // 重复定义会报错，所以不用if去check base存在不存在
             //base 只有继承的派生类才有！
@@ -590,9 +604,18 @@
                 //<=>super 每一个匿名函数都是新的
                 value: function () {
                     var supCon = this.base.caller;
-                    if (fnExist(supCon)) {
+                    if (fnExist(supCon) && oExist(supCon.prototype)
+                        && oExist(supCon.prototype.__proto__)
+                        && fnExist(supCon.prototype.__proto__.constructor)) {
                         supCon = supCon.prototype.__proto__.constructor;
-                        supCon.apply(this, arguments);
+                        if (!eq(supCon, Object) && this instanceof supCon) {
+                            supCon.apply(this, arguments);
+                        }
+                        else {
+                            throw "this.base() is only called by subclass constructor";
+                        }
+                    } else {
+                        throw "this.base() is only called by subclass constructor";
                     }
                 },
                 configurable: false,
@@ -600,6 +623,8 @@
                 writable: false,
             });
             return dest;
+        } else {
+            throw 'First param and second param are all functions!';
         }
     }
 
@@ -673,8 +698,8 @@
                         var inf_m = cOrI[m];
                         var obj_m = (obj.__proto__)[m];
 
-                        var m_type_in_inf = typeof inf_m;
-                        var m_type_in_obj = typeof obj_m;
+                        var m_type_in_inf = whatType(inf_m);
+                        var m_type_in_obj = whatType(obj_m);
                         //类型检验
                         if (m_type_in_obj !== m_type_in_inf) {//
                             return false;
@@ -917,11 +942,64 @@
         },
     };
 
+    var inst_of_insterface = {
+        inst_of: function (superClazz) {
+            return inst_of(this, superClazz);
+        }
+    };
+
+    var clone_interface = {
+        clone: function () {
+            var that = whatClass(this);
+            return deepCopy(new that(), this);
+        }
+    };
+
+    var equals_interface = {
+        equals: function (obj) {
+            return deepEQ(this, obj);
+        }
+    };
+
+
+    // var static_ext_insterface = {
+    //     ext: function (superClazz) {
+    //         return ext(this, superClazz);
+    //     }
+    // };
+
+    // var static_impl_interface = {
+    //     static_impl: function () {
+    //         var ps = arrayLike2Array(arguments);
+    //         ps.unshift(this);
+    //         return static_impl.apply(this, ps);
+    //     },
+    //     impl: function () {
+    //         var ps = arrayLike2Array(arguments);
+    //         ps.unshift(this);
+    //         return impl.apply(this, ps);
+    //     }
+    // };
+
+
+
+    var object_default_insterfaces = inf_ext(
+        inst_of_insterface,
+        equals_interface,
+        clone_interface,
+        inst_string_interface);
+
     var std_interfaces = {
         static_of_interface: static_of_interface,
         extend_interface: extend_interface,
         inst_wrapper_interface: inst_wrapper_interface,
         inst_string_interface: inst_string_interface,
+        inst_of_insterface: inst_of_insterface,
+        clone_interface: clone_interface,
+        equals_interface: equals_interface,
+        // static_ext_insterface: static_ext_insterface,
+        // static_impl_interface: static_impl_interface,
+        object_default_insterfaces: object_default_insterfaces
     };
 
 
@@ -1258,13 +1336,8 @@
     //9.Open API functions
 
     var fn = {
-        // ready: function (f) {
-        //     if (isFunction(f)) {
-        //         // dom.of(document).on('DOMContentLoaded', f);
-        //         this(f);
-        //     }
-        // },
-        t: whatType,
+        T: whatType,
+        C: whatClass,
         isSymbol: isSymbol,
         // 判断对象是否为空
         isNumber: isNumber,

@@ -6,17 +6,17 @@
     factory(global);
 }(typeof window !== "undefined" ? window : this, function (window) {
 
-    
-    
+
+
     var xy = window.xy;
-    
+
     if (!xy) {
         throw "Need xy2.js framework!!!";
     }
-    
+
     var document = window.document || {};
 
-    
+
     function hasString(str, subStr) {
 
         return xy.isStr(str) && xy.isStr(subStr) && !x.eq(str.indexOf(subStr), -1);

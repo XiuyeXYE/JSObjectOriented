@@ -540,7 +540,7 @@
                     throw arguments[i] + ' is not a function!';
                 }
                 if (oExist(check_m.get(clazz))) {
-                    throw 'class ' + clazz.name + ' only one!';
+                    throw 'Class ' + clazz.name + ' only one!';
                 } else {
                     check_m.set(clazz, 1);
                 }
@@ -554,7 +554,7 @@
         } else if (isFunction(dest) && isFunction(src)) {
 
             if (dest === src) {
-                throw 'class cannot inherit from itself!';
+                throw 'Class cannot inherit from itself!';
             }
 
             //up search
@@ -577,9 +577,14 @@
             // dest.prototype.constructor = dest;
             // methods_obj = dest.prototype;//re eq
             //核心3：inherit static methods and fields
-            for (var static_member in src) {
+            var static_members = enumKeys(src);
+            for (var i = 0; i < len(static_members); i++) {
+                var static_member = static_members[i];
                 dest[static_member] = src[static_member];
             }
+            // for (var static_member in src) {
+            //     dest[static_member] = src[static_member];
+            // }
             //核心4：定义超类构造方法，base() = super()
             // 重复定义会报错，所以不用if去check base存在不存在
             //base 只有继承的派生类才有！
@@ -590,9 +595,18 @@
                 //<=>super 每一个匿名函数都是新的
                 value: function () {
                     var supCon = this.base.caller;
-                    if (fnExist(supCon)) {
+                    if (fnExist(supCon) && oExist(supCon.prototype)
+                        && oExist(supCon.prototype.__proto__)
+                        && fnExist(supCon.prototype.__proto__.constructor)) {
                         supCon = supCon.prototype.__proto__.constructor;
-                        supCon.apply(this, arguments);
+                        if (!eq(supCon, Object) && this instanceof supCon) {
+                            supCon.apply(this, arguments);
+                        }
+                        else {
+                            throw "this.base() is only called by subclass constructor";
+                        }
+                    } else {
+                        throw "this.base() is only called by subclass constructor";
                     }
                 },
                 configurable: false,
@@ -600,6 +614,8 @@
                 writable: false,
             });
             return dest;
+        } else {
+            throw 'First param and second param are all functions!';
         }
     }
 

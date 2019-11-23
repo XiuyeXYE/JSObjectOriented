@@ -116,6 +116,9 @@
         // ext(F,E,F);//error
         //F extends E ,E extends D
         xy.ext(F, E, D);
+        console.log('D base=',D.prototype.base);
+        console.log('E base=',E.prototype.base);
+        console.log('F base=',F.prototype.base);
         // console.log(new D());
         // console.log(new E());
         console.log(new F());
@@ -141,7 +144,39 @@
         console.log("is G:", xy.inst_of(h, G));
         console.log("is H:", xy.inst_of(h, H));
 
+        function A1() {
+            this.a = 100;
+            console.log('A');
+        }
+        function B1() {
+            // this.base();
+            this.b = 10;
+            console.log('B');
+        }
+        function C1() {
+            this.base();
+            this.c = 999;
+            console.log('C');
+        }
+        xy.ext(C1, B1, A1);
+        console.log(new A1());
+        console.log(new B1());
+        console.log(new C1());
+        console.log(A1.toString());
+        console.log(B1.toString());
+        console.log(C1.toString());
+        console.log(new C1());
 
+        var C1_impl = {
+            f1: function () {
+                this.base();
+                console.log("C1::f1");
+            }
+        };
+        xy.impl(C1, C1_impl);
+        // C1.prototype.f1.prototype.__proto__.constructor = A;
+        var c = new C1();
+        c.f1();
 
     </script>
 </body>

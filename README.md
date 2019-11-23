@@ -59,7 +59,7 @@ Write some utilities API for me.
 		A:a1
 		A:a2
 		A:a3
-### Extends super class:
+### Extends super class: must inherit a class ,or not useful!
 		function B() {
             console.log("B");
             this.base('B input');

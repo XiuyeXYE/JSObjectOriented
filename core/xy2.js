@@ -410,6 +410,7 @@
                 case "function":
                     dest = src;
                     break;
+		default:
                 case "object":
 
                     if (isArray(src)) {
@@ -431,11 +432,11 @@
 
                     }
                     break;
+		    
+			    
             }
 
-            for (var key in src) {
-                dest[key] = src[key];
-            }
+            
         } else {// >2
             for (var i = 1; i < pNum; i++) {
                 dest = simpleCopy(dest, arguments[i]);
@@ -469,6 +470,7 @@
                 case "function":
                     dest = src;
                     break;
+		default:
                 case "object":
 
                     if (isArray(src)) {
@@ -490,6 +492,7 @@
 
                     }
                     break;
+		
             }
 
 

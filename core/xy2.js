@@ -1333,12 +1333,6 @@
     //9.Open API functions
 
     var fn = {
-        // ready: function (f) {
-        //     if (isFunction(f)) {
-        //         // dom.of(document).on('DOMContentLoaded', f);
-        //         this(f);
-        //     }
-        // },
         T: whatType,
         C: whatClass,
         isSymbol: isSymbol,

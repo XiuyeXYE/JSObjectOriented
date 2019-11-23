@@ -92,6 +92,12 @@
         return typeof a;
     }
 
+    function whatClass(o) {
+        if (oExist(o)) {
+            return o.constructor;
+        }
+    }
+
     //check boolean
     function isBoolean(b) {
         return typeof b === 'boolean';
@@ -939,6 +945,20 @@
         }
     };
 
+    var clone_interface = {
+        clone: function () {
+            var that = whatClass(this);
+            return deepCopy(new that(), this);
+        }
+    };
+
+    var equals_interface = {
+        equals: function (obj) {
+            return deepEQ(this, obj);
+        }
+    };
+
+
     // var static_ext_insterface = {
     //     ext: function (superClazz) {
     //         return ext(this, superClazz);
@@ -962,6 +982,8 @@
 
     var object_default_insterfaces = inf_ext(
         inst_of_insterface,
+        equals_interface,
+        clone_interface,
         inst_string_interface);
 
     var std_interfaces = {
@@ -970,6 +992,8 @@
         inst_wrapper_interface: inst_wrapper_interface,
         inst_string_interface: inst_string_interface,
         inst_of_insterface: inst_of_insterface,
+        clone_interface: clone_interface,
+        equals_interface: equals_interface,
         // static_ext_insterface: static_ext_insterface,
         // static_impl_interface: static_impl_interface,
         object_default_insterfaces: object_default_insterfaces
@@ -1315,7 +1339,8 @@
         //         this(f);
         //     }
         // },
-        t: whatType,
+        T: whatType,
+        C: whatClass,
         isSymbol: isSymbol,
         // 判断对象是否为空
         isNumber: isNumber,

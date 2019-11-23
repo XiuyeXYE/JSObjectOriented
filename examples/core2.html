@@ -180,7 +180,7 @@
         c.f1();
 
         xy.impl(C1, xy.std.object_default_insterfaces);
-        xy.static_impl(C1, xy.std.static_impl_interface);
+        // xy.static_impl(C1, xy.std.static_impl_interface);
         var inf1 = {
             toString: function () { return "inf1::toString()"; }
         };
@@ -192,6 +192,10 @@
         console.log(c.inst_of(xy.std.object_default_insterfaces));
         console.log(c.inst_of(inf1));
         console.log(c.toString());
+        console.log(c.clone());
+        console.log(c.clone().equals(c));
+        console.log(c.clone() == c);
+        console.log(c.clone() === c);
 
         // C1.impl(inf1);
         // console.log(c.toString());

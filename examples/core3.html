@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Core</title>
+    <style type="text/css">
+    </style>
+</head>
+
+<body>
+    <h1>API Operation!</h1>
+
+
+
+    <script type="text/javascript" src="../core/xy2.js"></script>
+    <script type="text/javascript" src="../core/dom.js"></script>
+    <script type="text/javascript" src="../core/ajax.js"></script>
+
+
+
+    <script type="text/javascript">
+        var the_following_common_interface = {
+            init: function () {
+                this.data = xy.EMPTY.ARRAY;
+            },
+            isEmpty: function () {
+                return eq(this.size(), 0);
+            },
+            size: function () {
+                return len(this.data);
+            },
+            [Symbol.iterator]: function* () {
+                for (var d of this.data) {
+                    yield d;
+                }
+            }
+        };
+        function Bag() {
+            xy.ntfs(this, Bag);
+            this.init();
+        }
+
+        var Bag_impl = {
+            add: function (item) {
+                this.data.push(item);
+            },
+        };
+
+        xy.impl(Bag, Bag_impl, the_following_common_interface);
+
+        function Queue() {
+            xy.ntfs(this, Queue);
+            this.init();
+        }
+
+        var Queue_impl = {
+            enqueue: function (item) {
+                this.data.unshift(item);
+            },
+            dequeue: function () {
+                return this.data.pop();
+            },
+        };
+        xy.impl(Queue, Queue_impl, the_following_common_interface);
+
+        function Stack() {
+            xy.ntfs(this, Stack);
+            this.init();
+        }
+
+        var Stack_impl = {
+            push: function (item) {
+                this.data.push(item);
+                return this;
+            },
+            pop: function () {
+                return this.data.pop();
+            },
+        };
+
+        xy.impl(Stack, Stack_impl, the_following_common_interface);
+
+
+        const N = 20;
+        var numbers = new Bag();
+        for (var i = 0; i < N; i++) {
+            numbers.add(Math.random() * i);
+        }
+        var sum = 0;
+        for (var x of numbers) {
+            sum += x;
+        }
+        var mean = sum / N;
+        sum = 0;
+        for (var x of numbers) {
+            sum += (x - mean) * (x - mean);
+        }
+        var std = Math.sqrt(sum / (N - 1));
+        console.log(mean);
+        console.log(std);
+
+        var q = new Queue();
+        for (var i = 0; i < N; i++) {
+            q.enqueue(Math.random() * i);
+        }
+        var a = xy.EMPTY.ARRAY;
+        for (var i = 0; i < N; i++) {
+            a[i] = q.dequeue();
+        }
+        console.log(a);
+        console.log(q);
+
+        var ops = new Stack();
+        var vals = new Stack();
+        var exprs = "(1+1+1)";
+        for (var s of exprs) {
+            switch (s) {
+                case "(":
+                case "+":
+                case "-":
+                case "*":
+                case "/":
+                    // case "sqrt":
+                    ops.push(s);
+                    break;
+                case ")":
+                    var op = ops.pop();
+                    var v = vals.pop();
+                    switch (op) {
+                        case "+": v = vals.pop() + v; break;
+                        case "-": v = vals.pop() - v; break;
+                        case "*": v = vals.pop() * v; break;
+                        case "/": v = vals.pop() / v; break;
+                        // case "sqrt": v = Math.sqrt(v);
+                    }
+                    vals.push(v);
+                    break;
+                default:
+                    vals.push(parseFloat(s));
+            }
+            console.log(ops, vals);
+        }
+        console.log(vals.pop());
+
+    </script>
+
+</body>
+
+</html>

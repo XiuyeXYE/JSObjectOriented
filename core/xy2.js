@@ -1208,74 +1208,9 @@
 
     impl(ValueMap, ValueMap_impl);
 
-    function Bag() {
+   
 
-    }
-
-    var Bag_impl = {
-        add: function () {
-
-        },
-        isEmpty: function () {
-
-        },
-        size: function () {
-
-        },
-        [Symbol.iterator]: function* () {
-
-        }
-    };
-
-    impl(Bag, Bag_impl);
-
-    function Queue() {
-
-    }
-
-    var Queue_impl = {
-        enqueue: function (item) {
-
-        },
-        dequeue: function () {
-
-        },
-        isEmpty: function (item) {
-
-        },
-        size: function (item) {
-
-        },
-        [Symbol.iterator]: function* () {
-
-        }
-    };
-    impl(Queue, Queue_impl);
-
-    function Stack() {
-
-    }
-
-    var Stack_impl = {
-        push: function (item) {
-
-        },
-        pop: function () {
-
-        },
-        isEmpty: function () {
-
-        },
-        size: function () {
-
-        },
-        [Symbol.iterator]: function* () {
-
-        }
-    };
-
-    impl(Stack, Stack_impl);
-
+    
 
     //12.Plugins dev
 
@@ -1464,7 +1399,7 @@
         Set: Set,
         ValueSet: ValueSet,
         Map: Map,
-        ValueMap: ValueMap
+        ValueMap: ValueMap,
     };
 
     var pluginsDEV = {

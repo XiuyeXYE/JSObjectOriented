@@ -4,17 +4,16 @@
 
 ; (function (global, factory) {
     factory(global);
-}(typeof window !== "undefined" ? window : this, function (window) {
+}(typeof require === 'function' ? require('./xy2.js') : this.xy, function (xy) {
 
 
 
-    var xy = window.xy;
 
     if (!xy) {
         throw "Need xy2.js framework!!!";
     }
 
-    var document = window.document || {};
+    var document = typeof window === 'object' && window.document || {};
 
 
     function hasString(str, subStr) {

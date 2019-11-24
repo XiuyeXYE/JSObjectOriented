@@ -2,15 +2,19 @@
  * My class definition and  and API
  */
 ; (function (global, factory) {
-    factory(global);
-}(typeof window !== "undefined" ? window : this, function (window) {
+    typeof exports === 'object' && typeof module !== 'undefined' ?
+        module.exports = factory() :
+        typeof define === 'function' && define.amd ?
+            define(factory) :
+            (global = global || self, global.xy = factory());
+}(this, function () {
 
 
 
     //1.System definition:
-    var Array = window.Array;
-    var JSON = window.JSON;
-
+    // var Array = this.Array;
+    // var JSON = this.JSON;
+    // console.log(this);//node:this <=> global;browser:this <=> window
 
     //5.Array length op!
     //==0
@@ -1378,8 +1382,8 @@
         static_impl: static_impl,
         inf_ext: inf_ext,
         inst_of: inst_of,
-        notInstanceof: notInstanceof
-
+        notInstanceof: notInstanceof,
+        ntfs: ntfs
     };
 
     var interfaces = {
@@ -1427,10 +1431,6 @@
     xy.extend(interfaces);
     xy.extend(pluginsDEV);
 
-
-
-
-
-    window.xy = xy;
+    // this.xy = xy;
     return xy;
 }));

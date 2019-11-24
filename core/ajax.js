@@ -4,15 +4,15 @@
 
 ; (function (global, factory) {
     factory(global);
-}(typeof window !== "undefined" ? window : this, function (window) {
+}(typeof require === 'function' ? require('./xy2.js') : this.xy, function (xy) {
 
-    var xy = window.xy;
     if (!xy) {
         throw "Need xy2.js framework!!!";
     }
 
+
     //Ajax 
-    var XMLHttpRequest = window.XMLHttpRequest;
+    var XMLHttpRequest = typeof window === 'object' && window.XMLHttpRequest;
 
     /**
      *

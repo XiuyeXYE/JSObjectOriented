@@ -1371,7 +1371,7 @@
         eq: eq,
         pgt: pgt,
         pnl: pnl,
-        p: peq,
+        peq: peq,
         deepEQ: deepEQ,
         fnExist: fnExist,
         oExist: oExist,
@@ -1432,5 +1432,7 @@
     xy.extend(pluginsDEV);
 
     // this.xy = xy;
+    // export default xy;
     return xy;
+    
 }));

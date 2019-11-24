@@ -410,33 +410,23 @@
                 case "function":
                     dest = src;
                     break;
-		default:
+                default:
                 case "object":
 
                     if (isArray(src)) {
                         dest = isArray(dest) ? dest : EMPTY_VALUES.ARRAY;
-                        // dest.length = src.length;
-                        for (var i = 0; i < len(src); i++) {
-                            dest[i] = src[i];
-                        }
-
                     }
                     else {
-
                         dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.OBJECT;
-                        var keys = enumKeys(src);
-                        for (var i = 0; i < len(keys); i++) {
-                            var key = keys[i];
-                            dest[key] = src[key];
-                        }
-
+                    }
+                    var keys = enumKeys(src);
+                    for (var i = 0; i < len(keys); i++) {
+                        var key = keys[i];
+                        dest[key] = src[key];
                     }
                     break;
-		    
-			    
             }
 
-            
         } else {// >2
             for (var i = 1; i < pNum; i++) {
                 dest = simpleCopy(dest, arguments[i]);
@@ -470,29 +460,22 @@
                 case "function":
                     dest = src;
                     break;
-		default:
+                default:
                 case "object":
 
                     if (isArray(src)) {
                         dest = isArray(dest) ? dest : EMPTY_VALUES.ARRAY;
-                        // dest.length = src.length;
-                        for (var i = 0; i < len(src); i++) {
-                            dest[i] = deepCopy(dest[i], src[i]);
-                        }
-
                     }
                     else {
-
                         dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.OBJECT;
-                        var keys = enumKeys(src);
-                        for (var i = 0; i < len(keys); i++) {
-                            var key = keys[i];
-                            dest[key] = deepCopy(dest[key], src[key]);
-                        }
-
+                    }
+                    var keys = enumKeys(src);
+                    for (var i = 0; i < len(keys); i++) {
+                        var key = keys[i];
+                        dest[key] = deepCopy(dest[key], src[key]);
                     }
                     break;
-		
+
             }
 
 

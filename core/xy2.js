@@ -1208,9 +1208,85 @@
 
     impl(ValueMap, ValueMap_impl);
 
-   
+    function BigInteger(s, radix = 10) {
+        ntfs(this, BigInteger);
+        this.digits = [
+            '0', '1', '2', '3', '4', '5',
+            '6', '7', '8', '9', 'a', 'b',
+            'c', 'd', 'e', 'f', 'g', 'h',
+            'i', 'j', 'k', 'l', 'm', 'n',
+            'o', 'p', 'q', 'r', 's', 't',
+            'u', 'v', 'w', 'x', 'y', 'z'
+        ];
+        this.digitsMap = new Map();
+        for (var i = 0; i < len(this.digits); i++) {
+            this.digitsMap.set(this.digits[i], i);
+        }
+        var r = this.checkRadixAndNumber(s, radix);
+        this.s = r[0];
 
-    
+        this.data = str2ListBySeparator(this.s, '');
+
+        this.radix = r[1];
+    }
+
+
+
+    var BigInteger_impl = {
+
+        charCode: function (s, i) {
+            if (isNumber(i) && strNonEmpty(s)) {
+                return s.charCodeAt(i);
+            }
+            throw new Error("First param string and second param integer!");
+        },
+        toLowerCase: function (s) {
+            if (strNonEmpty(s)) {
+                return s.toLowerCase();
+            }
+            throw new Error("First param string!");
+        },
+        toUpperCase: function (s) {
+            if (strNonEmpty(s)) {
+                return s.toUpperCase();
+            }
+            throw new Error("First param string!");
+        },
+        checkRadixAndNumber: function (s, radix) {
+            s = this.toLowerCase(s);
+            if (eq(s.charAt(0), '0')) {
+                radix = 8;
+                s = s.substring(1);
+                if (eq(s.charAt(0), 'o')) {
+                    // radix = 8;
+                    s = s.substring(1);
+                }
+                else if (eq(s.charAt(0), 'x')) {
+                    radix = 16;
+                    s = s.substring(1);
+                } else if (eq(s.charAt(0), 'b')) {
+                    radix = 2;
+                    s = s.substring(1);
+                }
+            }
+
+            for (var i = 0; i < len(s); i++) {
+                if (nlt(this.digitsMap.get(s.charAt(i)), radix)) {
+                    throw new Error("Input number cannot greater than radix:" + radix);
+                }
+            }
+            for (var i = 0; i < len(s); i++) {
+                if (!eq(s.charAt(i), '0')) {
+                    s = s.substring(i);
+                    break;
+                }
+            }
+            return [s, radix];
+        }
+    };
+
+    impl(BigInteger, BigInteger_impl);
+
 
     //12.Plugins dev
 
@@ -1400,6 +1476,7 @@
         ValueSet: ValueSet,
         Map: Map,
         ValueMap: ValueMap,
+        BigInteger: BigInteger
     };
 
     var pluginsDEV = {

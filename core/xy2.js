@@ -1282,7 +1282,8 @@
                 }
             }
             return [s, radix];
-        }
+        },
+        
     };
 
     impl(BigInteger, BigInteger_impl);

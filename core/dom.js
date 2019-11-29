@@ -407,7 +407,9 @@
 
     xy.addPlugin(xy.Plugin.TYPE_CLASS, Dom);
     xy.addPlugin(xy.Plugin.TYPE_FUNCTION, crtDom);
-
+    xy.addPlugin(xy.Plugin.TYPE_CALL, function (p) {
+        document.addEventListener('DOMContentLoaded', p);
+    },"docEvetListener");
 
     return xy;
 

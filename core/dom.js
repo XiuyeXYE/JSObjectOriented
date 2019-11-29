@@ -324,7 +324,7 @@
         },
         width: function (w, u) {
             u = u || 'px';
-            if (xy.p(arguments, 0)) {
+            if (xy.peq(arguments, 0)) {
                 return this.clientWidth();
             }
             else if (pnl1(arguments) && isNumber(w)) {
@@ -334,7 +334,7 @@
         },
         height: function (h, u) {
             u = u || 'px';
-            if (xy.p(arguments, 0)) {
+            if (xy.peq(arguments, 0)) {
                 return this.clientHeight();
             }
             else if (pnl1(arguments) && isNumber(h)) {
@@ -343,7 +343,7 @@
             }
         },
         full: function (h) {
-            if (xy.p(arguments, 0)) {
+            if (xy.peq(arguments, 0)) {
                 return this.k('outerHTML');
             } else {
                 //will changes node,no return!
@@ -357,7 +357,7 @@
                 //因为空字符串''也是false！！！
                 //直接用吧，即可
                 // if (!!this.node.innerHTML) {
-                if (xy.p(arguments, 0)) {
+                if (xy.peq(arguments, 0)) {
                     return this.node.innerHTML;
                 }
                 this.node.innerHTML = h;
@@ -369,7 +369,7 @@
             t = xy.dv(t, xy.EMPTY.STRING);
             if (this.exist()) {
                 // if (!!this.node.innerText) {
-                if (xy.p(arguments, 0)) {
+                if (xy.peq(arguments, 0)) {
                     return this.node.innerText;
                 }
                 this.node.innerText = t;
@@ -381,7 +381,7 @@
         value: function (v) {
             v = xy.dv(v, xy.EMPTY.STRING);
             if (this.exist()) {
-                if (xy.p(arguments, 0)) {
+                if (xy.peq(arguments, 0)) {
                     return this.attr('value');
                 }
                 this.attr('value', v);
@@ -405,11 +405,11 @@
     }
 
 
-    xy.addPlugin(xy.Plugin.TYPE_CLASS, Dom);
-    xy.addPlugin(xy.Plugin.TYPE_FUNCTION, crtDom);
-    xy.addPlugin(xy.Plugin.TYPE_CALL, function (p) {
+    xy.addPlugin(xy.plugin.TYPE_CLASS, Dom);
+    xy.addPlugin(xy.plugin.TYPE_FUNCTION, crtDom);
+    xy.addPlugin(xy.plugin.TYPE_CALL, function (p) {
         document.addEventListener('DOMContentLoaded', p);
-    },"docEvetListener");
+    }, "docEvetListener");
 
     return xy;
 

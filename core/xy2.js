@@ -393,6 +393,48 @@
         notInstanceof(o, c, "Constructor requires 'new'!!!");
     }
 
+
+    //15.math function
+    function max(a, b) {
+        if (pgt(arguments, 2)) {
+            var m = arguments[0];
+            for (var i = 1; i < len(arguments); i++) {
+                m = max(m, arguments[i]);
+            }
+            return m;
+        } else {
+            return a > b ? a : b;
+        }
+    }
+
+    function min(a, b) {
+        if (pgt(arguments, 2)) {
+            var m = arguments[0];
+            for (var i = 1; i < len(arguments); i++) {
+                m = min(m, arguments[i]);
+            }
+            return m;
+        } else {
+            return a > b ? b : a;
+        }
+    }
+
+    function pmax() {
+        var m = len(arguments[0]);
+        for (var i = 1; i < len(arguments); i++) {
+            m = max(m, len(arguments[i]));
+        }
+        return m;
+    }
+
+    function pmin() {
+        var m = len(arguments[0]);
+        for (var i = 1; i < len(arguments); i++) {
+            m = min(m, len(arguments[i]));
+        }
+        return m;
+    }
+
     /**
      * core Class API
     */
@@ -1283,7 +1325,9 @@
             }
             return [s, radix];
         },
-        
+
+
+
     };
 
     impl(BigInteger, BigInteger_impl);
@@ -1397,7 +1441,7 @@
     }
 
 
-    
+
 
 
 
@@ -1459,6 +1503,10 @@
         oExist: oExist,
         openInterval: openInterval,
         closedInterval: closedInterval,
+        min: min,
+        max: max,
+        pmax: pmax,
+        pmin: pmin,
         ext: ext,
         impl: impl,
         static_impl: static_impl,

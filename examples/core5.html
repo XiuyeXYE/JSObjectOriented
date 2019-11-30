@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Core</title>
+    <style type="text/css">
+    </style>
+</head>
+
+<body>
+    <h1>API Operation!</h1>
+
+
+
+    <script type="text/javascript" src="../core/xy2.js"></script>
+    <script type="text/javascript" src="../core/dom.js"></script>
+    <script type="text/javascript" src="../core/ajax.js"></script>
+
+
+
+    <script type="text/javascript">
+        //add radix 10
+        var radix = 10;
+        var a = "1234567";
+        var b = "1234567";
+        var nums = xy.EMPTY.ARRAY;
+        var len = xy.pmax(a, b);
+        var j = 0;
+        for (var i = len - 1; i >= 0; i--) {
+            nums[j++] = parseInt(a[i]) + parseInt(b[i]);
+        }
+        console.log(nums);
+        for (var i = 0; i < xy.len(nums); i++) {
+            if (nums[i] >= radix) {
+                nums[i + 1] += parseInt(nums[i] / radix);
+                nums[i] %= radix;
+            }
+
+        }
+        nums.reverse();
+        var s = nums.join('');
+        console.log(s);
+
+    </script>
+
+</body>
+
+</html>

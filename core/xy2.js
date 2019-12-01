@@ -1433,23 +1433,32 @@
     }
 
     var BigInteger_impl = {
-        convert2Array10: function () {//have some errors to deal!
+        bigint10: function () {//have some errors to deal!
+            return new BigInteger(this.int10Value());
+        },
+        int10Value: function () {
             var data = EMPTY_VALUES.ARRAY;
-            for (var i = len(this.s) - 1, j = 0; i >= 0; i-- , j++) {
-                data[i] = digitsMap.get(this.s[i]);//have to multiply n*radix^N
+            var s = '0';
+            for (var i = len(this.s) - 1; i >= 0; i--) {
+                s = addInt10(s,
+                    multiplyInt10(
+                        String(digitsMap.get(this.s[i])),
+                        powerInt10(String(this.radix), len(this.s) - i - 1)
+                    )
+                );//have to multiply n*radix^N
             }
-            return data;
+            return s;
         },
         add: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
-            var aData = a.convert2Array10();
-            var oData = this.convert2Array10();
+            var aData = a.int10Value();
+            var oData = this.int10Value();
             return new BigInteger(addInt10(aData, oData));
         },
         multiply: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
-            var aData = a.convert2Array10();
-            var oData = this.convert2Array10();
+            var aData = a.int10Value();
+            var oData = this.int10Value();
             return new BigInteger(multiplyInt10(aData, oData));
         },
 

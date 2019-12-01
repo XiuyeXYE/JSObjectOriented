@@ -1433,10 +1433,10 @@
     }
 
     var BigInteger_impl = {
-        convert2Array10: function () {
+        convert2Array10: function () {//have some errors to deal!
             var data = EMPTY_VALUES.ARRAY;
             for (var i = len(this.s) - 1, j = 0; i >= 0; i-- , j++) {
-                data[i] = digitsMap.get(this.s[i]);
+                data[i] = digitsMap.get(this.s[i]);//have to multiply n*radix^N
             }
             return data;
         },

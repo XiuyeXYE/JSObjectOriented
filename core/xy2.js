@@ -1329,7 +1329,23 @@
         return [s, radix];
     }
 
-    function add10(a, b) {
+    function checkBigIntegerNumber10(a) {
+        if (oExist(a) && oExist(a.length)) {
+            for (var i = 0; i < len(a); i++) {
+                if (!((a[i] >= 0 && a[i] <= 9) || (a[i] >= '0' && a[i] <= '9'))) {
+                    throw "Not a integer number"
+                }
+            }
+        } else {
+            throw "Not a integer number";
+        }
+    }
+
+    function addInt10(a, b) {
+
+        checkBigIntegerNumber10(a);
+        checkBigIntegerNumber10(b);
+
         var radix = 10;
         var nums = EMPTY_VALUES.ARRAY;
         // var len = xy.pmin(a, b);
@@ -1356,10 +1372,13 @@
         }
         nums.reverse();
         var s = list2StrWithJoint(nums, '');
-        return new BigInteger(s);
+        return s;
     }
 
-    function multiply10(a, b) {
+    function multiplyInt10(a, b) {
+        checkBigIntegerNumber10(a);
+        checkBigIntegerNumber10(b);
+
         var radix = 10;
         var nums = EMPTY_VALUES.ARRAY;
         var le = xy.pmax(a, b);
@@ -1367,8 +1386,6 @@
         for (var i = 0; i < len(nums); i++) {
             nums[i] = 0;
         }
-        // var i = len(a) - 1;
-        // var j = len(b) - 1;
 
         var k = 0;
         for (var i = len(a) - 1; i >= 0; i--) {
@@ -1394,7 +1411,7 @@
         }
         nums = nums.slice(openZero);
         var s = list2StrWithJoint(nums, '');
-        return new BigInteger(s);
+        return s;
 
     }
 
@@ -1418,13 +1435,13 @@
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
             var aData = a.convert2Array10();
             var oData = this.convert2Array10();
-            return add10(aData, oData);
+            return new BigInteger(addInt10(aData, oData));
         },
         multiply: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
             var aData = a.convert2Array10();
             var oData = this.convert2Array10();
-            return multiply10(aData, oData);
+            return new BigInteger(multiplyInt10(aData, oData));
         },
 
         toString: function () {
@@ -1557,8 +1574,8 @@
     //9.Open API functions
 
     var fn = {
-        multiply10: multiply10,
-        add10: add10,
+        multiplyInt10: multiplyInt10,
+        addInt10: addInt10,
         T: whatType,
         C: whatClass,
         isSymbol: isSymbol,

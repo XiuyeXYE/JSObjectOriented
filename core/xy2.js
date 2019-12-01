@@ -1250,88 +1250,152 @@
 
     impl(ValueMap, ValueMap_impl);
 
-    function BigInteger(s, radix = 10) {
-        ntfs(this, BigInteger);
-        this.digits = [
-            '0', '1', '2', '3', '4', '5',
-            '6', '7', '8', '9', 'a', 'b',
-            'c', 'd', 'e', 'f', 'g', 'h',
-            'i', 'j', 'k', 'l', 'm', 'n',
-            'o', 'p', 'q', 'r', 's', 't',
-            'u', 'v', 'w', 'x', 'y', 'z'
-        ];
-        this.digitsMap = new Map();
-        for (var i = 0; i < len(this.digits); i++) {
-            this.digitsMap.set(this.digits[i], i);
-        }
-        var r = this.checkRadixAndNumber(s, radix);
-        this.s = r[0];
+    const digits = [
+        '0', '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', 'a', 'b',
+        'c', 'd', 'e', 'f', 'g', 'h',
+        'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't',
+        'u', 'v', 'w', 'x', 'y', 'z'
+    ];
 
-        this.data = str2ListBySeparator(this.s, '');
-
-        this.radix = r[1];
+    const digitsMap = new Map();
+    for (var i = 0; i < len(digits); i++) {
+        digitsMap.set(digits[i], i);
     }
 
 
+    function charCode(s, i) {
+        if (isNumber(i) && strNonEmpty(s)) {
+            return s.charCodeAt(i);
+        }
+        throw new Error("First param string and second param integer!");
+    }
+    function toLowerCase(s) {
+        if (strNonEmpty(s)) {
+            return s.toLowerCase();
+        }
+        throw new Error("First param string!");
+    }
+    function toUpperCase(s) {
+        if (strNonEmpty(s)) {
+            return s.toUpperCase();
+        }
+        throw new Error("First param string!");
+    }
+    function parseInt10(i) {
+        return Math.floor(i);
+    }
+
+
+    function checkRadixAndNumber(s, radix) {
+        if (lt(radix, 2) || gt(radix, 36)) {
+            throw new Error("Radix between 2 and 36.");
+        }
+        s = toLowerCase(s);
+        if (eq(s.charAt(0), '0')) {
+            radix = 8;
+            s = s.substring(1);
+            if (eq(s.charAt(0), 'o')) {
+                // radix = 8;
+                s = s.substring(1);
+            }
+            else if (eq(s.charAt(0), 'x')) {
+                radix = 16;
+                s = s.substring(1);
+            } else if (eq(s.charAt(0), 'b')) {
+                radix = 2;
+                s = s.substring(1);
+            }
+        }
+
+        for (var i = 0; i < len(s); i++) {
+            if (nlt(digitsMap.get(s.charAt(i)), radix)) {
+                throw new Error("Input number cannot greater than radix:" + radix);
+            }
+        }
+        for (var i = 0; i < len(s); i++) {
+            if (!eq(s.charAt(i), '0')) {
+                s = s.substring(i);
+                break;
+            }
+        }
+        return [s, radix];
+    }
+
+    function add10(a, b) {
+        if (!isArray(a) || !isArray(b)) {
+            throw new Error("params must be array!");
+        }
+        var radix = 10;
+        var nums = EMPTY_VALUES.ARRAY;
+        // var len = xy.pmin(a, b);
+        var i = len(a) - 1;
+        var j = len(b) - 1;
+        var k = 0;
+        while (i >= 0 && j >= 0) {
+            nums[k++] = parseInt10(a[i--]) + parseInt10(b[j--]);
+        }
+        while (i >= 0) {
+            nums[k++] = parseInt10(a[i--]);
+        }
+        while (j >= 0) {
+            nums[k++] = parseInt10(b[j--]);
+        }
+
+        // console.log(nums);
+        for (var n = 0; n < len(nums); n++) {
+            if (nums[n] >= radix) {
+                nums[n + 1] += parseInt10(nums[n] / radix);
+                nums[n] %= radix;
+            }
+
+        }
+        nums.reverse();
+        var s = nums.join('');
+        return new BigInteger(s);
+    }
+
+
+    function BigInteger(s, radix = 10) {
+        ntfs(this, BigInteger);
+        var r = checkRadixAndNumber(s, radix);
+        this.s = r[0];
+        this.data = str2ListBySeparator(this.s, '');
+        this.radix = r[1];
+    }
 
     var BigInteger_impl = {
-
-        charCode: function (s, i) {
-            if (isNumber(i) && strNonEmpty(s)) {
-                return s.charCodeAt(i);
+        convert2DecimalArray: function () {
+            var data = EMPTY_VALUES.ARRAY;
+            for (var i = 0; i < len(this.s); i++) {
+                data[i] = digitsMap.get(this.s[i]);
             }
-            throw new Error("First param string and second param integer!");
+            return data;
         },
-        toLowerCase: function (s) {
-            if (strNonEmpty(s)) {
-                return s.toLowerCase();
-            }
-            throw new Error("First param string!");
+        add: function (a) {
+            notInstanceof(a, BigInteger, "param must be BigInteger object!");
+            var aData = a.convert2DecimalArray();
+            var oData = this.convert2DecimalArray();
+            return add10(aData, oData);
         },
-        toUpperCase: function (s) {
-            if (strNonEmpty(s)) {
-                return s.toUpperCase();
-            }
-            throw new Error("First param string!");
-        },
-        checkRadixAndNumber: function (s, radix) {
-            s = this.toLowerCase(s);
-            if (eq(s.charAt(0), '0')) {
-                radix = 8;
-                s = s.substring(1);
-                if (eq(s.charAt(0), 'o')) {
-                    // radix = 8;
-                    s = s.substring(1);
-                }
-                else if (eq(s.charAt(0), 'x')) {
-                    radix = 16;
-                    s = s.substring(1);
-                } else if (eq(s.charAt(0), 'b')) {
-                    radix = 2;
-                    s = s.substring(1);
-                }
-            }
-
-            for (var i = 0; i < len(s); i++) {
-                if (nlt(this.digitsMap.get(s.charAt(i)), radix)) {
-                    throw new Error("Input number cannot greater than radix:" + radix);
-                }
-            }
-            for (var i = 0; i < len(s); i++) {
-                if (!eq(s.charAt(i), '0')) {
-                    s = s.substring(i);
-                    break;
-                }
-            }
-            return [s, radix];
+        multiply: function (a) {
+            // this.
         },
 
-
+        toString: function () {
+            return this.s;
+        }
 
     };
 
     impl(BigInteger, BigInteger_impl);
 
+    var BigInteger_static_impl = {
+        ZERO: new BigInteger('0'),
+        ONE: new BigInteger('1'),
+    };
+    static_impl(BigInteger, BigInteger_static_impl);
 
     //12.Plugins dev
 

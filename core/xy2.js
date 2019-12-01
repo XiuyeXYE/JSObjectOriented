@@ -1333,11 +1333,11 @@
         if (oExist(a) && oExist(a.length)) {
             for (var i = 0; i < len(a); i++) {
                 if (!((a[i] >= 0 && a[i] <= 9) || (a[i] >= '0' && a[i] <= '9'))) {
-                    throw "Not a integer number"
+                    throw "Not a integer number string."
                 }
             }
         } else {
-            throw "Not a integer number";
+            throw "Not a integer number string.";
         }
     }
 
@@ -1413,6 +1413,15 @@
         var s = list2StrWithJoint(nums, '');
         return s;
 
+    }
+
+    function powerInt10(s, p) {
+        checkBigIntegerNumber10(s);
+        var num = '1';
+        for (var i = 0; i < p; i++) {
+            num = multiplyInt10(num, s);
+        }
+        return num;
     }
 
     function BigInteger(s, radix = 10) {
@@ -1574,8 +1583,7 @@
     //9.Open API functions
 
     var fn = {
-        multiplyInt10: multiplyInt10,
-        addInt10: addInt10,
+
         T: whatType,
         C: whatClass,
         isSymbol: isSymbol,
@@ -1634,6 +1642,9 @@
         max: max,
         pmax: pmax,
         pmin: pmin,
+        multiplyInt10: multiplyInt10,
+        addInt10: addInt10,
+        powerInt10: powerInt10,
         ext: ext,
         impl: impl,
         static_impl: static_impl,

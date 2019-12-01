@@ -1381,7 +1381,7 @@
 
         var radix = 10;
         var nums = EMPTY_VALUES.ARRAY;
-        var le = xy.pmax(a, b);
+        var le = pmax(a, b);
         nums.length = le * 2 + 1;
         for (var i = 0; i < len(nums); i++) {
             nums[i] = 0;

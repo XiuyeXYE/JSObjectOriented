@@ -1283,8 +1283,14 @@
         }
         throw new Error("First param string!");
     }
+
     function parseInt10(i) {
-        return Math.floor(i);
+        if (isNumber(i)) {
+            return Math.floor(i);
+        }
+        else {
+            return parseInt(i);
+        }
     }
 
 
@@ -1311,7 +1317,7 @@
 
         for (var i = 0; i < len(s); i++) {
             if (nlt(digitsMap.get(s.charAt(i)), radix)) {
-                throw new Error("Input number cannot greater than radix:" + radix);
+                throw new Error("Input number cannot greater than radix: " + radix);
             }
         }
         for (var i = 0; i < len(s); i++) {
@@ -1324,9 +1330,6 @@
     }
 
     function add10(a, b) {
-        if (!isArray(a) || !isArray(b)) {
-            throw new Error("params must be array!");
-        }
         var radix = 10;
         var nums = EMPTY_VALUES.ARRAY;
         // var len = xy.pmin(a, b);
@@ -1352,10 +1355,48 @@
 
         }
         nums.reverse();
-        var s = nums.join('');
+        var s = list2StrWithJoint(nums, '');
         return new BigInteger(s);
     }
 
+    function multiply10(a, b) {
+        var radix = 10;
+        var nums = EMPTY_VALUES.ARRAY;
+        var le = xy.pmax(a, b);
+        nums.length = le * 2 + 1;
+        for (var i = 0; i < len(nums); i++) {
+            nums[i] = 0;
+        }
+        // var i = len(a) - 1;
+        // var j = len(b) - 1;
+
+        var k = 0;
+        for (var i = len(a) - 1; i >= 0; i--) {
+            for (var j = len(b) - 1; j >= 0; j--) {
+                nums[len(a) - 1 - i + k++] += parseInt10(a[i]) * parseInt10(b[j]);
+                // console.log(len(a) - 1 - i + k - 1, nums[len(a) - 1 - i + k - 1], parseInt10(a[i]), parseInt10(b[j]));
+            }
+            k = 0;
+        }
+
+        for (var n = 0; n < len(nums); n++) {
+            if (nums[n] >= radix) {
+                nums[n + 1] += parseInt10(nums[n] / radix);
+                nums[n] %= radix;
+            }
+
+        }
+
+        nums.reverse();
+        var openZero = 0;
+        while (eq(nums[openZero], 0)) {
+            openZero++;
+        }
+        nums = nums.slice(openZero);
+        var s = list2StrWithJoint(nums, '');
+        return new BigInteger(s);
+
+    }
 
     function BigInteger(s, radix = 10) {
         ntfs(this, BigInteger);
@@ -1366,21 +1407,24 @@
     }
 
     var BigInteger_impl = {
-        convert2DecimalArray: function () {
+        convert2Array10: function () {
             var data = EMPTY_VALUES.ARRAY;
-            for (var i = 0; i < len(this.s); i++) {
+            for (var i = len(this.s) - 1, j = 0; i >= 0; i-- , j++) {
                 data[i] = digitsMap.get(this.s[i]);
             }
             return data;
         },
         add: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
-            var aData = a.convert2DecimalArray();
-            var oData = this.convert2DecimalArray();
+            var aData = a.convert2Array10();
+            var oData = this.convert2Array10();
             return add10(aData, oData);
         },
         multiply: function (a) {
-            // this.
+            notInstanceof(a, BigInteger, "param must be BigInteger object!");
+            var aData = a.convert2Array10();
+            var oData = this.convert2Array10();
+            return multiply10(aData, oData);
         },
 
         toString: function () {
@@ -1513,6 +1557,8 @@
     //9.Open API functions
 
     var fn = {
+        multiply10: multiply10,
+        add10: add10,
         T: whatType,
         C: whatClass,
         isSymbol: isSymbol,

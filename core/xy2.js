@@ -1341,6 +1341,20 @@
         }
     }
 
+    function initZero(nums) {
+        for (var i = 0; i < len(nums); i++) {
+            nums[i] = 0;
+        }
+    }
+
+    function clearOpenZero(nums) {
+        var openZero = 0;
+        while (eq(nums[openZero], 0)) {
+            openZero++;
+        }
+        return nums.slice(openZero);
+    }
+
     function addInt10(a, b) {
 
         checkBigIntegerNumber10(a);
@@ -1348,10 +1362,12 @@
 
         var radix = 10;
         var nums = EMPTY_VALUES.ARRAY;
-        // var len = xy.pmin(a, b);
+        var le = pmax(a, b);
+        nums.length = le + 1;
+        initZero(nums);
         var i = len(a) - 1;
         var j = len(b) - 1;
-        var k = 0;
+        var k = 0;//core
         while (i >= 0 && j >= 0) {
             nums[k++] = parseInt10(a[i--]) + parseInt10(b[j--]);
         }
@@ -1371,6 +1387,7 @@
 
         }
         nums.reverse();
+        nums = clearOpenZero(nums);
         var s = list2StrWithJoint(nums, '');
         return s;
     }
@@ -1383,10 +1400,8 @@
         var nums = EMPTY_VALUES.ARRAY;
         var le = pmax(a, b);
         nums.length = le * 2 + 1;
-        for (var i = 0; i < len(nums); i++) {
-            nums[i] = 0;
-        }
-
+        initZero(nums);
+        //core
         var k = 0;
         for (var i = len(a) - 1; i >= 0; i--) {
             for (var j = len(b) - 1; j >= 0; j--) {
@@ -1395,7 +1410,7 @@
             }
             k = 0;
         }
-
+        //core
         for (var n = 0; n < len(nums); n++) {
             if (nums[n] >= radix) {
                 nums[n + 1] += parseInt10(nums[n] / radix);
@@ -1403,22 +1418,57 @@
             }
 
         }
-
         nums.reverse();
-        var openZero = 0;
-        while (eq(nums[openZero], 0)) {
-            openZero++;
-        }
-        nums = nums.slice(openZero);
+        nums = clearOpenZero(nums);
         var s = list2StrWithJoint(nums, '');
         return s;
 
     }
 
+    function addInt10One(s) {
+        // checkBigIntegerNumber10(s);
+        return addInt10(s, '1');
+    }
+
+    function compareInt10(a, b) {
+        checkBigIntegerNumber10(a);
+        checkBigIntegerNumber10(b);
+        if (len(a) > len(b)) {
+            return 1;
+        } else if (len(a) < len(b)) {
+            return -1;
+        }
+        var i = 0;
+        while (eq(a[i], b[i]) && i < len(a)) {
+            i++;
+        }
+        if (eq(i, len(a))) {
+            return 0;
+        }
+        else if (a[i] > b[i]) {
+            return 1;
+        } else if (a[i] < b[i]) {
+            return -1;
+        }
+        return 0;
+    }
+
+    function gtInt10(a, b) {
+        return compareInt10(a, b) > 0;
+    }
+    function ltInt10(a, b) {
+        return compareInt10(a, b) < 0;
+    }
+    function eqInt10(a, b) {
+        return eq(compareInt10(a, b), 0);
+    }
+
+
     function powerInt10(s, p) {
         checkBigIntegerNumber10(s);
         var num = '1';
-        for (var i = 0; i < p; i++) {
+        p = String(p);
+        for (var i = '0'; ltInt10(i, p); i = addInt10One(i)) {
             num = multiplyInt10(num, s);
         }
         return num;
@@ -1433,17 +1483,18 @@
     }
 
     var BigInteger_impl = {
-        bigint10: function () {//have some errors to deal!
+        bigint10: function () {//new bigint obj
             return new BigInteger(this.int10Value());
         },
-        int10Value: function () {
+        int10Value: function () {//string
             var data = EMPTY_VALUES.ARRAY;
             var s = '0';
+            var radix = String(this.radix);
             for (var i = len(this.s) - 1; i >= 0; i--) {
                 s = addInt10(s,
                     multiplyInt10(
                         String(digitsMap.get(this.s[i])),
-                        powerInt10(String(this.radix), len(this.s) - i - 1)
+                        powerInt10(radix, len(this.s) - i - 1)
                     )
                 );//have to multiply n*radix^N
             }
@@ -1461,7 +1512,10 @@
             var oData = this.int10Value();
             return new BigInteger(multiplyInt10(aData, oData));
         },
+        power: function (n) {
+            var sum = '1';
 
+        },
         toString: function () {
             return this.s;
         }
@@ -1654,6 +1708,8 @@
         multiplyInt10: multiplyInt10,
         addInt10: addInt10,
         powerInt10: powerInt10,
+        addInt10One: addInt10One,
+        compareInt10: compareInt10,
         ext: ext,
         impl: impl,
         static_impl: static_impl,

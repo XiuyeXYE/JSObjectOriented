@@ -1513,8 +1513,15 @@
             return new BigInteger(multiplyInt10(aData, oData));
         },
         power: function (n) {
-            var sum = '1';
-
+            var sum = BigInteger.ONE;
+            n = String(n);
+            for (var i = '0'; ltInt10(i, n); i = addInt10One(i)) {
+                sum = sum.multiply(this);
+            }
+            return sum;
+        },
+        addOne: function () {
+            return this.add(BigInteger.ONE);
         },
         toString: function () {
             return this.s;

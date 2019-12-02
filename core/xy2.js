@@ -1501,9 +1501,9 @@
 
     var BigInteger_impl = {
         bigint10: function () {//new bigint obj
-            return new BigInteger(this.int10Value());
+            return new BigInteger(this.unsignedInt10Value());
         },
-        int10Value: function () {//string
+        unsignedInt10Value: function () {//string
             var data = EMPTY_VALUES.ARRAY;
             var s = '0';
             var radix = String(this.radix);
@@ -1519,14 +1519,14 @@
         },
         add: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
-            var aData = a.int10Value();
-            var oData = this.int10Value();
+            var aData = a.unsignedInt10Value();
+            var oData = this.unsignedInt10Value();
             return new BigInteger(addInt10(aData, oData));
         },
         multiply: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
-            var aData = a.int10Value();
-            var oData = this.int10Value();
+            var aData = a.unsignedInt10Value();
+            var oData = this.unsignedInt10Value();
             return new BigInteger(multiplyInt10(aData, oData));
         },
         power: function (n) {
@@ -1536,6 +1536,14 @@
                 sum = sum.multiply(this);
             }
             return sum;
+        },
+        negate: function () {
+            return new BigInteger(
+                eq(this.sign, '-')
+                    ?
+                    '+' + this.unsignedInt10Value()
+                    :
+                    '-' + this.unsignedInt10Value());
         },
         addOne: function () {
             return this.add(BigInteger.ONE);

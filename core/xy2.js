@@ -1250,7 +1250,7 @@
 
     impl(ValueMap, ValueMap_impl);
 
-    const digits = [
+    var digits = [
         '0', '1', '2', '3', '4', '5',
         '6', '7', '8', '9', 'a', 'b',
         'c', 'd', 'e', 'f', 'g', 'h',
@@ -1259,7 +1259,7 @@
         'u', 'v', 'w', 'x', 'y', 'z'
     ];
 
-    const digitsMap = new Map();
+    var digitsMap = new Map();
     for (var i = 0; i < len(digits); i++) {
         digitsMap.set(digits[i], i);
     }
@@ -1293,12 +1293,22 @@
         }
     }
 
+    var numRegExp = /^[+-]?(0[box]?)?\w*$/;
 
     function checkRadixAndNumber(s, radix) {
-        if (lt(radix, 2) || gt(radix, 36)) {
+        if ((lt(radix, 2) || gt(radix, 36)) && numRegExp.test(s)) {
             throw new Error("Radix between 2 and 36.");
         }
         s = toLowerCase(s);
+        var sign = '+';
+        if (eq(s.charAt(0), '-')) {
+            sign = '-';
+            s = s.substring(1);
+        } else if (eq(s.charAt(0), '+')) {
+            // sign = '+';
+            s = s.substring(1);
+        }
+
         if (eq(s.charAt(0), '0')) {
             radix = 8;
             s = s.substring(1);
@@ -1328,7 +1338,7 @@
         // }
         s = str2ListBySeparator(s, '');
         s = clearOpenZero(s);
-        return [list2StrWithJoint(s, ''), radix];
+        return [list2StrWithJoint(s, ''), radix, sign];
     }
 
     function checkBigIntegerNumber10(a) {
@@ -1486,6 +1496,7 @@
         this.s = r[0];
         this.data = str2ListBySeparator(this.s, '');
         this.radix = r[1];
+        this.sign = r[2];
     }
 
     var BigInteger_impl = {

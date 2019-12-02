@@ -1337,7 +1337,7 @@
         //     }
         // }
         s = str2ListBySeparator(s, '');
-        s = clearOpenZero(s);
+        s = clearOpenZeroI(s);
         return [list2StrWithJoint(s, ''), radix, sign];
     }
 
@@ -1359,14 +1359,26 @@
         }
     }
 
-    function clearOpenZero(nums) {
+    function clearOpenZeroI(nums) {
         var openZero = 0;
-        while (eq(nums[openZero], 0) || eq(nums[openZero], '0')) {
+        while (eq(nums[openZero], 0)) {
             openZero++;
         }
         nums = nums.slice(openZero);
         if (eq(len(nums), 0)) {
             nums = [0];
+        }
+        return nums;
+    }
+
+    function clearOpenZeroS(nums) {
+        var openZero = 0;
+        while (eq(nums[openZero], '0')) {
+            openZero++;
+        }
+        nums = nums.slice(openZero);
+        if (eq(len(nums), 0)) {
+            nums = '0';
         }
         return nums;
     }
@@ -1386,12 +1398,17 @@
         return s;
     }
 
+    /**
+     * 
+     * @param {String} a 
+     * @param {String} b 
+     */
     function addInt10(a, b) {
-
+        //check decimal format
         if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
             throw new Error("params must be decimal number and sign only one +/-!");
         }
-
+        //calc sign
         var asign = whatSign(a);
         var bsign = whatSign(b);
 
@@ -1402,18 +1419,22 @@
         checkBigIntegerNumber10(a);
         checkBigIntegerNumber10(b);
 
-        var finalSign = '+';
+        a = clearOpenZeroS(a);
+        b = clearOpenZeroS(b);
 
-        if (ltInt10(a, b)) {
-            finalSign = bsign;
+        //determine end sign
+        if (eqInt10(a, b) && !eq(asign, bsign)) {
+            return '0';
         }
-        else if (gtInt10(a, b)) {
-            finalSign = asign;
-        } else {
-            if (!eq(asign, bsign)) {
-                return '0';
-            }
+        else if (ltInt10(a, b)) {//a > b ,indeed
+            var tmp = a;//data swap
+            a = b;
+            b = tmp;
+            tmp = bsign;//sign swap
+            bsign = asign;
+            asign = tmp;
         }
+        var finalSign = asign;
 
         var radix = 10;
         var nums = EMPTY_VALUES.ARRAY;
@@ -1424,26 +1445,40 @@
         var j = len(b) - 1;
         var k = 0;//core
         while (i >= 0 && j >= 0) {
-            nums[k++] = parseInt10(a[i--]) + parseInt10(b[j--]);
+            if (eq(asign, bsign)) {//for +
+                nums[k++] = parseInt10(a[i--]) + parseInt10(b[j--]);
+            } else {//for -
+                nums[k++] = parseInt10(a[i--]) - parseInt10(b[j--]);
+            }
         }
         while (i >= 0) {
             nums[k++] = parseInt10(a[i--]);
         }
-        while (j >= 0) {
-            nums[k++] = parseInt10(b[j--]);
-        }
+        // while (j >= 0) {//this is error,max num rest!!!Do you understand?!!!
+        //     nums[k++] = parseInt10(b[j--]);
+        // }
 
         // console.log(nums);
         for (var n = 0; n < len(nums); n++) {
-            if (nums[n] >= radix) {
-                nums[n + 1] += parseInt10(nums[n] / radix);
-                nums[n] %= radix;
+            if (eq(asign, bsign)) {//+ handler
+                if (nums[n] >= radix) {
+                    nums[n + 1] += parseInt10(nums[n] / radix);
+                    nums[n] %= radix;
+                }
+            } else {//- handler
+                if (nums[n] < 0) {//because of '-',don't have num >= radix;
+                    nums[n + 1] -= 1;
+                    nums[n] += radix;
+                }
             }
 
         }
         nums.reverse();
-        nums = clearOpenZero(nums);
+        nums = clearOpenZeroI(nums);
         var s = list2StrWithJoint(nums, '');
+        if (eq(finalSign, '-')) {
+            s = '-' + s;
+        }
         return s;
     }
 
@@ -1453,8 +1488,17 @@
             throw new Error("params must be decimal number and sign only one +/-!");
         }
 
+        //calc sign
+        var asign = whatSign(a);
+        var bsign = whatSign(b);
+
+        a = getRidOfSign(a);
+        b = getRidOfSign(b);
+
         checkBigIntegerNumber10(a);
         checkBigIntegerNumber10(b);
+
+        var finalSign = eq(asign, bsign) ? '+' : '-';
 
         var radix = 10;
         var nums = EMPTY_VALUES.ARRAY;
@@ -1479,8 +1523,11 @@
 
         }
         nums.reverse();
-        nums = clearOpenZero(nums);
+        nums = clearOpenZeroI(nums);
         var s = list2StrWithJoint(nums, '');
+        if (eq(finalSign, '-')) {
+            s = '-' + s;
+        }
         return s;
 
     }
@@ -1525,11 +1572,19 @@
 
 
     function powerInt10(s, p) {
+        if (!int10RegExp.test(s)) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+        var finalSign = whatSign(s);
+        s = getRidOfSign(s);
         checkBigIntegerNumber10(s);
         var num = '1';
         p = String(p);
         for (var i = '0'; ltInt10(i, p); i = addInt10One(i)) {
             num = multiplyInt10(num, s);
+        }
+        if (eq(finalSign, '-')) {
+            num = '-' + num;
         }
         return num;
     }
@@ -1545,7 +1600,7 @@
 
     var BigInteger_impl = {
         bigint10: function () {//new bigint obj
-            return new BigInteger(this.unsignedInt10Value());
+            return new BigInteger(this.int10Value());
         },
         unsignedInt10Value: function () {//string
             var data = EMPTY_VALUES.ARRAY;
@@ -1561,25 +1616,31 @@
             }
             return s;
         },
+        int10Value: function () {
+            return this.sign + this.unsignedInt10Value()
+        },
         add: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
-            var aData = a.unsignedInt10Value();
-            var oData = this.unsignedInt10Value();
+            var aData = a.int10Value();
+            var oData = this.int10Value();
             return new BigInteger(addInt10(aData, oData));
         },
         multiply: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
-            var aData = a.unsignedInt10Value();
-            var oData = this.unsignedInt10Value();
+            var aData = a.int10Value();
+            var oData = this.int10Value();
             return new BigInteger(multiplyInt10(aData, oData));
         },
         power: function (n) {
-            var sum = BigInteger.ONE;
-            n = String(n);
-            for (var i = '0'; ltInt10(i, n); i = addInt10One(i)) {
-                sum = sum.multiply(this);
-            }
-            return sum;
+            //One:
+            // var sum = BigInteger.ONE;
+            // n = String(n);
+            // for (var i = '0'; ltInt10(i, n); i = addInt10One(i)) {
+            //     sum = sum.multiply(this);
+            // }
+            // return sum;
+            //Two:
+            return new BigInteger(powerInt10(this.int10Value(), n));
         },
         negate: function () {
             return new BigInteger(

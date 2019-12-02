@@ -1320,13 +1320,15 @@
                 throw new Error("Input number cannot greater than radix: " + radix);
             }
         }
-        for (var i = 0; i < len(s); i++) {
-            if (!eq(s.charAt(i), '0')) {
-                s = s.substring(i);
-                break;
-            }
-        }
-        return [s, radix];
+        // for (var i = 0; i < len(s); i++) {
+        //     if (!eq(s.charAt(i), '0')) {
+        //         s = s.substring(i);
+        //         break;
+        //     }
+        // }
+        s = str2ListBySeparator(s, '');
+        s = clearOpenZero(s);
+        return [list2StrWithJoint(s, ''), radix];
     }
 
     function checkBigIntegerNumber10(a) {
@@ -1349,10 +1351,14 @@
 
     function clearOpenZero(nums) {
         var openZero = 0;
-        while (eq(nums[openZero], 0)) {
+        while (eq(nums[openZero], 0) || eq(nums[openZero], '0')) {
             openZero++;
         }
-        return nums.slice(openZero);
+        nums = nums.slice(openZero);
+        if (eq(len(nums), 0)) {
+            nums = [0];
+        }
+        return nums;
     }
 
     function addInt10(a, b) {

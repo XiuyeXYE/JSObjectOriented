@@ -1371,10 +1371,49 @@
         return nums;
     }
 
+    var int10RegExp = /^[+-]?\d*$/;
+
+    function whatSign(s) {
+        return s.startsWith('-') ? '-' : '+';
+    }
+
+    function getRidOfSign(s) {
+        if (eq(s.charAt(0), '-')) {
+            s = s.substring(1);
+        } else if (eq(s.charAt(0), '+')) {
+            s = s.substring(1);
+        }
+        return s;
+    }
+
     function addInt10(a, b) {
+
+        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+
+        var asign = whatSign(a);
+        var bsign = whatSign(b);
+
+        a = getRidOfSign(a);
+        b = getRidOfSign(b);
+
 
         checkBigIntegerNumber10(a);
         checkBigIntegerNumber10(b);
+
+        var finalSign = '+';
+
+        if (ltInt10(a, b)) {
+            finalSign = bsign;
+        }
+        else if (gtInt10(a, b)) {
+            finalSign = asign;
+        } else {
+            if (!eq(asign, bsign)) {
+                return '0';
+            }
+        }
 
         var radix = 10;
         var nums = EMPTY_VALUES.ARRAY;
@@ -1409,6 +1448,11 @@
     }
 
     function multiplyInt10(a, b) {
+
+        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+
         checkBigIntegerNumber10(a);
         checkBigIntegerNumber10(b);
 

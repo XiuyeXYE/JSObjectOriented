@@ -1820,6 +1820,59 @@
     };
     static_impl(BigInteger, BigInteger_static_impl);
 
+    function hashCode(k) {
+        if (oExist(k) && fnExist(k.hashCode)) {
+            return k.hashCode();
+        }
+        var digitLimit = HashMap.DIGIT_LIMIT;
+        // var digitLimitS = String(digitLimitI);
+        k = String(k) + whatType(k) + whatClass(k);
+        var h = '0';
+        for (var i = 0; i < len(k); i++) {
+            h = addInt10(multiplyInt10('33', h), String(charCode(k, i)));
+            if (gt(len(h), digitLimit)) {//folder!
+                var m = len(h) / digitLimit;
+                var n = parseInt10(m);
+                if (n < m) {
+                    n++;
+                }
+                var sh = '0';
+                for (var j = 0; j < n; j++) {
+                    sh = addInt10(sh, h.substring(j * digitLimit, digitLimit))
+                }
+                h = sh;
+                h = h.substring(len(h) - digitLimit);
+            }
+        }
+        return h;
+    }
+
+
+    function HashMap(cap, factor) {
+        this.loadFactor = factor || HashMap.DEFAULT_LOAD_FACTOR;
+        this.capacity = cap || HashMap.DEFAULT_INITIAL_CAPACITY;
+        if (gt(cap, HashMap.MAXIMUM_CAPACITY)) {
+            this.capacity = HashMap.MAXIMUM_CAPACITY;
+        }
+        this.data = EMPTY_VALUES.ARRAY;
+        this.data.length = this.capacity;
+    }
+
+    var HashMap_impl = {
+
+    };
+
+    impl(HashMap, HashMap_impl);
+
+    var HashMap_static_impl = {
+        DEFAULT_INITIAL_CAPACITY: 1 << 4,
+        DEFAULT_LOAD_FACTOR: 0.75,
+        MAXIMUM_CAPACITY: 1 << 30,
+        DIGIT_LIMIT: 32
+    };
+
+    static_impl(HashMap, HashMap_static_impl);
+
     //12.Plugins dev
 
     var plugins = EMPTY_VALUES.ARRAY;
@@ -2002,6 +2055,7 @@
         substractInt10: substractInt10,
         divideInt10: divideInt10,
         modInt10: modInt10,
+        hashCode: hashCode,
         ext: ext,
         impl: impl,
         static_impl: static_impl,

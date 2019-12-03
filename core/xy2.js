@@ -1636,35 +1636,33 @@
             throw new Error("divisor cannot be zero or 0");
         }
 
-        if (eq(a, '0') || ltInt10(a, b)) {
-            return '0';
+        var finalSign = eq(asign, bsign) ? '+' : '-';
+
+        if (eq(a, '0')) {
+            return eq(finalSign, '-') ? '-0' : '0';
+        }
+
+        //core
+        var radix = '10';
+        var quotient = '0';
+        while (!(ltInt10(a, b))) {
+            var rest = String(len(a) - len(b));
+            var rest10 = powerInt10(radix, rest);
+            var qn = multiplyInt10(b, rest10);
+            if (gtInt10(qn, a)) {
+                rest = substractInt10(rest, '1');
+                rest10 = powerInt10(radix, rest);
+            }
+            qn = multiplyInt10(b, rest10);
+            a = substractInt10(a, qn);
+            quotient = addInt10(quotient, rest10);
         }
 
 
-
-        var finalSign = eq(asign, bsign) ? '+' : '-';
-
-        var radix = '10';
-        var quotient = '0';
-        var rest = String(len(a) - len(b));
-
-        var t = multiplyInt10(b, multiplyInt10(rest, radix));
-        // while
-
-
-        //determine end sign
-        // if (eqInt10(a, b) && !eq(asign, bsign)) {
-        //     return '0';
-        // }
-        // else if (ltInt10(a, b)) {//a > b ,indeed
-        //     var tmp = a;//data swap
-        //     a = b;
-        //     b = tmp;
-        //     tmp = bsign;//sign swap
-        //     bsign = asign;
-        //     asign = tmp;
-        // }
-        // var finalSign = asign;
+        if (eq(finalSign, '-')) {
+            quotient = '-' + quotient;
+        }
+        return quotient;
 
     }
 
@@ -1687,32 +1685,40 @@
         a = clearOpenZeroS(a);
         b = clearOpenZeroS(b);
 
-        var finalSign = eq(asign, bsign) ? '+' : '-';
-
-
-
-
-        if (ltInt10(a, b)) {
-            return substractInt10(b, a);
+        if (eq(b, '0')) {
+            throw new Error("divisor cannot be zero or 0");
         }
 
-        len(a) - len(b);
+        var finalSign = asign;
 
-        //determine end sign
-        // if (eqInt10(a, b) && !eq(asign, bsign)) {
-        //     return '0';
-        // }
-        // else if (ltInt10(a, b)) {//a > b ,indeed
-        //     var tmp = a;//data swap
-        //     a = b;
-        //     b = tmp;
-        //     tmp = bsign;//sign swap
-        //     bsign = asign;
-        //     asign = tmp;
-        // }
-        // var finalSign = asign;
+        if (eq(a, '0')) {
+            return eq(finalSign, '-') ? '-0' : '0';
+        }
+
+        //core
+        var radix = '10';
+        // var quotient = '0';
+        while (!(ltInt10(a, b))) {
+            var rest = String(len(a) - len(b));
+            var rest10 = powerInt10(radix, rest);
+            var qn = multiplyInt10(b, rest10);
+            if (gtInt10(qn, a)) {
+                rest = substractInt10(rest, '1');
+                rest10 = powerInt10(radix, rest);
+            }
+            qn = multiplyInt10(b, rest10);
+            a = substractInt10(a, qn);
+            // quotient = addInt10(quotient, rest10);
+        }
+
+
+        if (eq(finalSign, '-')) {
+            a = '-' + a;
+        }
+        return a;
 
     }
+
 
     function BigInteger(s, radix = 10) {
         ntfs(this, BigInteger);
@@ -1761,6 +1767,18 @@
             var aData = a.int10Value();
             var oData = this.int10Value();
             return new BigInteger(substractInt10(aData, oData));
+        },
+        divide: function (a) {
+            notInstanceof(a, BigInteger, "param must be BigInteger object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigInteger(divideInt10(oData, aData));
+        },
+        mod: function (a) {
+            notInstanceof(a, BigInteger, "param must be BigInteger object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigInteger(modInt10(oData, aData));
         },
         power: function (n) {
             //One:
@@ -1972,12 +1990,14 @@
         max: max,
         pmax: pmax,
         pmin: pmin,
-        multiplyInt10: multiplyInt10,
         addInt10: addInt10,
         powerInt10: powerInt10,
         addInt10One: addInt10One,
         compareInt10: compareInt10,
+        multiplyInt10: multiplyInt10,
         substractInt10: substractInt10,
+        divideInt10: divideInt10,
+        modInt10: modInt10,
         ext: ext,
         impl: impl,
         static_impl: static_impl,

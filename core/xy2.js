@@ -1748,7 +1748,11 @@
             return s;
         },
         int10Value: function () {
-            return this.sign + this.unsignedInt10Value()
+            var sign = this.sign;
+            if (eq(sign, '+')) {
+                sign = '';
+            }
+            return sign + this.unsignedInt10Value()
         },
         add: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");

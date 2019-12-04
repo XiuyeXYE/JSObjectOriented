@@ -2,15 +2,19 @@
  * My class definition and  and API
  */
 ; (function (global, factory) {
-    factory(global);
-}(typeof window !== "undefined" ? window : this, function (window) {
+    typeof exports === 'object' && typeof module !== 'undefined' ?
+        module.exports = factory() :
+        typeof define === 'function' && define.amd ?
+            define(factory) :
+            (global = global || self, global.xy = factory());
+}(this, function () {
 
 
 
     //1.System definition:
-    var Array = window.Array;
-    var JSON = window.JSON;
-
+    // var Array = this.Array;
+    // var JSON = this.JSON;
+    // console.log(this);//node:this <=> global;browser:this <=> window
 
     //5.Array length op!
     //==0
@@ -292,6 +296,7 @@
     /**
     * very good deeply equals tools!!!
     * hey,hey,hey !!!
+    * not compare types ! only compare values!
     */
     function deepEQ(a, b) {
         var at = whatType(a);
@@ -329,7 +334,7 @@
                         }
                     }
                 }
-                else {
+                else if (!isArray(a) && !isArray(b)) {
                     var akeys = enumKeys(a);
                     var bkeys = enumKeys(b);
                     var alen = akeys.length;
@@ -339,10 +344,23 @@
                     }
                     for (var i = 0; i < alen; i++) {
                         var key = akeys[i];
-                        if (!oExist(b[key]) || !deepEQ(a[key], b[key])) {
+                        var bHadKey = false;
+                        for (var j = 0; j < blen; j++) {
+                            if (eq(key, bkeys[j])) {
+                                bHadKey = true;
+                                break;
+                            }
+                        }
+                        if (!bHadKey) {
                             return false;
                         }
+                        else if (bHadKey && !deepEQ(a[key], b[key])) {
+                            return false;
+                        }
+
                     }
+                } else {// one is array,another is object,cannot be compared!
+                    return false;
                 }
                 break;
         }
@@ -389,6 +407,48 @@
         notInstanceof(o, c, "Constructor requires 'new'!!!");
     }
 
+
+    //15.math function
+    function max(a, b) {
+        if (pgt(arguments, 2)) {
+            var m = arguments[0];
+            for (var i = 1; i < len(arguments); i++) {
+                m = max(m, arguments[i]);
+            }
+            return m;
+        } else {
+            return a > b ? a : b;
+        }
+    }
+
+    function min(a, b) {
+        if (pgt(arguments, 2)) {
+            var m = arguments[0];
+            for (var i = 1; i < len(arguments); i++) {
+                m = min(m, arguments[i]);
+            }
+            return m;
+        } else {
+            return a > b ? b : a;
+        }
+    }
+
+    function pmax() {
+        var m = len(arguments[0]);
+        for (var i = 1; i < len(arguments); i++) {
+            m = max(m, len(arguments[i]));
+        }
+        return m;
+    }
+
+    function pmin() {
+        var m = len(arguments[0]);
+        for (var i = 1; i < len(arguments); i++) {
+            m = min(m, len(arguments[i]));
+        }
+        return m;
+    }
+
     /**
      * core Class API
     */
@@ -410,33 +470,23 @@
                 case "function":
                     dest = src;
                     break;
-		default:
+                default:
                 case "object":
 
                     if (isArray(src)) {
                         dest = isArray(dest) ? dest : EMPTY_VALUES.ARRAY;
-                        // dest.length = src.length;
-                        for (var i = 0; i < len(src); i++) {
-                            dest[i] = src[i];
-                        }
-
                     }
                     else {
-
                         dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.OBJECT;
-                        var keys = enumKeys(src);
-                        for (var i = 0; i < len(keys); i++) {
-                            var key = keys[i];
-                            dest[key] = src[key];
-                        }
-
+                    }
+                    var keys = enumKeys(src);
+                    for (var i = 0; i < len(keys); i++) {
+                        var key = keys[i];
+                        dest[key] = src[key];
                     }
                     break;
-		    
-			    
             }
 
-            
         } else {// >2
             for (var i = 1; i < pNum; i++) {
                 dest = simpleCopy(dest, arguments[i]);
@@ -470,29 +520,22 @@
                 case "function":
                     dest = src;
                     break;
-		default:
+                default:
                 case "object":
 
                     if (isArray(src)) {
                         dest = isArray(dest) ? dest : EMPTY_VALUES.ARRAY;
-                        // dest.length = src.length;
-                        for (var i = 0; i < len(src); i++) {
-                            dest[i] = deepCopy(dest[i], src[i]);
-                        }
-
                     }
                     else {
-
                         dest = oExist(dest) && !isArray(dest) ? dest : EMPTY_VALUES.OBJECT;
-                        var keys = enumKeys(src);
-                        for (var i = 0; i < len(keys); i++) {
-                            var key = keys[i];
-                            dest[key] = deepCopy(dest[key], src[key]);
-                        }
-
+                    }
+                    var keys = enumKeys(src);
+                    for (var i = 0; i < len(keys); i++) {
+                        var key = keys[i];
+                        dest[key] = deepCopy(dest[key], src[key]);
                     }
                     break;
-		
+
             }
 
 
@@ -1067,7 +1110,7 @@
             if (!this.has(d)) {
                 this.data.push(d);
             }
-
+            return this;
         },
         list: function () {
             return this.data;
@@ -1141,7 +1184,7 @@
                     if (oExist(a)) {
                         f.call(a, this.data[i][0], this.data[i][1], this);
                     } else {
-                        f(this.data[i], this.data[i], this);
+                        f(this.data[i][0], this.data[i][1], this);
                     }
                 }
             }
@@ -1178,6 +1221,7 @@
                 if (this.elemEQ(k, en[0])) {
                     en[1] = v;
                     nonHave = false;
+                    break;
                 }
             }
             if (nonHave) {
@@ -1215,11 +1259,859 @@
 
     var ValueMap_impl = {
         elemEQ: function (a, b) {
-            return deepEQ(a, b);
+            return deepEQ(a, b) && eq(whatClass(a), whatClass(b));
         },
     }
 
     impl(ValueMap, ValueMap_impl);
+
+    var digits = [
+        '0', '1', '2', '3', '4', '5',
+        '6', '7', '8', '9', 'a', 'b',
+        'c', 'd', 'e', 'f', 'g', 'h',
+        'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't',
+        'u', 'v', 'w', 'x', 'y', 'z'
+    ];
+
+    var digitsMap = new Map();
+    for (var i = 0; i < len(digits); i++) {
+        digitsMap.set(digits[i], i);
+    }
+
+
+    function charCode(s, i) {
+        if (isNumber(i) && strNonEmpty(s)) {
+            return s.charCodeAt(i);
+        }
+        throw new Error("First param string and second param integer!");
+    }
+    function toLowerCase(s) {
+        if (strNonEmpty(s)) {
+            return s.toLowerCase();
+        }
+        throw new Error("First param string!");
+    }
+    function toUpperCase(s) {
+        if (strNonEmpty(s)) {
+            return s.toUpperCase();
+        }
+        throw new Error("First param string!");
+    }
+
+    function parseInt10(i) {
+        if (isNumber(i)) {
+            return Math.floor(i);
+        }
+        else {
+            return parseInt(i);
+        }
+    }
+
+    var numRegExp = /^[+-]?(0[box]?)?\w*$/;
+
+    function checkRadixAndNumber(s, radix) {
+        if ((lt(radix, 2) || gt(radix, 36)) && numRegExp.test(s)) {
+            throw new Error("Radix between 2 and 36.");
+        }
+        s = toLowerCase(s);
+        var sign = '+';
+        if (eq(s.charAt(0), '-')) {
+            sign = '-';
+            s = s.substring(1);
+        } else if (eq(s.charAt(0), '+')) {
+            // sign = '+';
+            s = s.substring(1);
+        }
+
+        if (eq(s.charAt(0), '0')) {
+            radix = 8;
+            s = s.substring(1);
+            if (eq(s.charAt(0), 'o')) {
+                // radix = 8;
+                s = s.substring(1);
+            }
+            else if (eq(s.charAt(0), 'x')) {
+                radix = 16;
+                s = s.substring(1);
+            } else if (eq(s.charAt(0), 'b')) {
+                radix = 2;
+                s = s.substring(1);
+            }
+        }
+
+        for (var i = 0; i < len(s); i++) {
+            if (nlt(digitsMap.get(s.charAt(i)), radix)) {
+                throw new Error("Input number cannot greater than radix: " + radix);
+            }
+        }
+        // for (var i = 0; i < len(s); i++) {
+        //     if (!eq(s.charAt(i), '0')) {
+        //         s = s.substring(i);
+        //         break;
+        //     }
+        // }
+        s = str2ListBySeparator(s, '');
+        s = clearOpenZeroI(s);
+        return [list2StrWithJoint(s, ''), radix, sign];
+    }
+
+    function checkBigIntegerNumber10(a) {
+        if (oExist(a) && oExist(a.length)) {
+            for (var i = 0; i < len(a); i++) {
+                if (!((a[i] >= 0 && a[i] <= 9) || (a[i] >= '0' && a[i] <= '9'))) {
+                    throw "Not a integer number string."
+                }
+            }
+        } else {
+            throw "Not a integer number string.";
+        }
+    }
+
+    function initZero(nums) {
+        for (var i = 0; i < len(nums); i++) {
+            nums[i] = 0;
+        }
+    }
+
+    function clearOpenZeroI(nums) {
+        var openZero = 0;
+        while (eq(nums[openZero], 0)) {
+            openZero++;
+        }
+        nums = nums.slice(openZero);
+        if (eq(len(nums), 0)) {
+            nums = [0];
+        }
+        return nums;
+    }
+
+    function clearOpenZeroS(nums) {
+        var openZero = 0;
+        while (eq(nums[openZero], '0')) {
+            openZero++;
+        }
+        nums = nums.slice(openZero);
+        if (eq(len(nums), 0)) {
+            nums = '0';
+        }
+        return nums;
+    }
+
+    var int10RegExp = /^[+-]?\d*$/;
+
+    function whatSign(s) {
+        return s.startsWith('-') ? '-' : '+';
+    }
+
+    function getRidOfSign(s) {
+        if (eq(s.charAt(0), '-')) {
+            s = s.substring(1);
+        } else if (eq(s.charAt(0), '+')) {
+            s = s.substring(1);
+        }
+        return s;
+    }
+
+    /**
+     * 
+     * @param {String} a 
+     * @param {String} b 
+     */
+    function addInt10(a, b) {
+        //check decimal format
+        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+        //calc sign
+        var asign = whatSign(a);
+        var bsign = whatSign(b);
+
+        a = getRidOfSign(a);
+        b = getRidOfSign(b);
+
+
+        checkBigIntegerNumber10(a);
+        checkBigIntegerNumber10(b);
+
+        a = clearOpenZeroS(a);
+        b = clearOpenZeroS(b);
+
+        //determine end sign
+        if (eqInt10(a, b) && !eq(asign, bsign)) {
+            return '0';
+        }
+        else if (ltInt10(a, b)) {//a > b ,indeed
+            var tmp = a;//data swap
+            a = b;
+            b = tmp;
+            tmp = bsign;//sign swap
+            bsign = asign;
+            asign = tmp;
+        }
+        var finalSign = asign;
+
+        var radix = 10;
+        var nums = EMPTY_VALUES.ARRAY;
+        var le = pmax(a, b);
+        nums.length = le + 1;
+        initZero(nums);
+        var i = len(a) - 1;
+        var j = len(b) - 1;
+        var k = 0;
+        //core 1
+        while (i >= 0 && j >= 0) {
+            if (eq(asign, bsign)) {//for +
+                nums[k++] = parseInt10(a[i--]) + parseInt10(b[j--]);
+            } else {//for -
+                nums[k++] = parseInt10(a[i--]) - parseInt10(b[j--]);
+            }
+        }
+        while (i >= 0) {
+            nums[k++] = parseInt10(a[i--]);
+        }
+        // while (j >= 0) {//this is error,max num rest!!!Do you understand?!!!
+        //     nums[k++] = parseInt10(b[j--]);
+        // }
+
+        // core 2
+        for (var n = 0; n < len(nums); n++) {
+            if (eq(asign, bsign)) {//+ handler
+                if (nums[n] >= radix) {
+                    nums[n + 1] += parseInt10(nums[n] / radix);
+                    nums[n] %= radix;
+                }
+            } else {//- handler
+                if (nums[n] < 0) {//because of '-',don't have num >= radix;
+                    nums[n + 1] -= 1;
+                    nums[n] += radix;
+                }
+            }
+
+        }
+        nums.reverse();
+        nums = clearOpenZeroI(nums);
+        var s = list2StrWithJoint(nums, '');
+        if (eq(finalSign, '-')) {
+            s = '-' + s;
+        }
+        return s;
+    }
+
+    function multiplyInt10(a, b) {
+
+        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+
+        //calc sign
+        var asign = whatSign(a);
+        var bsign = whatSign(b);
+
+        a = getRidOfSign(a);
+        b = getRidOfSign(b);
+
+        checkBigIntegerNumber10(a);
+        checkBigIntegerNumber10(b);
+
+        a = clearOpenZeroS(a);
+        b = clearOpenZeroS(b);
+
+        var finalSign = eq(asign, bsign) ? '+' : '-';
+
+        var radix = 10;
+        var nums = EMPTY_VALUES.ARRAY;
+        // var le = pmax(a, b);
+        // nums.length = le * 2 + 1;
+        nums.length = len(a) + len(b);
+        initZero(nums);
+        //core 1
+        var k = 0;
+        for (var i = len(a) - 1; i >= 0; i--) {
+            for (var j = len(b) - 1; j >= 0; j--) {
+                nums[len(a) - 1 - i + k++] += parseInt10(a[i]) * parseInt10(b[j]);
+                // console.log(len(a) - 1 - i + k - 1, nums[len(a) - 1 - i + k - 1], parseInt10(a[i]), parseInt10(b[j]));
+            }
+            k = 0;
+        }
+        //core 2
+        for (var n = 0; n < len(nums); n++) {
+            if (nums[n] >= radix) {
+                nums[n + 1] += parseInt10(nums[n] / radix);
+                nums[n] %= radix;
+            }
+
+        }
+        nums.reverse();
+        nums = clearOpenZeroI(nums);
+        var s = list2StrWithJoint(nums, '');
+        if (eq(finalSign, '-')) {
+            s = '-' + s;
+        }
+        return s;
+
+    }
+
+    function addInt10One(s) {
+        // checkBigIntegerNumber10(s);
+        return addInt10(s, '1');
+    }
+
+    function compareInt10(a, b) {
+        checkBigIntegerNumber10(a);
+        checkBigIntegerNumber10(b);
+        if (len(a) > len(b)) {
+            return 1;
+        } else if (len(a) < len(b)) {
+            return -1;
+        }
+        var i = 0;
+        while (eq(a[i], b[i]) && i < len(a)) {
+            i++;
+        }
+        if (eq(i, len(a))) {
+            return 0;
+        }
+        else if (a[i] > b[i]) {
+            return 1;
+        } else if (a[i] < b[i]) {
+            return -1;
+        }
+        return 0;
+    }
+
+    function gtInt10(a, b) {
+        return compareInt10(a, b) > 0;
+    }
+    function ltInt10(a, b) {
+        return compareInt10(a, b) < 0;
+    }
+    function eqInt10(a, b) {
+        return eq(compareInt10(a, b), 0);
+    }
+
+
+    function powerInt10(s, p) {
+        if (!int10RegExp.test(s)) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+        var finalSign = whatSign(s);
+        s = getRidOfSign(s);
+        checkBigIntegerNumber10(s);
+        s = clearOpenZeroS(s);
+        var num = '1';
+        p = String(p);
+        for (var i = '0'; ltInt10(i, p); i = addInt10One(i)) {
+            num = multiplyInt10(num, s);
+        }
+        if (eq(finalSign, '-')) {
+            num = '-' + num;
+        }
+        return num;
+    }
+
+    function substractInt10(a, b) {
+        //check decimal format
+        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+        //calc sign
+        // var asign = whatSign(a);
+        var bsign = whatSign(b);
+
+        // a = getRidOfSign(a);
+        b = getRidOfSign(b);
+
+        //exchange sign '+' and '-'
+        b = eq(bsign, '-') ? b : '-' + b;
+
+        return addInt10(a, b);
+
+    }
+
+    function divideInt10(a, b) {
+        //check decimal format
+        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+        //calc sign
+        var asign = whatSign(a);
+        var bsign = whatSign(b);
+
+        a = getRidOfSign(a);
+        b = getRidOfSign(b);
+
+
+        checkBigIntegerNumber10(a);
+        checkBigIntegerNumber10(b);
+
+        a = clearOpenZeroS(a);
+        b = clearOpenZeroS(b);
+
+        if (eq(b, '0')) {
+            throw new Error("divisor cannot be zero or 0");
+        }
+
+        var finalSign = eq(asign, bsign) ? '+' : '-';
+
+        if (eq(a, '0')) {
+            return eq(finalSign, '-') ? '-0' : '0';
+        }
+
+        //core
+        var radix = '10';
+        var quotient = '0';
+        while (!(ltInt10(a, b))) {
+            var rest = String(len(a) - len(b));
+            var rest10 = powerInt10(radix, rest);
+            var qn = multiplyInt10(b, rest10);
+            if (gtInt10(qn, a)) {
+                rest = substractInt10(rest, '1');
+                rest10 = powerInt10(radix, rest);
+            }
+            qn = multiplyInt10(b, rest10);
+            a = substractInt10(a, qn);
+            quotient = addInt10(quotient, rest10);
+        }
+
+
+        if (eq(finalSign, '-')) {
+            quotient = '-' + quotient;
+        }
+        return quotient;
+
+    }
+
+    function modInt10(a, b) {
+        //check decimal format
+        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+        //calc sign
+        var asign = whatSign(a);
+        var bsign = whatSign(b);
+
+        a = getRidOfSign(a);
+        b = getRidOfSign(b);
+
+
+        checkBigIntegerNumber10(a);
+        checkBigIntegerNumber10(b);
+
+        a = clearOpenZeroS(a);
+        b = clearOpenZeroS(b);
+
+        if (eq(b, '0')) {
+            throw new Error("divisor cannot be zero or 0");
+        }
+
+        var finalSign = asign;
+
+        if (eq(a, '0')) {
+            return eq(finalSign, '-') ? '-0' : '0';
+        }
+
+        //core
+        var radix = '10';
+        // var quotient = '0';
+        while (!(ltInt10(a, b))) {
+            var rest = String(len(a) - len(b));
+            var rest10 = powerInt10(radix, rest);
+            var qn = multiplyInt10(b, rest10);
+            if (gtInt10(qn, a)) {
+                rest = substractInt10(rest, '1');
+                rest10 = powerInt10(radix, rest);
+            }
+            qn = multiplyInt10(b, rest10);
+            a = substractInt10(a, qn);
+            // quotient = addInt10(quotient, rest10);
+        }
+
+
+        if (eq(finalSign, '-')) {
+            a = '-' + a;
+        }
+        return a;
+
+    }
+
+
+    function BigInteger(s, radix = 10) {
+        ntfs(this, BigInteger);
+        var r = checkRadixAndNumber(s, radix);
+        this.s = r[0];
+        this.data = str2ListBySeparator(this.s, '');
+        this.radix = r[1];
+        this.sign = r[2];
+    }
+
+    var BigInteger_impl = {
+        bigint10: function () {//new bigint obj
+            return new BigInteger(this.int10Value());
+        },
+        unsignedInt10Value: function () {//string
+            var data = EMPTY_VALUES.ARRAY;
+            var s = '0';
+            var radix = String(this.radix);
+            for (var i = len(this.s) - 1; i >= 0; i--) {
+                s = addInt10(s,
+                    multiplyInt10(
+                        String(digitsMap.get(this.s[i])),
+                        powerInt10(radix, len(this.s) - i - 1)
+                    )
+                );//have to multiply n*radix^N
+            }
+            return s;
+        },
+        int10Value: function () {
+            var sign = this.sign;
+            if (eq(sign, '+')) {
+                sign = '';
+            }
+            return sign + this.unsignedInt10Value()
+        },
+        add: function (a) {
+            notInstanceof(a, BigInteger, "param must be BigInteger object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigInteger(addInt10(aData, oData));
+        },
+        multiply: function (a) {
+            notInstanceof(a, BigInteger, "param must be BigInteger object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigInteger(multiplyInt10(aData, oData));
+        },
+        substract: function (a) {
+            notInstanceof(a, BigInteger, "param must be BigInteger object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigInteger(substractInt10(aData, oData));
+        },
+        divide: function (a) {
+            notInstanceof(a, BigInteger, "param must be BigInteger object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigInteger(divideInt10(oData, aData));
+        },
+        mod: function (a) {
+            notInstanceof(a, BigInteger, "param must be BigInteger object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigInteger(modInt10(oData, aData));
+        },
+        power: function (n) {
+            //One:
+            // var sum = BigInteger.ONE;
+            // n = String(n);
+            // for (var i = '0'; ltInt10(i, n); i = addInt10One(i)) {
+            //     sum = sum.multiply(this);
+            // }
+            // return sum;
+            //Two:
+            return new BigInteger(powerInt10(this.int10Value(), String(n)));
+        },
+        negate: function () {
+            return new BigInteger(
+                eq(this.sign, '-')
+                    ?
+                    '+' + this.unsignedInt10Value()
+                    :
+                    '-' + this.unsignedInt10Value());
+        },
+        addOne: function () {
+            return this.add(BigInteger.ONE);
+        },
+        toString: function () {
+            return this.s;
+        }
+
+    };
+
+    impl(BigInteger, BigInteger_impl);
+
+    var BigInteger_static_impl = {
+        ZERO: new BigInteger('0'),
+        ONE: new BigInteger('1'),
+    };
+    static_impl(BigInteger, BigInteger_static_impl);
+
+
+
+    //very useful code for generating hash value!
+    function hashCodeS(k) {
+        if (oExist(k) && fnExist(k.hashCode)) {
+            return k.hashCode();
+        }
+        var digitLimit = HashMap.DIGIT_LIMIT;
+        var kType = whatType(k);
+        switch (kType) {
+            case "number":
+            case "bigint":
+            // return k;
+            // break;
+            case "string":
+            case "boolean":
+            case "symbol":
+            case "undefined":
+            case "function":
+                k = String(k) + whatType(k) + whatClass(k);
+                break;
+            default:
+            case "object":
+                k = JSON.stringify(k);//+ whatType(k) + whatClass(k);
+                break;
+        }
+        var h = '0';
+        for (var i = 0; i < len(k); i++) {
+            h = addInt10(multiplyInt10('33', h), String(charCode(k, i)));
+            if (gt(len(h), digitLimit)) {//folder! compress!
+                var m = len(h) / digitLimit;
+                var n = parseInt10(m);
+                if (n < m) {
+                    n++;
+                }
+                var sh = '0';
+                for (var j = 0; j < n; j++) {
+                    sh = addInt10(sh, h.substring(j * digitLimit, digitLimit))
+                }
+                h = sh;
+                h = h.substring(len(h) - digitLimit);
+            }
+        }
+        var sign = whatSign(h);
+        if (eq(sign, '-')) {
+            h = h.substring(1);
+        }
+        return h;
+    }
+
+    function hashCodeI(k) {
+        if (oExist(k) && fnExist(k.hashCode)) {
+            return k.hashCode();
+        }
+        var kType = whatType(k);
+        switch (kType) {
+            case "number":
+                return k;
+            case "bigint":
+            case "string":
+            case "boolean":
+            case "symbol":
+            case "undefined":
+            case "function":
+                k = String(k) + kType;
+                break;
+            default:
+            case "object":
+                k = JSON.stringify(k) + whatClass(k);//+ whatType(k) + whatClass(k);
+                break;
+        }
+        var h = 0;
+        for (var i = 0; i < len(k); i++) {
+            h = h * 33 + charCode(k, i);
+            //javascript 按位操作符 有大小限制 限制为32位！
+            // h = (h << 5 + h) + charCode(k, i);//have some errors!
+            // the following code : limit bits and clear sign '-'
+            h = (h >>> 16) ^ (h << 16);//average a little
+            h >>>= 1;//去符号 clear '-'
+            h = h ^ (h >>> 16);
+        }
+        return h;
+    }
+
+
+    function HashNode(k, v) {
+        this.k = k;
+        this.v = v;
+    }
+
+    //According to key's value to get value
+    //not key's reference!!!
+    function HashMap(cap, factor) {
+        this.loadFactor = factor || HashMap.DEFAULT_LOAD_FACTOR;
+        this.capacity = cap || HashMap.DEFAULT_INITIAL_CAPACITY;
+        if (gt(this.capacity, HashMap.MAXIMUM_CAPACITY)) {
+            this.capacity = HashMap.MAXIMUM_CAPACITY;
+        }
+        this.data = EMPTY_VALUES.ARRAY;
+        this.data.length = this.capacity;
+        this.saved = 0;
+    }
+
+    var HashMap_impl = {
+        elemEQ: function (a, b) {
+            return deepEQ(a, b) && eq(whatClass(a), whatClass(b))
+        },
+        resize: function () {
+            if (nlt(this.capacity, HashMap.MAXIMUM_CAPACITY)) {
+                return;
+            }
+            var tmp = EMPTY_VALUES.ARRAY;
+            this.capacity = tmp.length = this.capacity * 2;
+            if (gt(len(tmp), HashMap.MAXIMUM_CAPACITY)) {
+                this.capacity = tmp.length = HashMap.MAXIMUM_CAPACITY;
+            }
+            for (var i = 0; i < this.capacity; i++) {
+                if (oExist(this.data[i])) {
+                    for (var j = 0; j < len(this.data[i]); j++) {
+                        var en = this.data[i][j];
+                        if (oExist(en)) {
+                            var idx = this.index(en.k);
+                            if (!oExist(tmp[idx])) {
+                                tmp[idx] = EMPTY_VALUES.ARRAY;
+                            }
+                            tmp[idx].push(en);
+                        }
+                    }
+                }
+            }
+            this.data = tmp;
+            // this.capacity = this.data.length;
+        },
+        clear: function () {
+            this.data.length = 0;
+        },
+        delete: function (k) {
+            return this.remove(k);
+        },
+        remove: function (k) {
+            var idx = this.index(k);
+            var j = -1;
+            if (oExist(this.data[idx])) {
+                for (var i = 0; i < len(this.data[idx]); i++) {
+                    var en = this.data[idx][i];
+                    if (this.elemEQ(k, en.k)) {//type same!
+                        j = i;
+                        break;
+                    }
+                }
+            }
+            if (!eq(j, -1)) {
+                if (eq(len(this.data[idx]), 1)) {
+                    this.data[idx] = undefined;
+                } else {
+                    for (var i = j; i < len(this.data[idx]) - 1; i++) {
+                        this.data[idx][i] = this.data[idx][i + 1];
+                    }
+                    this.data[idx].length--;
+                }
+            }
+        },
+        size: function () {
+            return this.saved;
+        },
+        get: function (k) {
+            var idx = this.index(k);
+            if (oExist(this.data[idx])) {
+                for (var i = 0; i < len(this.data[idx]); i++) {
+                    var en = this.data[idx][i];
+                    if (this.elemEQ(k, en.k)) {
+                        return en.v;
+                    }
+                }
+            }
+        },
+        set: function (k, v) {
+            return this.add(k, v);
+        },
+        put: function (k, v) {
+            return this.add(k, v);
+        },
+        index: function (k) {
+            // return parseInt10(modInt10(hashCodeS(k), String(this.capacity)));
+            return hashCodeI(k) % this.capacity;
+        },
+        add: function (k, v) {
+            var idx = this.index(k);
+            var en = new HashNode(k, v);
+            if (!oExist(this.data[idx])) {
+                this.data[idx] = EMPTY_VALUES.ARRAY;
+                this.data[idx].push(en);
+                this.saved++;
+            }
+            else {
+                var notCovered = true;
+                for (var i = 0; i < len(this.data[idx]); i++) {
+                    var oEn = this.data[idx][i];
+                    if (this.elemEQ(k, oEn.k)) {//coverage!
+                        oEn.v = v;
+                        notCovered = false;
+                        break;
+                    }
+                }
+                if (notCovered) {
+                    this.data[idx].push(en);
+                    this.saved++;
+                }
+            }
+
+            if (this.saved / this.capacity > this.loadFactor) {
+                this.resize();
+            }
+            return this;
+        },
+        forEach: function (f, a) {//a => this => other obj
+            if (isFunction(f)) {
+                for (var i = 0; i < this.capacity; i++) {
+                    if (oExist(this.data[i])) {
+                        for (var j = 0; j < len(this.data[i]); j++) {
+                            if (oExist(a)) {
+                                f.call(a, this.data[i][j].k, this.data[i][j].v, this);
+                            } else {
+                                f(this.data[i][j].k, this.data[i][j].v, this);
+                            }
+                        }
+                    }
+
+                }
+            }
+        },
+        keys: function () {
+            var keyss = EMPTY_VALUES.ARRAY;
+            for (var i = 0; i < this.capacity; i++) {
+                if (oExist(this.data[i])) {
+                    for (var j = 0; j < len(this.data[i]); j++) {
+                        keyss.push(this.data[i][j].k);
+                    }
+                }
+            }
+            return keyss;
+        },
+        values: function () {
+            var valuess = EMPTY_VALUES.ARRAY;
+            for (var i = 0; i < this.capacity; i++) {
+                if (oExist(this.data[i])) {
+                    for (var j = 0; j < len(this.data[i]); j++) {
+                        valuess.push(this.data[i][j].v);
+                    }
+                }
+            }
+            return valuess;
+        },
+        has: function (k) {
+            var idx = this.index(k);
+            if (oExist(this.data[idx])) {
+                for (var i = 0; i < len(this.data[idx]); i++) {
+                    if (this.elemEQ(k, this.data[idx][i].k)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        },
+    };
+
+    impl(HashMap, HashMap_impl);
+
+    var HashMap_static_impl = {
+        DEFAULT_INITIAL_CAPACITY: 1 << 4,
+        DEFAULT_LOAD_FACTOR: 0.75,
+        MAXIMUM_CAPACITY: 1 << 30,
+        DIGIT_LIMIT: 10
+    };
+
+    static_impl(HashMap, HashMap_static_impl);
 
     //12.Plugins dev
 
@@ -1333,6 +2225,7 @@
 
 
 
+
     //9.Open API functions
 
     var fn = {
@@ -1384,19 +2277,37 @@
         eq: eq,
         pgt: pgt,
         pnl: pnl,
-        p: peq,
+        peq: peq,
         deepEQ: deepEQ,
         fnExist: fnExist,
         oExist: oExist,
         openInterval: openInterval,
         closedInterval: closedInterval,
+        min: min,
+        max: max,
+        pmax: pmax,
+        pmin: pmin,
+        compareInt10: compareInt10,
+        gtInt10: gtInt10,
+        ltInt10: ltInt10,
+        eqInt10: eqInt10,
+        addInt10: addInt10,
+        powerInt10: powerInt10,
+        addInt10One: addInt10One,
+        compareInt10: compareInt10,
+        multiplyInt10: multiplyInt10,
+        substractInt10: substractInt10,
+        divideInt10: divideInt10,
+        modInt10: modInt10,
+        hashCodeS: hashCodeS,
+        hashCodeI: hashCodeI,
         ext: ext,
         impl: impl,
         static_impl: static_impl,
         inf_ext: inf_ext,
         inst_of: inst_of,
-        notInstanceof: notInstanceof
-
+        notInstanceof: notInstanceof,
+        ntfs: ntfs
     };
 
     var interfaces = {
@@ -1408,7 +2319,9 @@
         Set: Set,
         ValueSet: ValueSet,
         Map: Map,
-        ValueMap: ValueMap
+        ValueMap: ValueMap,
+        BigInteger: BigInteger,
+        HashMap: HashMap
     };
 
     var pluginsDEV = {
@@ -1444,10 +2357,8 @@
     xy.extend(interfaces);
     xy.extend(pluginsDEV);
 
-
-
-
-
-    window.xy = xy;
+    // this.xy = xy;
+    // export default xy;
     return xy;
+
 }));

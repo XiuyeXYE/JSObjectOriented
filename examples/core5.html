@@ -42,52 +42,63 @@
         var s = nums.join('');
         console.log(s);
 
+        function G(a, b) {
+            this.a = a;
+            this.b = b;
+        }
+
         var n = 10000;
         console.time();
         var m1 = new Map();
         for (var i = 0; i < n; i++) {
-            m1.set({ a: i }, i);
+            m1.set(new G(i, i), i);
         }
         console.log(m1);
         console.timeEnd();
         console.time();
         var m2 = new xy.HashMap();
         for (var i = 0; i < n; i++) {
-            m2.set({ a: i }, i);
+            m2.set(new G(i, i), i);
         }
         console.log(m2);
         console.timeEnd();
         console.time();
         var m3 = new xy.Map();
         for (var i = 0; i < n; i++) {
-            m3.set({ a: i }, i);
+            m3.set(new G(i, i), i);
         }
         console.log(m3);
         console.timeEnd();
         console.time();
         var m5 = new xy.ValueMap();
         for (var i = 0; i < n; i++) {
-            m5.set({ a: i }, i);
+            m5.set(new G(i, i), i);
         }
         console.log(m5);
         console.timeEnd();
 
         console.time();
 
-        console.log(m1.get({ a: 999 }));
+        console.log(m1.get(new G(878, 878)));
         console.timeEnd();
         console.time();
 
-        console.log(m2.get({ a: 1 }));
+        console.log(m2.get(new G(878, 878)));
         console.timeEnd();
         console.time();
 
-        console.log(m3.get({ a: 999 }));
+        console.log(m3.get(new G(878, 878)));
         console.timeEnd();
         console.time();
 
-        console.log(m5.get({ a: 999 }));
+        console.log(m5.get(new G(878, 878)));
         console.timeEnd();
+
+        var c = 0;
+        for (var i = 0; i < m2.size(); i++) {
+            c += xy.oExist(m2.data[i]) ? 1 : 0;
+        }
+        console.log(c);
 
     </script>
 

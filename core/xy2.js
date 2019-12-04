@@ -1170,7 +1170,7 @@
                     if (oExist(a)) {
                         f.call(a, this.data[i][0], this.data[i][1], this);
                     } else {
-                        f(this.data[i], this.data[i], this);
+                        f(this.data[i][0], this.data[i][1], this);
                     }
                 }
             }
@@ -1207,6 +1207,7 @@
                 if (this.elemEQ(k, en[0])) {
                     en[1] = v;
                     nonHave = false;
+                    break;
                 }
             }
             if (nonHave) {
@@ -1244,7 +1245,7 @@
 
     var ValueMap_impl = {
         elemEQ: function (a, b) {
-            return deepEQ(a, b);
+            return deepEQ(a, b) && eq(whatClass(a), whatClass(b));
         },
     }
 
@@ -1875,23 +1876,21 @@
         if (oExist(k) && fnExist(k.hashCode)) {
             return k.hashCode();
         }
-        var digitLimit = HashMap.DIGIT_LIMIT;
         var kType = whatType(k);
         switch (kType) {
             case "number":
+                return k;
             case "bigint":
-            // return k;
-            // break;
             case "string":
             case "boolean":
             case "symbol":
             case "undefined":
             case "function":
-                k = String(k) + whatType(k) + whatClass(k);
+                k = String(k) + kType;
                 break;
             default:
             case "object":
-                k = JSON.stringify(k);//+ whatType(k) + whatClass(k);
+                k = JSON.stringify(k) + whatClass(k);//+ whatType(k) + whatClass(k);
                 break;
         }
         var h = 0;
@@ -1913,6 +1912,8 @@
         this.v = v;
     }
 
+    //According to key's value to get value
+    //not key's reference!!!
     function HashMap(cap, factor) {
         this.loadFactor = factor || HashMap.DEFAULT_LOAD_FACTOR;
         this.capacity = cap || HashMap.DEFAULT_INITIAL_CAPACITY;
@@ -1925,11 +1926,17 @@
     }
 
     var HashMap_impl = {
+        elemEQ: function (a, b) {
+            return deepEQ(a, b) && eq(whatClass(a), whatClass(b))
+        },
         resize: function () {
+            if (nlt(this.capacity, HashMap.MAXIMUM_CAPACITY)) {
+                return;
+            }
             var tmp = EMPTY_VALUES.ARRAY;
             this.capacity = tmp.length = this.capacity * 2;
-            if (len(tmp) > HashMap.MAXIMUM_CAPACITY) {
-                tmp.length = HashMap.MAXIMUM_CAPACITY;
+            if (gt(len(tmp), HashMap.MAXIMUM_CAPACITY)) {
+                this.capacity = tmp.length = HashMap.MAXIMUM_CAPACITY;
             }
             for (var i = 0; i < this.capacity; i++) {
                 if (oExist(this.data[i])) {
@@ -1951,14 +1958,18 @@
         clear: function () {
             this.data.length = 0;
         },
+        delete: function (k) {
+            return this.remove(k);
+        },
         remove: function (k) {
             var idx = this.index(k);
             var j = -1;
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
                     var en = this.data[idx][i];
-                    if (deepEQ(en.k, k)) {
+                    if (this.elemEQ(k, en.k)) {//type same!
                         j = i;
+                        break;
                     }
                 }
             }
@@ -1981,7 +1992,7 @@
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
                     var en = this.data[idx][i];
-                    if (deepEQ(en.k, k)) {
+                    if (this.elemEQ(k, en.k)) {
                         return en.v;
                     }
                 }
@@ -2009,9 +2020,10 @@
                 var notCovered = true;
                 for (var i = 0; i < len(this.data[idx]); i++) {
                     var oEn = this.data[idx][i];
-                    if (deepEQ(k, oEn.k)) {//coverage!
+                    if (this.elemEQ(k, oEn.k)) {//coverage!
                         oEn.v = v;
-                        covered = false;
+                        notCovered = false;
+                        break;
                     }
                 }
                 if (notCovered) {
@@ -2024,6 +2036,55 @@
                 this.resize();
             }
             return this;
+        },
+        forEach: function (f, a) {//a => this => other obj
+            if (isFunction(f)) {
+                for (var i = 0; i < this.capacity; i++) {
+                    if (oExist(this.data[i])) {
+                        for (var j = 0; j < len(this.data[i]); j++) {
+                            if (oExist(a)) {
+                                f.call(a, this.data[i][j].k, this.data[i][j].v, this);
+                            } else {
+                                f(this.data[i][j].k, this.data[i][j].v, this);
+                            }
+                        }
+                    }
+
+                }
+            }
+        },
+        keys: function () {
+            var keyss = EMPTY_VALUES.ARRAY;
+            for (var i = 0; i < this.capacity; i++) {
+                if (oExist(this.data[i])) {
+                    for (var j = 0; j < len(this.data[i]); j++) {
+                        keyss.push(this.data[i][j].k);
+                    }
+                }
+            }
+            return keyss;
+        },
+        values: function () {
+            var valuess = EMPTY_VALUES.ARRAY;
+            for (var i = 0; i < this.capacity; i++) {
+                if (oExist(this.data[i])) {
+                    for (var j = 0; j < len(this.data[i]); j++) {
+                        valuess.push(this.data[i][j].v);
+                    }
+                }
+            }
+            return valuess;
+        },
+        has: function (k) {
+            var idx = this.index(k);
+            if (oExist(this.data[idx])) {
+                for (var i = 0; i < len(this.data[idx]); i++) {
+                    if (this.elemEQ(k, this.data[idx][i].k)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         },
     };
 

@@ -296,6 +296,7 @@
     /**
     * very good deeply equals tools!!!
     * hey,hey,hey !!!
+    * not compare types ! only compare values!
     */
     function deepEQ(a, b) {
         var at = whatType(a);
@@ -333,7 +334,7 @@
                         }
                     }
                 }
-                else {
+                else if (!isArray(a) && !isArray(b)) {
                     var akeys = enumKeys(a);
                     var bkeys = enumKeys(b);
                     var alen = akeys.length;
@@ -343,10 +344,23 @@
                     }
                     for (var i = 0; i < alen; i++) {
                         var key = akeys[i];
-                        if (!oExist(b[key]) || !deepEQ(a[key], b[key])) {
+                        var bHadKey = false;
+                        for (var j = 0; j < blen; j++) {
+                            if (eq(key, bkeys[j])) {
+                                bHadKey = true;
+                                break;
+                            }
+                        }
+                        if (!bHadKey) {
                             return false;
                         }
+                        else if (bHadKey && !deepEQ(a[key], b[key])) {
+                            return false;
+                        }
+
                     }
+                } else {// one is array,another is object,cannot be compared!
+                    return false;
                 }
                 break;
         }

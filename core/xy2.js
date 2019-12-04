@@ -1822,9 +1822,6 @@
     static_impl(BigInteger, BigInteger_static_impl);
 
 
-    function objectToString(oOrA) {
-
-    }
 
     //very useful code for generating hash value!
     function hashCodeS(k) {
@@ -1906,40 +1903,7 @@
             h = (h >>> 16) ^ (h << 16);//average a little
             h >>>= 1;//去符号 clear '-'
             h = h ^ (h >>> 16);
-            // var hS = String(h);
-            // if (gt(len(hS), digitLimit)) {//folder! compress!
-            //     var m = len(hS) / digitLimit;
-            //     var n = parseInt10(m);
-            //     if (n < m) {
-            //         n++;
-            //     }
-            //     var sh = 0;
-            //     for (var j = 0; j < n; j++) {
-            //         var phase = hS.substring(j * digitLimit, digitLimit)
-            //         if (strIsEmpty(phase)) {
-            //             phase = '0';
-            //         }
-            //         sh += parseInt10(phase);
-            //     }
-            //     h = sh;
-            //     // hS = String(sh);
-            //     // h = parseInt10(hS.substring(len(hS) - digitLimit));
-            //     h = (h >>> 16) ^ (h << 16);//average a little
-            //     h >>>= 1;//去符号
-            //     h = h ^ (h >>> 16);
-
-            //     // jdk8
-            //     // h = h ^ h >>> 16;
-
-            //     //jdk7
-            //     // h ^= (h >>> 20) ^ (h >>> 12);
-            //     // h = h ^ (h >>> 7) ^ (h >>> 4);
-
-            // }
         }
-        // if (lt(h, 0) || eq(h, -0)) {
-        //     h = -h;
-        // }
         return h;
     }
 

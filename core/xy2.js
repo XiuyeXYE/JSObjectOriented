@@ -1096,7 +1096,7 @@
             if (!this.has(d)) {
                 this.data.push(d);
             }
-
+            return this;
         },
         list: function () {
             return this.data;
@@ -1820,17 +1820,39 @@
     };
     static_impl(BigInteger, BigInteger_static_impl);
 
+
+    function objectToString(oOrA) {
+
+    }
+
+    //very useful code for generating hash value!
     function hashCode(k) {
         if (oExist(k) && fnExist(k.hashCode)) {
             return k.hashCode();
         }
         var digitLimit = HashMap.DIGIT_LIMIT;
-        // var digitLimitS = String(digitLimitI);
-        k = String(k) + whatType(k) + whatClass(k);
+        var kType = whatType(k);
+        switch (kType) {
+            case "number":
+            case "bigint":
+            // return k;
+            // break;
+            case "string":
+            case "boolean":
+            case "symbol":
+            case "undefined":
+            case "function":
+                k = String(k) + whatType(k) + whatClass(k);
+                break;
+            default:
+            case "object":
+                k = JSON.stringify(k);//+ whatType(k) + whatClass(k);
+                break;
+        }
         var h = '0';
         for (var i = 0; i < len(k); i++) {
             h = addInt10(multiplyInt10('33', h), String(charCode(k, i)));
-            if (gt(len(h), digitLimit)) {//folder!
+            if (gt(len(h), digitLimit)) {//folder! compress!
                 var m = len(h) / digitLimit;
                 var n = parseInt10(m);
                 if (n < m) {
@@ -1848,6 +1870,11 @@
     }
 
 
+    function HashNode(k, v) {
+        this.k = k;
+        this.v = v;
+    }
+
     function HashMap(cap, factor) {
         this.loadFactor = factor || HashMap.DEFAULT_LOAD_FACTOR;
         this.capacity = cap || HashMap.DEFAULT_INITIAL_CAPACITY;
@@ -1856,10 +1883,109 @@
         }
         this.data = EMPTY_VALUES.ARRAY;
         this.data.length = this.capacity;
+        this.saved = 0;
     }
 
     var HashMap_impl = {
+        resize: function () {
+            var tmp = EMPTY_VALUES.ARRAY;
+            tmp.length = this.capacity * 2 + 1;
+            if (len(tmp) > HashMap.MAXIMUM_CAPACITY) {
+                tmp.length = HashMap.MAXIMUM_CAPACITY;
+            }
+            for (var i = 0; i < this.capacity; i++) {
+                if (oExist(this.data[i])) {
+                    for (var j = 0; j < len(this.data[i]); j++) {
+                        var en = this.data[i][j];
+                        if (oExist(en)) {
+                            var idx = this.index(en.k);
+                            if (!oExist(tmp[idx])) {
+                                tmp[idx] = EMPTY_VALUES.ARRAY;
+                            }
+                            tmp[idx].push(en);
+                        }
+                    }
+                }
+            }
+            this.data = tmp;
+            this.capacity = this.data.length;
+        },
+        clear: function () {
+            this.data.length = 0;
+        },
+        remove: function (k) {
+            var idx = this.index(k);
+            var j = -1;
+            if (oExist(this.data[idx])) {
+                for (var i = 0; i < len(this.data[idx]); i++) {
+                    var en = this.data[idx][i];
+                    if (deepEQ(en.k, k)) {
+                        j = i;
+                    }
+                }
+            }
+            if (!eq(j, -1)) {
+                if (eq(len(this.data[idx]), 1)) {
+                    this.data[idx] = undefined;
+                } else {
+                    for (var i = j; i < len(this.data[idx]) - 1; i++) {
+                        this.data[idx][i] = this.data[idx][i + 1];
+                    }
+                    this.data[idx].length--;
+                }
+            }
+        },
+        size: function () {
+            return this.saved;
+        },
+        get: function (k) {
+            var idx = this.index(k);
+            if (oExist(this.data[idx])) {
+                for (var i = 0; i < len(this.data[idx]); i++) {
+                    var en = this.data[idx][i];
+                    if (deepEQ(en.k, k)) {
+                        return en.v;
+                    }
+                }
+            }
+        },
+        set: function (k, v) {
+            return this.add(k, v);
+        },
+        put: function (k, v) {
+            return this.add(k, v);
+        },
+        index: function (k) {
+            return parseInt10(modInt10(hashCode(k), String(this.capacity)));
+        },
+        add: function (k, v) {
+            var idx = this.index(k);
+            var en = new HashNode(k, v);
+            if (!oExist(this.data[idx])) {
+                this.data[idx] = EMPTY_VALUES.ARRAY;
+                this.data[idx].push(en);
+                this.len++;
+            }
+            else {
+                var notCovered = true;
+                for (var i = 0; i < len(this.data[idx]); i++) {
+                    var oEn = this.data[idx][i];
+                    if (deepEQ(k, oEn.k)) {//coverage!
+                        oEn.v = v;
+                        covered = false;
+                    }
+                }
+                if (notCovered) {
+                    this.data[idx].push(en);
+                    this.len++;
+                }
+            }
 
+            if (this.size() / this.capacity > this.loadFactor) {
+                this.resize();
+            }
+            return this;
+        },
     };
 
     impl(HashMap, HashMap_impl);
@@ -1868,7 +1994,7 @@
         DEFAULT_INITIAL_CAPACITY: 1 << 4,
         DEFAULT_LOAD_FACTOR: 0.75,
         MAXIMUM_CAPACITY: 1 << 30,
-        DIGIT_LIMIT: 32
+        DIGIT_LIMIT: 10
     };
 
     static_impl(HashMap, HashMap_static_impl);
@@ -2047,6 +2173,10 @@
         max: max,
         pmax: pmax,
         pmin: pmin,
+        compareInt10: compareInt10,
+        gtInt10: gtInt10,
+        ltInt10: ltInt10,
+        eqInt10: eqInt10,
         addInt10: addInt10,
         powerInt10: powerInt10,
         addInt10One: addInt10One,
@@ -2075,7 +2205,8 @@
         ValueSet: ValueSet,
         Map: Map,
         ValueMap: ValueMap,
-        BigInteger: BigInteger
+        BigInteger: BigInteger,
+        HashMap: HashMap
     };
 
     var pluginsDEV = {

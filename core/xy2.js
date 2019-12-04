@@ -1996,6 +1996,7 @@
                     }
                     this.data[idx].length--;
                 }
+                this.saved--;
             }
         },
         size: function () {

@@ -1506,8 +1506,9 @@
 
         var radix = 10;
         var nums = EMPTY_VALUES.ARRAY;
-        var le = pmax(a, b);
-        nums.length = le * 2 + 1;
+        // var le = pmax(a, b);
+        // nums.length = le * 2 + 1;
+        nums.length = len(a) + len(b);
         initZero(nums);
         //core 1
         var k = 0;
@@ -1826,7 +1827,7 @@
     }
 
     //very useful code for generating hash value!
-    function hashCode(k) {
+    function hashCodeS(k) {
         if (oExist(k) && fnExist(k.hashCode)) {
             return k.hashCode();
         }
@@ -1866,6 +1867,65 @@
                 h = h.substring(len(h) - digitLimit);
             }
         }
+        var sign = whatSign(h);
+        if (eq(sign, '-')) {
+            h = h.substring(1);
+        }
+        return h;
+    }
+
+    function hashCodeI(k) {
+        if (oExist(k) && fnExist(k.hashCode)) {
+            return k.hashCode();
+        }
+        var digitLimit = HashMap.DIGIT_LIMIT;
+        var kType = whatType(k);
+        switch (kType) {
+            case "number":
+            case "bigint":
+            // return k;
+            // break;
+            case "string":
+            case "boolean":
+            case "symbol":
+            case "undefined":
+            case "function":
+                k = String(k) + whatType(k) + whatClass(k);
+                break;
+            default:
+            case "object":
+                k = JSON.stringify(k);//+ whatType(k) + whatClass(k);
+                break;
+        }
+        var h = 0;
+        for (var i = 0; i < len(k); i++) {
+            h = h * 33 + charCode(k, i);
+            //javascript 按位操作符 有大小限制 限制为32位！
+            // h = (h << 5 + h) + charCode(k, i);//have some errors!
+            var hS = String(h);
+            if (gt(len(hS), digitLimit)) {//folder! compress!
+                var m = len(hS) / digitLimit;
+                var n = parseInt10(m);
+                if (n < m) {
+                    n++;
+                }
+                var sh = 0;
+                for (var j = 0; j < n; j++) {
+                    var phase = hS.substring(j * digitLimit, digitLimit)
+                    if (strIsEmpty(phase)) {
+                        phase = '0';
+                    }
+                    sh += parseInt10(phase);
+                }
+                // h = sh;
+                hS = String(sh);
+                h = parseInt10(hS.substring(len(hS) - digitLimit));
+                // h = h ^ h >>> 16;
+            }
+        }
+        if (lt(h, 0) || eq(h, -0)) {
+            h = -h;
+        }
         return h;
     }
 
@@ -1878,7 +1938,7 @@
     function HashMap(cap, factor) {
         this.loadFactor = factor || HashMap.DEFAULT_LOAD_FACTOR;
         this.capacity = cap || HashMap.DEFAULT_INITIAL_CAPACITY;
-        if (gt(cap, HashMap.MAXIMUM_CAPACITY)) {
+        if (gt(this.capacity, HashMap.MAXIMUM_CAPACITY)) {
             this.capacity = HashMap.MAXIMUM_CAPACITY;
         }
         this.data = EMPTY_VALUES.ARRAY;
@@ -1889,7 +1949,7 @@
     var HashMap_impl = {
         resize: function () {
             var tmp = EMPTY_VALUES.ARRAY;
-            tmp.length = this.capacity * 2 + 1;
+            this.capacity = tmp.length = this.capacity * 2;
             if (len(tmp) > HashMap.MAXIMUM_CAPACITY) {
                 tmp.length = HashMap.MAXIMUM_CAPACITY;
             }
@@ -1908,7 +1968,7 @@
                 }
             }
             this.data = tmp;
-            this.capacity = this.data.length;
+            // this.capacity = this.data.length;
         },
         clear: function () {
             this.data.length = 0;
@@ -1956,7 +2016,8 @@
             return this.add(k, v);
         },
         index: function (k) {
-            return parseInt10(modInt10(hashCode(k), String(this.capacity)));
+            // return parseInt10(modInt10(hashCodeS(k), String(this.capacity)));
+            return hashCodeI(k) % this.capacity;
         },
         add: function (k, v) {
             var idx = this.index(k);
@@ -1964,7 +2025,7 @@
             if (!oExist(this.data[idx])) {
                 this.data[idx] = EMPTY_VALUES.ARRAY;
                 this.data[idx].push(en);
-                this.len++;
+                this.saved++;
             }
             else {
                 var notCovered = true;
@@ -1977,11 +2038,11 @@
                 }
                 if (notCovered) {
                     this.data[idx].push(en);
-                    this.len++;
+                    this.saved++;
                 }
             }
 
-            if (this.size() / this.capacity > this.loadFactor) {
+            if (this.saved / this.capacity > this.loadFactor) {
                 this.resize();
             }
             return this;
@@ -2185,7 +2246,8 @@
         substractInt10: substractInt10,
         divideInt10: divideInt10,
         modInt10: modInt10,
-        hashCode: hashCode,
+        hashCodeS: hashCodeS,
+        hashCodeI: hashCodeI,
         ext: ext,
         impl: impl,
         static_impl: static_impl,

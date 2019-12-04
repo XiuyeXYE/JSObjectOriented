@@ -42,6 +42,53 @@
         var s = nums.join('');
         console.log(s);
 
+        var n = 1000;
+        console.time();
+        var m1 = new Map();
+        for (var i = 0; i < n; i++) {
+            m1.set({ a: i }, i);
+        }
+        console.log(m1);
+        console.timeEnd();
+        console.time();
+        var m2 = new xy.HashMap();
+        for (var i = 0; i < n; i++) {
+            m2.set({ a: i }, i);
+        }
+        console.log(m2);
+        console.timeEnd();
+        console.time();
+        var m3 = new xy.Map();
+        for (var i = 0; i < n; i++) {
+            m3.set({ a: i }, i);
+        }
+        console.log(m3);
+        console.timeEnd();
+        console.time();
+        var m5 = new xy.ValueMap();
+        for (var i = 0; i < n; i++) {
+            m5.set({ a: i }, i);
+        }
+        console.log(m5);
+        console.timeEnd();
+
+        console.time();
+
+        console.log(m1.get({ a: 999 }));
+        console.timeEnd();
+        console.time();
+
+        console.log(m2.get({ a: 1 }));
+        console.timeEnd();
+        console.time();
+
+        console.log(m3.get({ a: 999 }));
+        console.timeEnd();
+        console.time();
+
+        console.log(m5.get({ a: 999 }));
+        console.timeEnd();
+
     </script>
 
 </body>

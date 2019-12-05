@@ -47,7 +47,7 @@
             this.b = b;
         }
 
-        var n = 1000000;
+        var n = 10000;
         console.time();
         var m1 = new Map();
         for (var i = 0; i < n; i++) {
@@ -63,18 +63,18 @@
         console.log(m2);
         console.timeEnd();
         console.time();
-        // var m3 = new xy.Map();
-        // for (var i = 0; i < n; i++) {
-        //     m3.set(new G(i, i), i);
-        // }
-        // console.log(m3);
+        var m3 = new xy.Map();
+        for (var i = 0; i < n; i++) {
+            m3.set(new G(i, i), i);
+        }
+        console.log(m3);
         console.timeEnd();
         console.time();
-        // var m5 = new xy.ValueMap();
-        // for (var i = 0; i < n; i++) {
-        //     m5.set(new G(i, i), i);
-        // }
-        // console.log(m5);
+        var m5 = new xy.ValueMap();
+        for (var i = 0; i < n; i++) {
+            m5.set(new G(i, i), i);
+        }
+        console.log(m5);
         console.timeEnd();
 
         console.time();
@@ -87,11 +87,11 @@
         console.timeEnd();
         console.time();
 
-        // console.log(m3.get(new G(878, 878)));
+        console.log(m3.get(new G(878, 878)));
         console.timeEnd();
         console.time();
 
-        // console.log(m5.get(new G(878, 878)));
+        console.log(m5.get(new G(878, 878)));
         console.timeEnd();
 
         var c = 0;

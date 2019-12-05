@@ -1311,8 +1311,8 @@
     var numRegExp = /^[+-]?(0[box]?)?\w*$/;
 
     function checkRadixAndNumber(s, radix) {
-        if ((lt(radix, 2) || gt(radix, 36)) && numRegExp.test(s)) {
-            throw new Error("Radix between 2 and 36.");
+        if (!numRegExp.test(s)) {
+            throw new Error("Input first param must be a number string and and sign only one +/-!.");
         }
         s = toLowerCase(s);
         var sign = '+';
@@ -1325,19 +1325,26 @@
         }
 
         if (eq(s.charAt(0), '0')) {
-            radix = 8;
+            var radixI = 8;
             s = s.substring(1);
             if (eq(s.charAt(0), 'o')) {
                 // radix = 8;
                 s = s.substring(1);
             }
             else if (eq(s.charAt(0), 'x')) {
-                radix = 16;
+                radixI = 16;
                 s = s.substring(1);
             } else if (eq(s.charAt(0), 'b')) {
-                radix = 2;
+                radixI = 2;
                 s = s.substring(1);
+            } else if (eq(len(s), 0)) {
+                radixI = radix;
             }
+            radix = radixI;
+        }
+
+        if (!radix || lt(radix, 2) || gt(radix, 36)) {
+            throw new Error("Radix between 2 and 36.");
         }
 
         for (var i = 0; i < len(s); i++) {
@@ -1345,12 +1352,6 @@
                 throw new Error("Input number cannot greater than radix: " + radix);
             }
         }
-        // for (var i = 0; i < len(s); i++) {
-        //     if (!eq(s.charAt(i), '0')) {
-        //         s = s.substring(i);
-        //         break;
-        //     }
-        // }
         s = str2ListBySeparator(s, '');
         s = clearOpenZeroI(s);
         return [list2StrWithJoint(s, ''), radix, sign];
@@ -1498,6 +1499,11 @@
         return s;
     }
 
+    /**
+     * 
+     * @param {String} a 
+     * @param {String} b 
+     */
     function multiplyInt10(a, b) {
 
         if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
@@ -1590,7 +1596,11 @@
         return eq(compareInt10(a, b), 0);
     }
 
-
+    /**
+     * 
+     * @param {String} s 
+     * @param {String} p 
+     */
     function powerInt10(s, p) {
         if (!int10RegExp.test(s)) {
             throw new Error("params must be decimal number and sign only one +/-!");
@@ -1609,7 +1619,11 @@
         }
         return num;
     }
-
+    /**
+     * 
+     * @param {String} a 
+     * @param {String} b 
+     */
     function substractInt10(a, b) {
         //check decimal format
         if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
@@ -1629,6 +1643,11 @@
 
     }
 
+    /**
+     * 
+     * @param {String} a 
+     * @param {STring} b 
+     */
     function divideInt10(a, b) {
         //check decimal format
         if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
@@ -1682,14 +1701,19 @@
 
     }
 
+    /**
+     * 
+     * @param {String} a 
+     * @param {String} b 
+     */
     function modInt10(a, b) {
         //check decimal format
         if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
             throw new Error("params must be decimal number and sign only one +/-!");
         }
         //calc sign
-        var asign = whatSign(a);
-        var bsign = whatSign(b);
+        // var asign = whatSign(a);
+        // var bsign = whatSign(b);
 
         a = getRidOfSign(a);
         b = getRidOfSign(b);
@@ -1705,7 +1729,7 @@
             throw new Error("divisor cannot be zero or 0");
         }
 
-        var finalSign = asign;
+        // var finalSign = asign;
 
         if (eq(a, '0')) {
             return eq(finalSign, '-') ? '-0' : '0';
@@ -1728,10 +1752,138 @@
         }
 
 
-        if (eq(finalSign, '-')) {
-            a = '-' + a;
-        }
+        // if (eq(finalSign, '-')) {
+        //     a = '-' + a;
+        // }
         return a;
+
+    }
+
+    /**
+     * 
+     * @param {String} a 
+     * @param {String} b 
+     */
+    function divideAndRemainderInt10(a, b) {
+        //check decimal format
+        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+        //calc sign
+        var asign = whatSign(a);
+        // var bsign = whatSign(b);
+
+        a = getRidOfSign(a);
+        b = getRidOfSign(b);
+
+
+        checkBigIntegerNumber10(a);
+        checkBigIntegerNumber10(b);
+
+        a = clearOpenZeroS(a);
+        b = clearOpenZeroS(b);
+
+        if (eq(b, '0')) {
+            throw new Error("divisor cannot be zero or 0");
+        }
+
+        var finalSign = asign;
+
+        if (eq(a, '0')) {
+            return [eq(finalSign, '-') ? '-0' : '0', '0'];
+        }
+
+        //core
+        var radix = '10';
+        var quotient = '0';
+        while (!(ltInt10(a, b))) {
+            var rest = String(len(a) - len(b));
+            var rest10 = powerInt10(radix, rest);
+            var qn = multiplyInt10(b, rest10);
+            if (gtInt10(qn, a)) {
+                rest = substractInt10(rest, '1');
+                rest10 = powerInt10(radix, rest);
+            }
+            qn = multiplyInt10(b, rest10);
+            a = substractInt10(a, qn);
+            quotient = addInt10(quotient, rest10);
+        }
+
+
+        if (eq(finalSign, '-')) {
+            quotient = '-' + quotient;
+        }
+
+        return [quotient, a];
+
+    }
+
+    /**
+     * 
+     * @param {String} s 
+     * @param {Number} radix 
+     */
+    function radixToInt10(s, radix) {
+
+        var result = checkRadixAndNumber(s, radix);
+        s = clearOpenZeroS(result[0]);
+        radix = result[1];
+        var sign = result[2];
+        //core
+        var os = '0';
+        radix = String(radix);
+        for (var i = len(s) - 1; i >= 0; i--) {
+            os = addInt10(os,
+                multiplyInt10(
+                    String(digitsMap.get(s[i])),
+                    powerInt10(radix, len(s) - i - 1)
+                )
+            );//have to multiply n*radix^N
+        }
+
+        if (eq(sign, '-')) {
+            os = '-' + os;
+        }
+
+        return os;
+    }
+
+    /**
+     * 
+     * @param {String} s 
+     * @param {Number} radix 
+     */
+    function int10ToRadix(s, radix) {
+        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+
+        var sign = whatSign(s);
+
+        s = getRidOfSign(s);
+
+        checkBigIntegerNumber10(s);
+
+        s = clearOpenZeroS(s);
+        //core
+        if (isNumber(radix) && !eq(radix, 10)) {
+            radix = String(radix);
+            var radixNum = EMPTY_VALUES.ARRAY;
+            var result = divideAndRemainderInt10(s, radix);
+            radixNum.push(digits[result[1]]);
+            while (!eq(result[0], '0')) {
+                result = divideAndRemainderInt10(result[0], radix);
+                radixNum.push(digits[result[1]]);
+            }
+            radixNum.reverse();
+            s = list2StrWithJoint(radixNum, '');
+        }
+
+        if (eq(sign, '-')) {
+            s = '-' + s;
+        }
+
+        return s;
 
     }
 
@@ -1750,18 +1902,20 @@
             return new BigInteger(this.int10Value());
         },
         unsignedInt10Value: function () {//string
-            var data = EMPTY_VALUES.ARRAY;
-            var s = '0';
-            var radix = String(this.radix);
-            for (var i = len(this.s) - 1; i >= 0; i--) {
-                s = addInt10(s,
-                    multiplyInt10(
-                        String(digitsMap.get(this.s[i])),
-                        powerInt10(radix, len(this.s) - i - 1)
-                    )
-                );//have to multiply n*radix^N
-            }
-            return s;
+            // var data = EMPTY_VALUES.ARRAY;
+            // var s = '0';
+            // var radix = String(this.radix);
+            // for (var i = len(this.s) - 1; i >= 0; i--) {
+            //     s = addInt10(s,
+            //         multiplyInt10(
+            //             String(digitsMap.get(this.s[i])),
+            //             powerInt10(radix, len(this.s) - i - 1)
+            //         )
+            //     );//have to multiply n*radix^N
+            // }
+            // return s;
+
+            return radixToInt10(this.s, this.radix);
         },
         int10Value: function () {
             var sign = this.sign;
@@ -2318,6 +2472,9 @@
         substractInt10: substractInt10,
         divideInt10: divideInt10,
         modInt10: modInt10,
+        divideAndRemainderInt10: divideAndRemainderInt10,
+        radixToInt10: radixToInt10,
+        int10ToRadix: int10ToRadix,
         hashCodeS: hashCodeS,
         hashCodeI: hashCodeI,
         ext: ext,

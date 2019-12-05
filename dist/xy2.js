@@ -1470,9 +1470,6 @@
         while (i >= 0) {
             nums[k++] = parseInt10(a[i--]);
         }
-        // while (j >= 0) {//this is error,max num rest!!!Do you understand?!!!
-        //     nums[k++] = parseInt10(b[j--]);
-        // }
 
         // core 2
         for (var n = 0; n < len(nums); n++) {
@@ -1689,7 +1686,7 @@
         }
         //calc sign
         var asign = whatSign(a);
-        var bsign = whatSign(b);
+        // var bsign = whatSign(b);
 
         a = getRidOfSign(a);
         b = getRidOfSign(b);

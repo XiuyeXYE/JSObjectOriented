@@ -30,7 +30,7 @@ Write some utilities API for me.
 
 ## Using:
 ### Define a Class:
-		function A(a) {//define class
+	function A(a) {//define class
             console.log('A');
             console.log("A params =", a);
         }
@@ -49,51 +49,29 @@ Write some utilities API for me.
             }
         };
         xy.impl(A, A_impl1, A_impl2);
-		let a = new A();
+	let a = new A();
         a.a1();
         a.a2();
         a.a3();
 ##### Output:
-		A
-		A params = undefined
-		A:a1
-		A:a2
-		A:a3
+	A
+	A params = undefined
+	A:a1
+	A:a2
+	A:a3
 ### Extends super class: must inherit a class ,or not useful!
-		function B() {
+	function B() {
             console.log("B");
             this.base('B input');
-        }
-        var B_impl1 = {
-            b1: function () {
-                console.log(this.constructor.name + ":b1");
-            }
-        };
-        var B_impl2 = {
-            b2: function () {
-                console.log(this.constructor.name + ":b2");
-            }
-        };
-        xy.impl(B, B_impl1);
+        }       
         xy.ext(B, A);
-        xy.impl(B, B_impl2);
         let b = new B();
-        b.a1();
-        b.a2();
-        b.a3();
-        b.b2();
-        b.b1();
-
 ##### Output:
-		B
-		A
-		A params = B input
-		B:a2
-		B:a3
-		B:b2
-		B:b1
+	B
+	A
+	A params = B input	
 ### Class F => E => D:
-		function D() {
+	function D() {
             // this.base();//error;无继承类没有base！
             // this.base();//第一个类如果用base就是抽象类无法使用base
             this.d = 99;
@@ -105,20 +83,13 @@ Write some utilities API for me.
         function F() {
             this.base();//super class constructor
             this.f = 77;
-        }
-
-        // ext(F,F);//error
-        // ext(F,E,F);//error
-        //F extends E ,E extends D
-        xy.ext(F, E, D);
-        // console.log(new D());
-        // console.log(new E());
+        }        
+        xy.ext(F, E, D);       
         console.log(new F());
 ##### Output:
-		F {d: 99, e: 87, f: 77}
+	F {d: 99, e: 87, f: 77}
 ### Interfaces combined:
-		var new_inf = xy.inf_ext(xy.std.of_interface, xy.std.extend_interface);
-        console.log(new_inf);
+	var new_inf = xy.inf_ext(xy.std.of_interface, xy.std.extend_interface);        
         function C() {
             this.c = 100;
         }
@@ -126,9 +97,9 @@ Write some utilities API for me.
         var c = new C();
         console.log(c);
 ##### Output:
-		C {c: 100}
+	C {c: 100}
 ### Instanceof:
-		console.log("C instanceof new_inf:", xy.inst_of(c, new_inf));
+	console.log("C instanceof new_inf:", xy.inst_of(c, new_inf));
         console.log("C instanceof of_interface:", xy.inst_of(c, xy.std.of_interface));
         console.log("C instanceof extend_interface:", xy.inst_of(c, xy.std.extend_interface));
         console.log("C instanceof invoke_interface:", xy.inst_of(c, xy.std.invoke_interface));
@@ -136,17 +107,17 @@ Write some utilities API for me.
         console.log("C instanceof new_inf，of_interface，extend_interface:", xy.inst_of(c, new_inf, xy.std.of_interface, xy.std.extend_interface));
         console.log("C instanceof new_inf，of_interface，extend_interface，invoke_interface:", xy.inst_of(c, new_inf, xy.std.of_interface, xy.std.extend_interface, xy.std.invoke_interface));
 ##### Output:
-		C instanceof new_inf: true
-		C instanceof of_interface: true
-		C instanceof extend_interface: true
-		C instanceof invoke_interface: true
-		C instanceof C: true
-		C instanceof new_inf，of_interface，extend_interface: true
-		C instanceof new_inf，of_interface，extend_interface，invoke_interface: true
+	C instanceof new_inf: true
+	C instanceof of_interface: true
+	C instanceof extend_interface: true
+	C instanceof invoke_interface: true
+	C instanceof C: true
+	C instanceof new_inf，of_interface，extend_interface: true
+	C instanceof new_inf，of_interface，extend_interface，invoke_interface: true
 ### Static implements:
-		xy.static_impl(A, xy.std.static_of_interface, xy.std.extend_interface);
-		console.log(A.of());
+	xy.static_impl(A, xy.std.static_of_interface, xy.std.extend_interface);
+	console.log(A.of());
 ##### Output:
-		A {}
+	A {}
 
 

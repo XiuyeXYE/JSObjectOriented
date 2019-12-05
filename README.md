@@ -27,7 +27,7 @@ Write some utilities API for me.
 	        console.log('A');
 	        console.log("A params =", a);        
         }
-	
+
 ### Implements interfaces:
 
         var A_impl1 = {//implements 1
@@ -56,7 +56,7 @@ Write some utilities API for me.
 	    A:a1
 	    A:a2
 	    A:a3
-	
+
 ### Extends super class: must inherit a class ,or not useful!
 
 	    function B() {

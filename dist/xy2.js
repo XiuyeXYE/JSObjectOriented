@@ -1855,11 +1855,11 @@
             case "symbol":
             case "undefined":
             case "function":
-                k = String(k) + whatType(k) + whatClass(k);
+                k = String(k) + kType;
                 break;
             default:
             case "object":
-                k = JSON.stringify(k);//+ whatType(k) + whatClass(k);
+                k = JSON.stringify(k) + whatClass(k);//+ whatType(k) + whatClass(k);
                 break;
         }
         var h = '0';
@@ -1996,6 +1996,7 @@
                     }
                     this.data[idx].length--;
                 }
+                this.saved--;
             }
         },
         size: function () {
@@ -2099,6 +2100,24 @@
                 }
             }
             return false;
+        },
+        entries: function* () {
+            for (var i = 0; i < this.capacity; i++) {
+                if (oExist(this.data[i])) {
+                    for (var j = 0; j < len(this.data[i]); j++) {
+                        yield this.data[i][j];
+                    }
+                }
+            }
+        },
+        [Symbol.iterator]: function* () {
+            for (var i = 0; i < this.capacity; i++) {
+                if (oExist(this.data[i])) {
+                    for (var j = 0; j < len(this.data[i]); j++) {
+                        yield this.data[i][j];
+                    }
+                }
+            }
         },
     };
 

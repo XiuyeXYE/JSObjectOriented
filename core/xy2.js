@@ -2013,7 +2013,7 @@
         if (oExist(k) && fnExist(k.hashCode)) {
             return k.hashCode();
         }
-        var digitLimit = HashMap.DIGIT_LIMIT;
+        var digitLimit = 10;
         var kType = whatType(k);
         switch (kType) {
             case "number":
@@ -2091,9 +2091,10 @@
     }
 
 
-    function HashNode(k, v) {
+    function HashNode(k, v, hash) {
         this.k = k;
         this.v = v;
+        this.hash = hash;
     }
 
     //According to key's value to get value
@@ -2217,7 +2218,7 @@
                 }
             }
 
-            if (this.saved / this.capacity > this.loadFactor) {
+            if (this.saved >= this.loadFactor * this.capacity) {
                 this.resize();
             }
             return this;
@@ -2297,7 +2298,7 @@
         DEFAULT_INITIAL_CAPACITY: 1 << 4,
         DEFAULT_LOAD_FACTOR: 0.75,
         MAXIMUM_CAPACITY: 1 << 30,
-        DIGIT_LIMIT: 10
+        // DIGIT_LIMIT: 10
     };
 
     static_impl(HashMap, HashMap_static_impl);

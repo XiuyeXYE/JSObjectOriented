@@ -47,7 +47,7 @@
             this.b = b;
         }
 
-        var n = 10000;
+        var n = 1000000;
         console.time();
         var m1 = new Map();
         for (var i = 0; i < n; i++) {
@@ -63,11 +63,11 @@
         console.log(m2);
         console.timeEnd();
         console.time();
-        var m3 = new xy.Map();
-        for (var i = 0; i < n; i++) {
-            m3.set(new G(i, i), i);
-        }
-        console.log(m3);
+        // var m3 = new xy.Map();
+        // for (var i = 0; i < n; i++) {
+        //     m3.set(new G(i, i), i);
+        // }
+        // console.log(m3);
         console.timeEnd();
         console.time();
         // var m5 = new xy.ValueMap();
@@ -87,7 +87,7 @@
         console.timeEnd();
         console.time();
 
-        console.log(m3.get(new G(878, 878)));
+        // console.log(m3.get(new G(878, 878)));
         console.timeEnd();
         console.time();
 
@@ -95,11 +95,19 @@
         console.timeEnd();
 
         var c = 0;
+        var deepth = 0;
+        var pos = -1;
         for (var i = 0; i < m2.size(); i++) {
             c += xy.oExist(m2.data[i]) ? 1 : 0;
+            if (xy.oExist(m2.data[i])) {
+                if (xy.lt(deepth, xy.len(m2.data[i]))) {
+                    deepth = xy.len(m2.data[i]);
+                    pos = i;
+                }
+            }
         }
-        console.log(c);
-
+        console.log('count:', c, ' ; deepth:', deepth, ' ; pos:', pos);
+        console.log("ratio:", c/ m2.capacity);
     </script>
 
 </body>

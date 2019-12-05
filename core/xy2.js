@@ -1907,7 +1907,7 @@
             return new BigInteger(this.int10Value());
         },
         intRadix: function (r) {
-            return new BigInteger(this.intRadixValue());
+            return new BigInteger(this.intRadixValue(r));
         },
         intRadixValue: function (r) {
             return int10ToRadix(this.int10Value(), r);
@@ -1987,10 +1987,15 @@
         addOne: function () {
             return this.add(BigInteger.ONE);
         },
-        toString: function () {
+        toString: function (r) {
+            if (isNumber(r) && !eq(this.radix, r)) {
+                return this.intRadixValue(r);
+            }
             return this.s;
-        }
-
+        },
+        // toJSON: function (r) {//JSON.stringify()!
+        //     return this.toString(r);
+        // }
     };
 
     impl(BigInteger, BigInteger_impl);

@@ -48,6 +48,7 @@ Write some utilities API for me.
         a.a1();
         a.a2();
         a.a3();
+
 ##### Output:
 
 	    A

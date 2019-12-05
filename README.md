@@ -1,13 +1,5 @@
 # JavaScript Utilities API
 Write some utilities API for me.
-### 1.Html element operation:css,class,attribute,insert,remove,...;
-### 2.Selector(use original API):'#id','.class','tag',...;
-### 3.Event handler:register,unregister,trigger,...;
-### 4.Timer;
-### 5.FPS handler;
-### 6.Canvas API wrapper;
-### 7.Definition of some common interfaces;
-### 8.Another useful tools API; 
 # 类:基本定义
 方便类继承,接口实现的一套API.
 ### 类定义 关键字 function: function A(){...} 定义类A;
@@ -29,12 +21,16 @@ Write some utilities API for me.
 
 
 ## Using:
+
 ### Define a Class:
+
 	function A(a) {//define class
             console.log('A');
             console.log("A params =", a);
         }
+	
 ### Implements interfaces:
+
         var A_impl1 = {//implements 1
             a2: function () {
                 console.log(this.constructor.name + ":a2");
@@ -54,23 +50,30 @@ Write some utilities API for me.
         a.a2();
         a.a3();
 ##### Output:
+
 	A
 	A params = undefined
 	A:a1
 	A:a2
 	A:a3
+	
 ### Extends super class: must inherit a class ,or not useful!
+
 	function B() {
             console.log("B");
             this.base('B input');
         }       
         xy.ext(B, A);
         let b = new B();
+	
 ##### Output:
+
 	B
 	A
-	A params = B input	
+	A params = B input
+	
 ### Class F => E => D:
+
 	function D() {
             // this.base();//error;无继承类没有base！
             // this.base();//第一个类如果用base就是抽象类无法使用base
@@ -86,9 +89,13 @@ Write some utilities API for me.
         }        
         xy.ext(F, E, D);       
         console.log(new F());
+	
 ##### Output:
+
 	F {d: 99, e: 87, f: 77}
+	
 ### Interfaces combined:
+
 	var new_inf = xy.inf_ext(xy.std.of_interface, xy.std.extend_interface);        
         function C() {
             this.c = 100;
@@ -96,9 +103,13 @@ Write some utilities API for me.
         xy.impl(C, new_inf);
         var c = new C();
         console.log(c);
+	
 ##### Output:
+
 	C {c: 100}
+	
 ### Instanceof:
+
 	console.log("C instanceof new_inf:", xy.inst_of(c, new_inf));
         console.log("C instanceof of_interface:", xy.inst_of(c, xy.std.of_interface));
         console.log("C instanceof extend_interface:", xy.inst_of(c, xy.std.extend_interface));
@@ -106,7 +117,9 @@ Write some utilities API for me.
         console.log("C instanceof C:", xy.inst_of(c, C));
         console.log("C instanceof new_inf，of_interface，extend_interface:", xy.inst_of(c, new_inf, xy.std.of_interface, xy.std.extend_interface));
         console.log("C instanceof new_inf，of_interface，extend_interface，invoke_interface:", xy.inst_of(c, new_inf, xy.std.of_interface, xy.std.extend_interface, xy.std.invoke_interface));
+	
 ##### Output:
+
 	C instanceof new_inf: true
 	C instanceof of_interface: true
 	C instanceof extend_interface: true
@@ -114,10 +127,14 @@ Write some utilities API for me.
 	C instanceof C: true
 	C instanceof new_inf，of_interface，extend_interface: true
 	C instanceof new_inf，of_interface，extend_interface，invoke_interface: true
+	
 ### Static implements:
+
 	xy.static_impl(A, xy.std.static_of_interface, xy.std.extend_interface);
 	console.log(A.of());
+	
 ##### Output:
+
 	A {}
 
 

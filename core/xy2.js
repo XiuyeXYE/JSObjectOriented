@@ -1830,22 +1830,27 @@
         radix = result[1];
         var sign = result[2];
         //core
-        var os = '0';
-        radix = String(radix);
-        for (var i = len(s) - 1; i >= 0; i--) {
-            os = addInt10(os,
-                multiplyInt10(
-                    String(digitsMap.get(s[i])),
-                    powerInt10(radix, len(s) - i - 1)
-                )
-            );//have to multiply n*radix^N
+
+        if (isNumber(radix) && !eq(radix, 10)) {
+            var os = '0';
+            radix = String(radix);
+            for (var i = len(s) - 1; i >= 0; i--) {
+                os = addInt10(os,
+                    multiplyInt10(
+                        String(digitsMap.get(s[i])),
+                        powerInt10(radix, len(s) - i - 1)
+                    )
+                );//have to multiply n*radix^N
+            }
+            s = os;
         }
+
 
         if (eq(sign, '-')) {
-            os = '-' + os;
+            s = '-' + s;
         }
 
-        return os;
+        return s;
     }
 
     /**
@@ -1854,7 +1859,7 @@
      * @param {Number} radix 
      */
     function int10ToRadix(s, radix) {
-        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+        if (!int10RegExp.test(s)) {
             throw new Error("params must be decimal number and sign only one +/-!");
         }
 
@@ -1898,8 +1903,14 @@
     }
 
     var BigInteger_impl = {
-        bigint10: function () {//new bigint obj
+        int10: function () {//new bigint obj
             return new BigInteger(this.int10Value());
+        },
+        intRadix: function (r) {
+            return new BigInteger(this.intRadixValue());
+        },
+        intRadixValue: function (r) {
+            return int10ToRadix(this.int10Value(), r);
         },
         unsignedInt10Value: function () {//string
             // var data = EMPTY_VALUES.ARRAY;

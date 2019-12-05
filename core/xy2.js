@@ -1110,16 +1110,43 @@
         list: function () {
             return this.data;
         },
-        entries: function* () {
-            for (var i = 0; i < len(this.data); i++) {
-                yield [this.data[i], this.data[i]];
-            }
+        entries: function () {
+            var i = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        return { value: this.data[i], done: false };
+                        i++;
+                    }
+                    return { done: true }
+                },
+                [Symbol.iterator]: function () { return this; }
+            };
         },
-        [Symbol.iterator]: function* () {
-            for (var i = 0; i < len(this.data); i++) {
-                yield this.data[i];
-            }
-        }
+        [Symbol.iterator]: function () {
+            var i = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        return { value: this.data[i], done: false };
+                        i++;
+                    }
+                    return { done: true }
+                },
+            };
+        },
+        // entries: function* () {
+        //     for (var i = 0; i < len(this.data); i++) {
+        //         yield [this.data[i], this.data[i]];
+        //     }
+        // },
+        // [Symbol.iterator]: function* () {
+        //     for (var i = 0; i < len(this.data); i++) {
+        //         yield this.data[i];
+        //     }
+        // }
     }
 
     impl(Set, Set_impl);
@@ -1232,16 +1259,43 @@
                 }
             }
         },
-        entries: function* () {
-            for (var i = 0; i < len(this.data); i++) {
-                yield this.data[i];
-            }
+        entries: function () {
+            var i = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        return { value: this.data[i], done: false };
+                        i++;
+                    }
+                    return { done: true }
+                },
+                [Symbol.iterator]: function () { return this; }
+            };
         },
-        [Symbol.iterator]: function* () {
-            for (var i = 0; i < len(this.data); i++) {
-                yield this.data[i];
-            }
+        [Symbol.iterator]: function () {
+            var i = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        return { value: this.data[i], done: false };
+                        i++;
+                    }
+                    return { done: true }
+                },
+            };
         },
+        // entries: function* () {
+        //     for (var i = 0; i < len(this.data); i++) {
+        //         yield this.data[i];
+        //     }
+        // },
+        // [Symbol.iterator]: function* () {
+        //     for (var i = 0; i < len(this.data); i++) {
+        //         yield this.data[i];
+        //     }
+        // },
     };
 
     impl(Map, Map_impl);
@@ -2291,24 +2345,64 @@
             }
             return false;
         },
-        entries: function* () {
-            for (var i = 0; i < this.capacity; i++) {
-                if (oExist(this.data[i])) {
-                    for (var j = 0; j < len(this.data[i]); j++) {
-                        yield this.data[i][j];
+        entries: function () {
+            var i = 0;
+            var j = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        if (oExist(that.data[i])) {
+                            if (j < len(that.data[i])) {
+                                return { value: that.data[i][j++], done: false };
+                            }
+                            j = 0;
+                        }
+                        i++;
                     }
-                }
-            }
+                    return { done: true }
+                },
+                [Symbol.iterator]: function () { return this; }
+            };
         },
-        [Symbol.iterator]: function* () {
-            for (var i = 0; i < this.capacity; i++) {
-                if (oExist(this.data[i])) {
-                    for (var j = 0; j < len(this.data[i]); j++) {
-                        yield this.data[i][j];
+
+        [Symbol.iterator]: function () {
+            var i = 0;
+            var j = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        if (oExist(that.data[i])) {
+                            if (j < len(that.data[i])) {
+                                return { value: that.data[i][j++], done: false };
+                            }
+                            j = 0;
+                        }
+                        i++;
                     }
+                    return { done: true }
                 }
-            }
+            };
         },
+        // entries: function* () {
+        //     for (var i = 0; i < this.capacity; i++) {
+        //         if (oExist(this.data[i])) {
+        //             for (var j = 0; j < len(this.data[i]); j++) {
+        //                 yield this.data[i][j];
+        //             }
+        //         }
+        //     }
+        // },
+        // [Symbol.iterator]: function* () {
+        //     for (var i = 0; i < this.capacity; i++) {
+        //         if (oExist(this.data[i])) {
+        //             for (var j = 0; j < len(this.data[i]); j++) {
+        //                 yield this.data[i][j];
+        //             }
+        //         }
+        //     }
+        // },
     };
 
     impl(HashMap, HashMap_impl);

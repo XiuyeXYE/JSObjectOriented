@@ -2132,7 +2132,7 @@
                     for (var j = 0; j < len(this.data[i]); j++) {
                         var en = this.data[i][j];
                         if (oExist(en)) {
-                            var idx = this.index(en.k);
+                            var idx = this.index(en.hash);
                             if (!oExist(tmp[idx])) {
                                 tmp[idx] = EMPTY_VALUES.ARRAY;
                                 this.count++;
@@ -2153,7 +2153,7 @@
             return this.remove(k);
         },
         remove: function (k) {
-            var idx = this.index(k);
+            var idx = this.index(this.hash(k));
             var j = -1;
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
@@ -2187,7 +2187,7 @@
             return this.saved / this.capacity;
         },
         get: function (k) {
-            var idx = this.index(k);
+            var idx = this.index(this.hash(k));
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
                     var en = this.data[idx][i];
@@ -2203,15 +2203,18 @@
         put: function (k, v) {
             return this.add(k, v);
         },
-        index: function (k) {
+        hash: function (k) {
+            return hashCodeI(k);
+        },
+        index: function (h) {
+            return h % this.capacity;//common way!
             // return parseInt10(modInt10(hashCodeS(k), String(this.capacity)));
-            return hashCodeI(k) % this.capacity;//common way!
             // return hashCodeI(k) & this.capacity-1;//have some risks!
         },
         add: function (k, v) {
-
-            var idx = this.index(k);
-            var en = new HashNode(k, v);
+            var h = this.hash(k);
+            var idx = this.index(h);
+            var en = new HashNode(k, v, h);
             if (!oExist(this.data[idx])) {
                 this.data[idx] = EMPTY_VALUES.ARRAY;
                 this.data[idx].push(en);
@@ -2283,7 +2286,7 @@
             return valuess;
         },
         has: function (k) {
-            var idx = this.index(k);
+            var idx = this.index(this.hash(k));
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
                     if (this.elemEQ(k, this.data[idx][i].k)) {

@@ -97,17 +97,19 @@
         var c = 0;
         var deepth = 0;
         var pos = -1;
-        for (var i = 0; i < m2.size(); i++) {
-            c += xy.oExist(m2.data[i]) ? 1 : 0;
+        for (var i = 0; i < m2.capacity; i++) {
+            // c += xy.oExist(m2.data[i]) ? 1 : 0;
             if (xy.oExist(m2.data[i])) {
                 if (xy.lt(deepth, xy.len(m2.data[i]))) {
                     deepth = xy.len(m2.data[i]);
                     pos = i;
                 }
+                c++;
             }
         }
         console.log('count:', c, ' ; deepth:', deepth, ' ; pos:', pos);
-        console.log("ratio:", c/ m2.capacity);
+        console.log("ratio:", c / m2.capacity, " count:", m2.count);
+        console.log("ref ratio:", m2.refRatio(), " saved ratio:", m2.savedRatio());
     </script>
 
 </body>

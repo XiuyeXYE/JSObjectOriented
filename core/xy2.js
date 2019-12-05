@@ -2107,7 +2107,9 @@
         }
         this.data = EMPTY_VALUES.ARRAY;
         this.data.length = this.capacity;
-        this.saved = 0;
+        this.saved = 0;//saved elem nums
+        this.count = 0;//1 dimension array elem count
+        this.deepth = 0;//bucket deepth
     }
 
     var HashMap_impl = {
@@ -2123,6 +2125,8 @@
             if (gt(len(tmp), HashMap.MAXIMUM_CAPACITY)) {
                 this.capacity = tmp.length = HashMap.MAXIMUM_CAPACITY;
             }
+            this.count = 0;
+            this.deepth = 0;
             for (var i = 0; i < this.capacity; i++) {
                 if (oExist(this.data[i])) {
                     for (var j = 0; j < len(this.data[i]); j++) {
@@ -2131,8 +2135,10 @@
                             var idx = this.index(en.k);
                             if (!oExist(tmp[idx])) {
                                 tmp[idx] = EMPTY_VALUES.ARRAY;
+                                this.count++;
                             }
                             tmp[idx].push(en);
+                            this.deepth = max(this.deepth, len(tmp[idx]));
                         }
                     }
                 }
@@ -2161,6 +2167,7 @@
             if (!eq(j, -1)) {
                 if (eq(len(this.data[idx]), 1)) {
                     this.data[idx] = undefined;
+                    this.count--;
                 } else {
                     for (var i = j; i < len(this.data[idx]) - 1; i++) {
                         this.data[idx][i] = this.data[idx][i + 1];
@@ -2172,6 +2179,12 @@
         },
         size: function () {
             return this.saved;
+        },
+        refRatio: function () {
+            return this.count / this.capacity;
+        },
+        savedRatio: function () {
+            return this.saved / this.capacity;
         },
         get: function (k) {
             var idx = this.index(k);
@@ -2192,18 +2205,18 @@
         },
         index: function (k) {
             // return parseInt10(modInt10(hashCodeS(k), String(this.capacity)));
-            return hashCodeI(k) % this.capacity;
+            return hashCodeI(k) % this.capacity;//common way!
+            // return hashCodeI(k) & this.capacity-1;//have some risks!
         },
         add: function (k, v) {
-            if (this.saved + 1 >= this.loadFactor * this.capacity) {
-                this.resize();
-            }
+
             var idx = this.index(k);
             var en = new HashNode(k, v);
             if (!oExist(this.data[idx])) {
                 this.data[idx] = EMPTY_VALUES.ARRAY;
                 this.data[idx].push(en);
                 this.saved++;
+                this.count++;
             }
             else {
                 var notCovered = true;
@@ -2221,6 +2234,13 @@
                 }
             }
 
+            this.deepth = max(this.deepth, len(this.data[idx]));
+
+            //Don't care about this.saved and index out of array!!!
+            //Index cannot greater than length of array for ever!!!
+            if (this.count >= this.loadFactor * this.capacity) {
+                this.resize();
+            }
 
             return this;
         },

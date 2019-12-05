@@ -344,20 +344,9 @@
                     }
                     for (var i = 0; i < alen; i++) {
                         var key = akeys[i];
-                        var bHadKey = false;
-                        for (var j = 0; j < blen; j++) {
-                            if (eq(key, bkeys[j])) {
-                                bHadKey = true;
-                                break;
-                            }
-                        }
-                        if (!bHadKey) {
+                        if (!(key in b) || !deepEQ(a[key], b[key])) {
                             return false;
                         }
-                        else if (bHadKey && !deepEQ(a[key], b[key])) {
-                            return false;
-                        }
-
                     }
                 } else {// one is array,another is object,cannot be compared!
                     return false;
@@ -732,14 +721,24 @@
                     //成员存在，成员性质
                     //函数 函数名，函数参数，是函数
                     //变量 变量名，变量类型
-                    for (var m in cOrI) {//m : 成员 函数或变量！
+                    var keys = enumKeys(cOrI);
+                    for (var i = 0; i < len(keys); i++) {//m : 成员 函数或变量！
+                        m = keys[i];
                         //存在检验,名字检验
                         if (!(m in obj)) {
                             return false;
                         }
                         //性质检验
                         var inf_m = cOrI[m];
+                        //可能存在覆盖所以这么做，取原型链上的
+                        //存在一个问题，中间子类覆盖问题？
                         var obj_m = (obj.__proto__)[m];
+
+                        //值不等，prototype定义变量，是所有对象共用的，值必须一样
+                        //可能 接口覆盖，函数也是引用！
+                        if (obj_m !== inf_m) {
+                            return false;
+                        }
 
                         var m_type_in_inf = whatType(inf_m);
                         var m_type_in_obj = whatType(obj_m);
@@ -754,17 +753,13 @@
                         }
                         //上面针对变量函数的通用性质已经检验完成且通过检验
                         //接下来单独检验函数的性质
-                        if (m_type_in_obj === 'function') {
-                            //参数个数
-                            if (obj_m.length !== inf_m.length) {
-                                return false;
-                            }
-                        }
-                        //值不等，prototype定义变量，是所有对象共用的，值必须一样
-                        //可能 接口覆盖，函数也是引用！
-                        if (obj_m !== inf_m) {
-                            return false;
-                        }
+                        // if (m_type_in_obj === 'function') {
+                        //     //参数个数
+                        //     if (obj_m.length !== inf_m.length) {
+                        //         return false;
+                        //     }
+                        // }
+
                     }
                     return true;
                 }

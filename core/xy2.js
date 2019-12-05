@@ -1116,7 +1116,7 @@
             return {
                 next: function () {
                     while (i < that.capacity) {
-                        return { value: this.data[i], done: false };
+                        return { value: that.data[i], done: false };
                         i++;
                     }
                     return { done: true }
@@ -1130,7 +1130,7 @@
             return {
                 next: function () {
                     while (i < that.capacity) {
-                        return { value: this.data[i], done: false };
+                        return { value: that.data[i], done: false };
                         i++;
                     }
                     return { done: true }
@@ -1265,7 +1265,7 @@
             return {
                 next: function () {
                     while (i < that.capacity) {
-                        return { value: this.data[i], done: false };
+                        return { value: that.data[i], done: false };
                         i++;
                     }
                     return { done: true }
@@ -1279,7 +1279,7 @@
             return {
                 next: function () {
                     while (i < that.capacity) {
-                        return { value: this.data[i], done: false };
+                        return { value: that.data[i], done: false };
                         i++;
                     }
                     return { done: true }

@@ -2195,6 +2195,9 @@
             return hashCodeI(k) % this.capacity;
         },
         add: function (k, v) {
+            if (this.saved + 1 >= this.loadFactor * this.capacity) {
+                this.resize();
+            }
             var idx = this.index(k);
             var en = new HashNode(k, v);
             if (!oExist(this.data[idx])) {
@@ -2218,9 +2221,7 @@
                 }
             }
 
-            if (this.saved >= this.loadFactor * this.capacity) {
-                this.resize();
-            }
+
             return this;
         },
         forEach: function (f, a) {//a => this => other obj

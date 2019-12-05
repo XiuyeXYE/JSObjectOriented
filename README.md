@@ -21,13 +21,11 @@ Write some utilities API for me.
 
 
 ## Using:
-
 ### Define a Class:
-
-	function A(a) {//define class
-            console.log('A');
-            console.log("A params =", a);
-        }
+function A(a) {//define class
+	console.log('A');
+	console.log("A params =", a);        
+}
 	
 ### Implements interfaces:
 

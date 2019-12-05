@@ -1311,8 +1311,8 @@
     var numRegExp = /^[+-]?(0[box]?)?\w*$/;
 
     function checkRadixAndNumber(s, radix) {
-        if ((lt(radix, 2) || gt(radix, 36)) && numRegExp.test(s)) {
-            throw new Error("Radix between 2 and 36.");
+        if (!numRegExp.test(s)) {
+            throw new Error("Input first param must be a number string and and sign only one +/-!.");
         }
         s = toLowerCase(s);
         var sign = '+';
@@ -1325,19 +1325,26 @@
         }
 
         if (eq(s.charAt(0), '0')) {
-            radix = 8;
+            var radixI = 8;
             s = s.substring(1);
             if (eq(s.charAt(0), 'o')) {
                 // radix = 8;
                 s = s.substring(1);
             }
             else if (eq(s.charAt(0), 'x')) {
-                radix = 16;
+                radixI = 16;
                 s = s.substring(1);
             } else if (eq(s.charAt(0), 'b')) {
-                radix = 2;
+                radixI = 2;
                 s = s.substring(1);
+            } else if (eq(len(s), 0)) {
+                radixI = radix;
             }
+            radix = radixI;
+        }
+
+        if (!radix || lt(radix, 2) || gt(radix, 36)) {
+            throw new Error("Radix between 2 and 36.");
         }
 
         for (var i = 0; i < len(s); i++) {
@@ -1345,12 +1352,6 @@
                 throw new Error("Input number cannot greater than radix: " + radix);
             }
         }
-        // for (var i = 0; i < len(s); i++) {
-        //     if (!eq(s.charAt(i), '0')) {
-        //         s = s.substring(i);
-        //         break;
-        //     }
-        // }
         s = str2ListBySeparator(s, '');
         s = clearOpenZeroI(s);
         return [list2StrWithJoint(s, ''), radix, sign];
@@ -1498,6 +1499,11 @@
         return s;
     }
 
+    /**
+     * 
+     * @param {String} a 
+     * @param {String} b 
+     */
     function multiplyInt10(a, b) {
 
         if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
@@ -1590,7 +1596,11 @@
         return eq(compareInt10(a, b), 0);
     }
 
-
+    /**
+     * 
+     * @param {String} s 
+     * @param {String} p 
+     */
     function powerInt10(s, p) {
         if (!int10RegExp.test(s)) {
             throw new Error("params must be decimal number and sign only one +/-!");
@@ -1609,7 +1619,11 @@
         }
         return num;
     }
-
+    /**
+     * 
+     * @param {String} a 
+     * @param {String} b 
+     */
     function substractInt10(a, b) {
         //check decimal format
         if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
@@ -1629,6 +1643,11 @@
 
     }
 
+    /**
+     * 
+     * @param {String} a 
+     * @param {STring} b 
+     */
     function divideInt10(a, b) {
         //check decimal format
         if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
@@ -1682,14 +1701,19 @@
 
     }
 
+    /**
+     * 
+     * @param {String} a 
+     * @param {String} b 
+     */
     function modInt10(a, b) {
         //check decimal format
         if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
             throw new Error("params must be decimal number and sign only one +/-!");
         }
         //calc sign
-        var asign = whatSign(a);
-        var bsign = whatSign(b);
+        // var asign = whatSign(a);
+        // var bsign = whatSign(b);
 
         a = getRidOfSign(a);
         b = getRidOfSign(b);
@@ -1705,7 +1729,7 @@
             throw new Error("divisor cannot be zero or 0");
         }
 
-        var finalSign = asign;
+        // var finalSign = asign;
 
         if (eq(a, '0')) {
             return eq(finalSign, '-') ? '-0' : '0';
@@ -1728,10 +1752,143 @@
         }
 
 
-        if (eq(finalSign, '-')) {
-            a = '-' + a;
-        }
+        // if (eq(finalSign, '-')) {
+        //     a = '-' + a;
+        // }
         return a;
+
+    }
+
+    /**
+     * 
+     * @param {String} a 
+     * @param {String} b 
+     */
+    function divideAndRemainderInt10(a, b) {
+        //check decimal format
+        if (!(int10RegExp.test(a) && int10RegExp.test(b))) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+        //calc sign
+        var asign = whatSign(a);
+        // var bsign = whatSign(b);
+
+        a = getRidOfSign(a);
+        b = getRidOfSign(b);
+
+
+        checkBigIntegerNumber10(a);
+        checkBigIntegerNumber10(b);
+
+        a = clearOpenZeroS(a);
+        b = clearOpenZeroS(b);
+
+        if (eq(b, '0')) {
+            throw new Error("divisor cannot be zero or 0");
+        }
+
+        var finalSign = asign;
+
+        if (eq(a, '0')) {
+            return [eq(finalSign, '-') ? '-0' : '0', '0'];
+        }
+
+        //core
+        var radix = '10';
+        var quotient = '0';
+        while (!(ltInt10(a, b))) {
+            var rest = String(len(a) - len(b));
+            var rest10 = powerInt10(radix, rest);
+            var qn = multiplyInt10(b, rest10);
+            if (gtInt10(qn, a)) {
+                rest = substractInt10(rest, '1');
+                rest10 = powerInt10(radix, rest);
+            }
+            qn = multiplyInt10(b, rest10);
+            a = substractInt10(a, qn);
+            quotient = addInt10(quotient, rest10);
+        }
+
+
+        if (eq(finalSign, '-')) {
+            quotient = '-' + quotient;
+        }
+
+        return [quotient, a];
+
+    }
+
+    /**
+     * 
+     * @param {String} s 
+     * @param {Number} radix 
+     */
+    function radixToInt10(s, radix) {
+
+        var result = checkRadixAndNumber(s, radix);
+        s = clearOpenZeroS(result[0]);
+        radix = result[1];
+        var sign = result[2];
+        //core
+
+        if (isNumber(radix) && !eq(radix, 10)) {
+            var os = '0';
+            radix = String(radix);
+            for (var i = len(s) - 1; i >= 0; i--) {
+                os = addInt10(os,
+                    multiplyInt10(
+                        String(digitsMap.get(s[i])),
+                        powerInt10(radix, len(s) - i - 1)
+                    )
+                );//have to multiply n*radix^N
+            }
+            s = os;
+        }
+
+
+        if (eq(sign, '-')) {
+            s = '-' + s;
+        }
+
+        return s;
+    }
+
+    /**
+     * 
+     * @param {String} s 
+     * @param {Number} radix 
+     */
+    function int10ToRadix(s, radix) {
+        if (!int10RegExp.test(s)) {
+            throw new Error("params must be decimal number and sign only one +/-!");
+        }
+
+        var sign = whatSign(s);
+
+        s = getRidOfSign(s);
+
+        checkBigIntegerNumber10(s);
+
+        s = clearOpenZeroS(s);
+        //core
+        if (isNumber(radix) && !eq(radix, 10)) {
+            radix = String(radix);
+            var radixNum = EMPTY_VALUES.ARRAY;
+            var result = divideAndRemainderInt10(s, radix);
+            radixNum.push(digits[result[1]]);
+            while (!eq(result[0], '0')) {
+                result = divideAndRemainderInt10(result[0], radix);
+                radixNum.push(digits[result[1]]);
+            }
+            radixNum.reverse();
+            s = list2StrWithJoint(radixNum, '');
+        }
+
+        if (eq(sign, '-')) {
+            s = '-' + s;
+        }
+
+        return s;
 
     }
 
@@ -1746,22 +1903,30 @@
     }
 
     var BigInteger_impl = {
-        bigint10: function () {//new bigint obj
+        int10: function () {//new bigint obj
             return new BigInteger(this.int10Value());
         },
+        intRadix: function (r) {
+            return new BigInteger(this.intRadixValue(r));
+        },
+        intRadixValue: function (r) {
+            return int10ToRadix(this.int10Value(), r);
+        },
         unsignedInt10Value: function () {//string
-            var data = EMPTY_VALUES.ARRAY;
-            var s = '0';
-            var radix = String(this.radix);
-            for (var i = len(this.s) - 1; i >= 0; i--) {
-                s = addInt10(s,
-                    multiplyInt10(
-                        String(digitsMap.get(this.s[i])),
-                        powerInt10(radix, len(this.s) - i - 1)
-                    )
-                );//have to multiply n*radix^N
-            }
-            return s;
+            // var data = EMPTY_VALUES.ARRAY;
+            // var s = '0';
+            // var radix = String(this.radix);
+            // for (var i = len(this.s) - 1; i >= 0; i--) {
+            //     s = addInt10(s,
+            //         multiplyInt10(
+            //             String(digitsMap.get(this.s[i])),
+            //             powerInt10(radix, len(this.s) - i - 1)
+            //         )
+            //     );//have to multiply n*radix^N
+            // }
+            // return s;
+
+            return radixToInt10(this.s, this.radix);
         },
         int10Value: function () {
             var sign = this.sign;
@@ -1822,10 +1987,15 @@
         addOne: function () {
             return this.add(BigInteger.ONE);
         },
-        toString: function () {
+        toString: function (r) {
+            if (isNumber(r) && !eq(this.radix, r)) {
+                return this.intRadixValue(r);
+            }
             return this.s;
-        }
-
+        },
+        // toJSON: function (r) {//JSON.stringify()!
+        //     return this.toString(r);
+        // }
     };
 
     impl(BigInteger, BigInteger_impl);
@@ -1843,7 +2013,7 @@
         if (oExist(k) && fnExist(k.hashCode)) {
             return k.hashCode();
         }
-        var digitLimit = HashMap.DIGIT_LIMIT;
+        var digitLimit = 10;
         var kType = whatType(k);
         switch (kType) {
             case "number":
@@ -1855,11 +2025,11 @@
             case "symbol":
             case "undefined":
             case "function":
-                k = String(k) + whatType(k) + whatClass(k);
+                k = String(k) + kType;
                 break;
             default:
             case "object":
-                k = JSON.stringify(k);//+ whatType(k) + whatClass(k);
+                k = JSON.stringify(k) + whatClass(k);//+ whatType(k) + whatClass(k);
                 break;
         }
         var h = '0';
@@ -1921,9 +2091,10 @@
     }
 
 
-    function HashNode(k, v) {
+    function HashNode(k, v, hash) {
         this.k = k;
         this.v = v;
+        this.hash = hash;
     }
 
     //According to key's value to get value
@@ -1936,7 +2107,9 @@
         }
         this.data = EMPTY_VALUES.ARRAY;
         this.data.length = this.capacity;
-        this.saved = 0;
+        this.saved = 0;//saved elem nums
+        this.count = 0;//1 dimension array elem count
+        this.deepth = 0;//bucket deepth
     }
 
     var HashMap_impl = {
@@ -1952,16 +2125,20 @@
             if (gt(len(tmp), HashMap.MAXIMUM_CAPACITY)) {
                 this.capacity = tmp.length = HashMap.MAXIMUM_CAPACITY;
             }
+            this.count = 0;
+            this.deepth = 0;
             for (var i = 0; i < this.capacity; i++) {
                 if (oExist(this.data[i])) {
                     for (var j = 0; j < len(this.data[i]); j++) {
                         var en = this.data[i][j];
                         if (oExist(en)) {
-                            var idx = this.index(en.k);
+                            var idx = this.index(en.hash);
                             if (!oExist(tmp[idx])) {
                                 tmp[idx] = EMPTY_VALUES.ARRAY;
+                                this.count++;
                             }
                             tmp[idx].push(en);
+                            this.deepth = max(this.deepth, len(tmp[idx]));
                         }
                     }
                 }
@@ -1976,7 +2153,7 @@
             return this.remove(k);
         },
         remove: function (k) {
-            var idx = this.index(k);
+            var idx = this.index(this.hash(k));
             var j = -1;
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
@@ -1990,6 +2167,7 @@
             if (!eq(j, -1)) {
                 if (eq(len(this.data[idx]), 1)) {
                     this.data[idx] = undefined;
+                    this.count--;
                 } else {
                     for (var i = j; i < len(this.data[idx]) - 1; i++) {
                         this.data[idx][i] = this.data[idx][i + 1];
@@ -2002,8 +2180,14 @@
         size: function () {
             return this.saved;
         },
+        refRatio: function () {
+            return this.count / this.capacity;
+        },
+        savedRatio: function () {
+            return this.saved / this.capacity;
+        },
         get: function (k) {
-            var idx = this.index(k);
+            var idx = this.index(this.hash(k));
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
                     var en = this.data[idx][i];
@@ -2019,17 +2203,23 @@
         put: function (k, v) {
             return this.add(k, v);
         },
-        index: function (k) {
+        hash: function (k) {
+            return hashCodeI(k);
+        },
+        index: function (h) {
+            return h % this.capacity;//common way!
             // return parseInt10(modInt10(hashCodeS(k), String(this.capacity)));
-            return hashCodeI(k) % this.capacity;
+            // return hashCodeI(k) & this.capacity-1;//have some risks!
         },
         add: function (k, v) {
-            var idx = this.index(k);
-            var en = new HashNode(k, v);
+            var h = this.hash(k);
+            var idx = this.index(h);
+            var en = new HashNode(k, v, h);
             if (!oExist(this.data[idx])) {
                 this.data[idx] = EMPTY_VALUES.ARRAY;
                 this.data[idx].push(en);
                 this.saved++;
+                this.count++;
             }
             else {
                 var notCovered = true;
@@ -2047,9 +2237,14 @@
                 }
             }
 
-            if (this.saved / this.capacity > this.loadFactor) {
+            this.deepth = max(this.deepth, len(this.data[idx]));
+
+            //Don't care about this.saved and index out of array!!!
+            //Index cannot greater than length of array for ever!!!
+            if (this.count >= this.loadFactor * this.capacity) {
                 this.resize();
             }
+
             return this;
         },
         forEach: function (f, a) {//a => this => other obj
@@ -2091,7 +2286,7 @@
             return valuess;
         },
         has: function (k) {
-            var idx = this.index(k);
+            var idx = this.index(this.hash(k));
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
                     if (this.elemEQ(k, this.data[idx][i].k)) {
@@ -2101,6 +2296,24 @@
             }
             return false;
         },
+        entries: function* () {
+            for (var i = 0; i < this.capacity; i++) {
+                if (oExist(this.data[i])) {
+                    for (var j = 0; j < len(this.data[i]); j++) {
+                        yield this.data[i][j];
+                    }
+                }
+            }
+        },
+        [Symbol.iterator]: function* () {
+            for (var i = 0; i < this.capacity; i++) {
+                if (oExist(this.data[i])) {
+                    for (var j = 0; j < len(this.data[i]); j++) {
+                        yield this.data[i][j];
+                    }
+                }
+            }
+        },
     };
 
     impl(HashMap, HashMap_impl);
@@ -2109,7 +2322,7 @@
         DEFAULT_INITIAL_CAPACITY: 1 << 4,
         DEFAULT_LOAD_FACTOR: 0.75,
         MAXIMUM_CAPACITY: 1 << 30,
-        DIGIT_LIMIT: 10
+        // DIGIT_LIMIT: 10
     };
 
     static_impl(HashMap, HashMap_static_impl);
@@ -2300,6 +2513,9 @@
         substractInt10: substractInt10,
         divideInt10: divideInt10,
         modInt10: modInt10,
+        divideAndRemainderInt10: divideAndRemainderInt10,
+        radixToInt10: radixToInt10,
+        int10ToRadix: int10ToRadix,
         hashCodeS: hashCodeS,
         hashCodeI: hashCodeI,
         ext: ext,

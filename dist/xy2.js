@@ -344,20 +344,9 @@
                     }
                     for (var i = 0; i < alen; i++) {
                         var key = akeys[i];
-                        var bHadKey = false;
-                        for (var j = 0; j < blen; j++) {
-                            if (eq(key, bkeys[j])) {
-                                bHadKey = true;
-                                break;
-                            }
-                        }
-                        if (!bHadKey) {
+                        if (!(key in b) || !deepEQ(a[key], b[key])) {
                             return false;
                         }
-                        else if (bHadKey && !deepEQ(a[key], b[key])) {
-                            return false;
-                        }
-
                     }
                 } else {// one is array,another is object,cannot be compared!
                     return false;
@@ -641,6 +630,7 @@
             // 重复定义会报错，所以不用if去check base存在不存在
             //base 只有继承的派生类才有！
             //methods_obj代表本类的成员定义在其中
+            //apply super => function
             Object.defineProperty(methods_obj, 'base', {
                 //要考虑构造函数执行顺序！！！
                 //从父类到子类依次执行构造
@@ -665,6 +655,11 @@
                 enumerable: false,
                 writable: false,
             });
+            //error :super and this cannot mixed together.
+            //apply super => obj . call function
+            // if (fnExist(methods_obj.base)) {
+            //     methods_obj.base.__proto__ = src.prototype;
+            // }
             return dest;
         } else {
             throw 'First param and second param are all functions!';
@@ -716,7 +711,7 @@
     //interface1 extends interface2
     function inf_ext() {
         var last_inf = EMPTY_VALUES.OBJECT;
-        var ps = Array.prototype.slice.call(arguments);
+        var ps = arrayLike2Array(arguments);
         ps.unshift(last_inf);
         return simpleCopy.apply(null, ps);
     }
@@ -732,14 +727,24 @@
                     //成员存在，成员性质
                     //函数 函数名，函数参数，是函数
                     //变量 变量名，变量类型
-                    for (var m in cOrI) {//m : 成员 函数或变量！
+                    var keys = enumKeys(cOrI);
+                    for (var i = 0; i < len(keys); i++) {//m : 成员 函数或变量！
+                        m = keys[i];
                         //存在检验,名字检验
                         if (!(m in obj)) {
                             return false;
                         }
                         //性质检验
                         var inf_m = cOrI[m];
+                        //可能存在覆盖所以这么做，取原型链上的
+                        //存在一个问题，中间子类覆盖问题？
                         var obj_m = (obj.__proto__)[m];
+
+                        //值不等，prototype定义变量，是所有对象共用的，值必须一样
+                        //可能 接口覆盖，函数也是引用！
+                        if (obj_m !== inf_m) {
+                            return false;
+                        }
 
                         var m_type_in_inf = whatType(inf_m);
                         var m_type_in_obj = whatType(obj_m);
@@ -754,17 +759,13 @@
                         }
                         //上面针对变量函数的通用性质已经检验完成且通过检验
                         //接下来单独检验函数的性质
-                        if (m_type_in_obj === 'function') {
-                            //参数个数
-                            if (obj_m.length !== inf_m.length) {
-                                return false;
-                            }
-                        }
-                        //值不等，prototype定义变量，是所有对象共用的，值必须一样
-                        //可能 接口覆盖，函数也是引用！
-                        if (obj_m !== inf_m) {
-                            return false;
-                        }
+                        // if (m_type_in_obj === 'function') {
+                        //     //参数个数
+                        //     if (obj_m.length !== inf_m.length) {
+                        //         return false;
+                        //     }
+                        // }
+
                     }
                     return true;
                 }
@@ -800,12 +801,23 @@
     // };
     //es6 new feature ...args
     var static_of_interface = {
-        valueOf: function (...d) {
-            return new this(...d);
+
+        //es6 
+        // valueOf: function (...d) {
+        //     return new this(...d);
+        // },
+        // of: function (...d) {
+        //     return this.valueOf(...d);
+        // },
+        //It's a very good way! "bind" is very good!
+        of: function () {
+            return new (this.bind.apply(this, [null].concat(arrayLike2Array(arguments))))()
         },
-        of: function (...d) {
-            return this.valueOf(...d);
-        },
+        valueOf: function () {
+            return this.of.apply(this, arguments);
+        }
+
+        //not good way!
         // valueOf: function () {
         //     var that = this;
         //     for (var i = 0; i < arguments.length; i++) {
@@ -993,36 +1005,39 @@
 
     var clone_interface = {
         clone: function () {
-            var that = whatClass(this);
-            return deepCopy(new that(), this);
+            // var that = whatClass(this);
+            // return deepCopy(new that(...arguments), this);//per elem is new copy!
+
+            var that = EMPTY_VALUES.OBJECT;
+            that.__proto__ = this.__proto__;
+            return deepCopy(that, this);
+
         }
     };
 
     var equals_interface = {
         equals: function (obj) {
-            return deepEQ(this, obj);
+            if (oExist(obj)
+                &&
+                fnExist(obj.hashCode)
+                &&
+                fnExist(this.hashCode)
+                &&
+                !eq(this.hashCode(), obj.hashCode())
+            ) {
+                return false;
+            }
+            return eq(whatClass(a), whatClass(b)) && deepEQ(this, obj);
+        }
+    };
+
+    var hash_interface = {
+        hashCode: function () {
+            return hashCodeI(this);
         }
     };
 
 
-    // var static_ext_insterface = {
-    //     ext: function (superClazz) {
-    //         return ext(this, superClazz);
-    //     }
-    // };
-
-    // var static_impl_interface = {
-    //     static_impl: function () {
-    //         var ps = arrayLike2Array(arguments);
-    //         ps.unshift(this);
-    //         return static_impl.apply(this, ps);
-    //     },
-    //     impl: function () {
-    //         var ps = arrayLike2Array(arguments);
-    //         ps.unshift(this);
-    //         return impl.apply(this, ps);
-    //     }
-    // };
 
 
 
@@ -1030,7 +1045,8 @@
         inst_of_insterface,
         equals_interface,
         clone_interface,
-        inst_string_interface);
+        inst_string_interface,
+        hash_interface);
 
     var std_interfaces = {
         static_of_interface: static_of_interface,
@@ -1040,8 +1056,7 @@
         inst_of_insterface: inst_of_insterface,
         clone_interface: clone_interface,
         equals_interface: equals_interface,
-        // static_ext_insterface: static_ext_insterface,
-        // static_impl_interface: static_impl_interface,
+        hash_interface: hash_interface,
         object_default_insterfaces: object_default_insterfaces
     };
 
@@ -1058,6 +1073,8 @@
             }
         }
     }
+
+    impl(Set, object_default_insterfaces);
 
     var Set_impl = {
         size: function () {
@@ -1115,19 +1132,45 @@
         list: function () {
             return this.data;
         },
-        entries: function* () {
-            for (var i = 0; i < len(this.data); i++) {
-                yield [this.data[i], this.data[i]];
-            }
+        entries: function () {
+            var i = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        return { value: that.data[i++], done: false };
+                    }
+                    return { done: true }
+                },
+                [Symbol.iterator]: function () { return this; }
+            };
         },
-        [Symbol.iterator]: function* () {
-            for (var i = 0; i < len(this.data); i++) {
-                yield this.data[i];
-            }
-        }
+        [Symbol.iterator]: function () {
+            var i = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        return { value: that.data[i++], done: false };
+                    }
+                    return { done: true }
+                },
+            };
+        },
+        // entries: function* () {
+        //     for (var i = 0; i < len(this.data); i++) {
+        //         yield [this.data[i], this.data[i]];
+        //     }
+        // },
+        // [Symbol.iterator]: function* () {
+        //     for (var i = 0; i < len(this.data); i++) {
+        //         yield this.data[i];
+        //     }
+        // }
     }
 
     impl(Set, Set_impl);
+
 
     function ValueSet(arr) {
         //       notInstanceof(this, ValueSet, "Set using new!!!");
@@ -1155,6 +1198,8 @@
             }
         }
     }
+
+    impl(Map, object_default_insterfaces);
 
     var Map_impl = {
         elemEQ: function (a, b) {
@@ -1237,19 +1282,45 @@
                 }
             }
         },
-        entries: function* () {
-            for (var i = 0; i < len(this.data); i++) {
-                yield this.data[i];
-            }
+        entries: function () {
+            var i = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        return { value: that.data[i++], done: false };
+                    }
+                    return { done: true }
+                },
+                [Symbol.iterator]: function () { return this; }
+            };
         },
-        [Symbol.iterator]: function* () {
-            for (var i = 0; i < len(this.data); i++) {
-                yield this.data[i];
-            }
+        [Symbol.iterator]: function () {
+            var i = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        return { value: that.data[i++], done: false };
+                    }
+                    return { done: true }
+                },
+            };
         },
+        // entries: function* () {
+        //     for (var i = 0; i < len(this.data); i++) {
+        //         yield this.data[i];
+        //     }
+        // },
+        // [Symbol.iterator]: function* () {
+        //     for (var i = 0; i < len(this.data); i++) {
+        //         yield this.data[i];
+        //     }
+        // },
     };
 
     impl(Map, Map_impl);
+
 
     function ValueMap(arr) {
         this.base(arr);
@@ -2010,9 +2081,9 @@
 
     //very useful code for generating hash value!
     function hashCodeS(k) {
-        if (oExist(k) && fnExist(k.hashCode)) {
-            return k.hashCode();
-        }
+        // if (oExist(k) && fnExist(k.hashCode)) {
+        //     return k.hashCode();
+        // }
         var digitLimit = 10;
         var kType = whatType(k);
         switch (kType) {
@@ -2057,9 +2128,9 @@
     }
 
     function hashCodeI(k) {
-        if (oExist(k) && fnExist(k.hashCode)) {
-            return k.hashCode();
-        }
+        // if (oExist(k) && fnExist(k.hashCode)) {
+        //     return k.hashCode();
+        // }
         var kType = whatType(k);
         switch (kType) {
             case "number":
@@ -2111,6 +2182,8 @@
         this.count = 0;//1 dimension array elem count
         this.deepth = 0;//bucket deepth
     }
+
+    impl(HashMap, object_default_insterfaces);
 
     var HashMap_impl = {
         elemEQ: function (a, b) {
@@ -2204,7 +2277,7 @@
             return this.add(k, v);
         },
         hash: function (k) {
-            return hashCodeI(k);
+            return k && k.hashCode ? k.hashCode() : hashCodeI(k);
         },
         index: function (h) {
             return h % this.capacity;//common way!
@@ -2296,24 +2369,64 @@
             }
             return false;
         },
-        entries: function* () {
-            for (var i = 0; i < this.capacity; i++) {
-                if (oExist(this.data[i])) {
-                    for (var j = 0; j < len(this.data[i]); j++) {
-                        yield this.data[i][j];
+        entries: function () {
+            var i = 0;
+            var j = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        if (oExist(that.data[i])) {
+                            if (j < len(that.data[i])) {
+                                return { value: that.data[i][j++], done: false };
+                            }
+                            j = 0;
+                        }
+                        i++;
                     }
-                }
-            }
+                    return { done: true }
+                },
+                [Symbol.iterator]: function () { return this; }
+            };
         },
-        [Symbol.iterator]: function* () {
-            for (var i = 0; i < this.capacity; i++) {
-                if (oExist(this.data[i])) {
-                    for (var j = 0; j < len(this.data[i]); j++) {
-                        yield this.data[i][j];
+
+        [Symbol.iterator]: function () {
+            var i = 0;
+            var j = 0;
+            var that = this;
+            return {
+                next: function () {
+                    while (i < that.capacity) {
+                        if (oExist(that.data[i])) {
+                            if (j < len(that.data[i])) {
+                                return { value: that.data[i][j++], done: false };
+                            }
+                            j = 0;
+                        }
+                        i++;
                     }
+                    return { done: true }
                 }
-            }
+            };
         },
+        // entries: function* () {
+        //     for (var i = 0; i < this.capacity; i++) {
+        //         if (oExist(this.data[i])) {
+        //             for (var j = 0; j < len(this.data[i]); j++) {
+        //                 yield this.data[i][j];
+        //             }
+        //         }
+        //     }
+        // },
+        // [Symbol.iterator]: function* () {
+        //     for (var i = 0; i < this.capacity; i++) {
+        //         if (oExist(this.data[i])) {
+        //             for (var j = 0; j < len(this.data[i]); j++) {
+        //                 yield this.data[i][j];
+        //             }
+        //         }
+        //     }
+        // },
     };
 
     impl(HashMap, HashMap_impl);

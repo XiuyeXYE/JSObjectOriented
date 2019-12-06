@@ -16,6 +16,8 @@
     <script type="text/javascript" src="../core/xy2.js"></script>
     <script type="text/javascript" src="../core/dom.js"></script>
     <script type="text/javascript" src="../core/ajax.js"></script>
+    <script type="text/javascript" src="../3lib/hashmap.js"></script>
+
 
 
 
@@ -26,7 +28,7 @@
             this.b = b;
         }
 
-        var n = 10000;
+        var n = 100000;
         console.time();
         var m1 = new Map();
         for (var i = 0; i < n; i++) {
@@ -43,10 +45,22 @@
         console.timeEnd();
 
         console.time();
+        var m3 = new HashMap();
+        for (var i = 0; i < n; i++) {
+            m3.set(new G(i, i), i);
+        }
+        console.log(m3);
+        console.timeEnd();
+
+        console.time();
         console.log(m1.get(new G(878, 878)));
         console.timeEnd();
         console.time();
         console.log(m2.get(new G(878, 878)));
+        console.timeEnd();
+
+        console.time();
+        console.log(m3.get(new G(878, 878)));
         console.timeEnd();
 
         var c = 0;
@@ -71,11 +85,17 @@
             console.log('A params:', a, b, c, d);
         }
 
+        xy.impl(A, xy.std.object_default_insterfaces);
         xy.static_impl(A, xy.std.static_of_interface);
 
         console.log(A.of());
         console.log(A.of(1, 2, 3));
         console.log(A.of(1));
+        console.log(A.of(1, 2, 43, 5));
+        console.log(A.of(1));
+        console.log(b = A.of(1, 2, 43, 5));
+        console.log(b.clone());
+        console.log(b.clone() instanceof A);
 
     </script>
 

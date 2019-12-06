@@ -630,6 +630,7 @@
             // 重复定义会报错，所以不用if去check base存在不存在
             //base 只有继承的派生类才有！
             //methods_obj代表本类的成员定义在其中
+            //apply super => function
             Object.defineProperty(methods_obj, 'base', {
                 //要考虑构造函数执行顺序！！！
                 //从父类到子类依次执行构造
@@ -654,6 +655,10 @@
                 enumerable: false,
                 writable: false,
             });
+            //apply super => obj . call function
+            if (fnExist(methods_obj.base)) {
+                methods_obj.base.__proto__ = src.prototype;
+            }
             return dest;
         } else {
             throw 'First param and second param are all functions!';

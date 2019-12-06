@@ -1053,6 +1053,8 @@
         }
     }
 
+    impl(Set, object_default_insterfaces);
+
     var Set_impl = {
         size: function () {
             return len(this.data);
@@ -1147,7 +1149,7 @@
     }
 
     impl(Set, Set_impl);
-    impl(Set, object_default_insterfaces);
+
 
     function ValueSet(arr) {
         //       notInstanceof(this, ValueSet, "Set using new!!!");
@@ -1175,6 +1177,8 @@
             }
         }
     }
+
+    impl(Map, object_default_insterfaces);
 
     var Map_impl = {
         elemEQ: function (a, b) {
@@ -1295,6 +1299,7 @@
     };
 
     impl(Map, Map_impl);
+
 
     function ValueMap(arr) {
         this.base(arr);
@@ -2156,6 +2161,8 @@
         this.count = 0;//1 dimension array elem count
         this.deepth = 0;//bucket deepth
     }
+
+    impl(HashMap, object_default_insterfaces);
 
     var HashMap_impl = {
         elemEQ: function (a, b) {

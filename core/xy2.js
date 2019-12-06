@@ -995,29 +995,17 @@
 
     var equals_interface = {
         equals: function (obj) {
-            return deepEQ(this, obj);
+            return eq(whatClass(a), whatClass(b)) && deepEQ(this, obj);
+        }
+    };
+
+    var hash_interface = {
+        hashCode: function () {
+            return hashCodeI(this);
         }
     };
 
 
-    // var static_ext_insterface = {
-    //     ext: function (superClazz) {
-    //         return ext(this, superClazz);
-    //     }
-    // };
-
-    // var static_impl_interface = {
-    //     static_impl: function () {
-    //         var ps = arrayLike2Array(arguments);
-    //         ps.unshift(this);
-    //         return static_impl.apply(this, ps);
-    //     },
-    //     impl: function () {
-    //         var ps = arrayLike2Array(arguments);
-    //         ps.unshift(this);
-    //         return impl.apply(this, ps);
-    //     }
-    // };
 
 
 
@@ -1025,7 +1013,8 @@
         inst_of_insterface,
         equals_interface,
         clone_interface,
-        inst_string_interface);
+        inst_string_interface,
+        hash_interface);
 
     var std_interfaces = {
         static_of_interface: static_of_interface,
@@ -1035,8 +1024,7 @@
         inst_of_insterface: inst_of_insterface,
         clone_interface: clone_interface,
         equals_interface: equals_interface,
-        // static_ext_insterface: static_ext_insterface,
-        // static_impl_interface: static_impl_interface,
+        hash_interface: hash_interface,
         object_default_insterfaces: object_default_insterfaces
     };
 

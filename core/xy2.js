@@ -1027,7 +1027,7 @@
             ) {
                 return false;
             }
-            return eq(whatClass(a), whatClass(b)) && deepEQ(this, obj);
+            return eq(whatClass(this), whatClass(obj)) && deepEQ(this, obj);
         }
     };
 

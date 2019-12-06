@@ -710,7 +710,7 @@
     //interface1 extends interface2
     function inf_ext() {
         var last_inf = EMPTY_VALUES.OBJECT;
-        var ps = Array.prototype.slice.call(arguments);
+        var ps = arrayLike2Array(arguments);
         ps.unshift(last_inf);
         return simpleCopy.apply(null, ps);
     }
@@ -800,12 +800,22 @@
     // };
     //es6 new feature ...args
     var static_of_interface = {
-        valueOf: function (...d) {
-            return new this(...d);
+
+        //es6 
+        // valueOf: function (...d) {
+        //     return new this(...d);
+        // },
+        // of: function (...d) {
+        //     return this.valueOf(...d);
+        // },
+        //It's a very good way! "bind" is very good!
+        of: function () {
+            return new (this.bind.apply(this, [null].concat(arrayLike2Array(arguments))))()
         },
-        of: function (...d) {
-            return this.valueOf(...d);
-        },
+        valueOf: function () {
+            return this.of.apply(this, arguments);
+        }
+
         //not good way!
         // valueOf: function () {
         //     var that = this;

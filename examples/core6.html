@@ -66,6 +66,17 @@
         console.log("ratio:", c / m2.capacity, " count:", m2.count);
         console.log("ref ratio:", m2.refRatio(), " saved ratio:", m2.savedRatio());
         console.log("deepth:", m2.deepth);
+
+        function A(a, b, c, d) {
+            console.log('A params:', a, b, c, d);
+        }
+
+        xy.static_impl(A, xy.std.static_of_interface);
+
+        console.log(A.of());
+        console.log(A.of(1, 2, 3));
+        console.log(A.of(1));
+
     </script>
 
 </body>

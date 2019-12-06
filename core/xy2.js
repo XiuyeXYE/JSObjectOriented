@@ -996,6 +996,16 @@
 
     var equals_interface = {
         equals: function (obj) {
+            if (oExist(obj)
+                &&
+                fnExist(obj.hashCode)
+                &&
+                fnExist(this.hashCode)
+                &&
+                !eq(this.hashCode(), obj.hashCode())
+            ) {
+                return false;
+            }
             return eq(whatClass(a), whatClass(b)) && deepEQ(this, obj);
         }
     };

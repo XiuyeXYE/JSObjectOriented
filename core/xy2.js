@@ -1005,8 +1005,13 @@
 
     var clone_interface = {
         clone: function () {
-            var that = whatClass(this);
-            return deepCopy(new that(...arguments), this);//per elem is new copy!
+            // var that = whatClass(this);
+            // return deepCopy(new that(...arguments), this);//per elem is new copy!
+
+            var that = EMPTY_VALUES.OBJECT;
+            that.__proto__ = this.__proto__;
+            return deepCopy(that, this);
+
         }
     };
 

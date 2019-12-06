@@ -801,6 +801,7 @@
         of: function (...d) {
             return this.valueOf(...d);
         },
+        //not good way!
         // valueOf: function () {
         //     var that = this;
         //     for (var i = 0; i < arguments.length; i++) {
@@ -989,7 +990,7 @@
     var clone_interface = {
         clone: function () {
             var that = whatClass(this);
-            return deepCopy(new that(), this);
+            return deepCopy(new that(...arguments), this);//per elem is new copy!
         }
     };
 
@@ -1136,6 +1137,7 @@
     }
 
     impl(Set, Set_impl);
+    impl(Set, object_default_insterfaces);
 
     function ValueSet(arr) {
         //       notInstanceof(this, ValueSet, "Set using new!!!");
@@ -2043,9 +2045,9 @@
 
     //very useful code for generating hash value!
     function hashCodeS(k) {
-        if (oExist(k) && fnExist(k.hashCode)) {
-            return k.hashCode();
-        }
+        // if (oExist(k) && fnExist(k.hashCode)) {
+        //     return k.hashCode();
+        // }
         var digitLimit = 10;
         var kType = whatType(k);
         switch (kType) {
@@ -2090,9 +2092,9 @@
     }
 
     function hashCodeI(k) {
-        if (oExist(k) && fnExist(k.hashCode)) {
-            return k.hashCode();
-        }
+        // if (oExist(k) && fnExist(k.hashCode)) {
+        //     return k.hashCode();
+        // }
         var kType = whatType(k);
         switch (kType) {
             case "number":
@@ -2237,7 +2239,7 @@
             return this.add(k, v);
         },
         hash: function (k) {
-            return hashCodeI(k);
+            return k && k.hashCode ? k.hashCode() : hashCodeI(k);
         },
         index: function (h) {
             return h % this.capacity;//common way!

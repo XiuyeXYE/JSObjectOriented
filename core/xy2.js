@@ -655,10 +655,11 @@
                 enumerable: false,
                 writable: false,
             });
+            //error :super and this cannot mixed together.
             //apply super => obj . call function
-            if (fnExist(methods_obj.base)) {
-                methods_obj.base.__proto__ = src.prototype;
-            }
+            // if (fnExist(methods_obj.base)) {
+            //     methods_obj.base.__proto__ = src.prototype;
+            // }
             return dest;
         } else {
             throw 'First param and second param are all functions!';

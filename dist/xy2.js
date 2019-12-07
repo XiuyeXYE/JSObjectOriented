@@ -1017,17 +1017,17 @@
 
     var equals_interface = {
         equals: function (obj) {
-            if (oExist(obj)
-                &&
-                fnExist(obj.hashCode)
-                &&
-                fnExist(this.hashCode)
-                &&
-                !eq(this.hashCode(), obj.hashCode())
-            ) {
-                return false;
-            }
-            return eq(whatClass(a), whatClass(b)) && deepEQ(this, obj);
+            // if (oExist(obj)
+            //     &&
+            //     fnExist(obj.hashCode)
+            //     &&
+            //     fnExist(this.hashCode)
+            //     &&
+            //     !eq(this.hashCode(), obj.hashCode())
+            // ) {
+            //     return false;
+            // }
+            return eq(whatClass(this), whatClass(obj)) && deepEQ(this, obj);
         }
     };
 
@@ -1181,7 +1181,7 @@
 
     var ValueSet_impl = {
         elemEQ: function (a, b) {
-            return deepEQ(a, b);
+            return eq(whatClass(a), whatClass(b)) && deepEQ(a, b);
         },
     };
 
@@ -1330,7 +1330,7 @@
 
     var ValueMap_impl = {
         elemEQ: function (a, b) {
-            return deepEQ(a, b) && eq(whatClass(a), whatClass(b));
+            return eq(whatClass(a), whatClass(b)) && deepEQ(a, b);
         },
     }
 
@@ -2187,7 +2187,7 @@
 
     var HashMap_impl = {
         elemEQ: function (a, b) {
-            return deepEQ(a, b) && eq(whatClass(a), whatClass(b))
+            return eq(whatClass(a), whatClass(b)) && deepEQ(a, b);
         },
         resize: function () {
             if (nlt(this.capacity, HashMap.MAXIMUM_CAPACITY)) {
@@ -2226,12 +2226,13 @@
             return this.remove(k);
         },
         remove: function (k) {
-            var idx = this.index(this.hash(k));
+            var h = this.hash(k);
+            var idx = this.index(h);
             var j = -1;
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
                     var en = this.data[idx][i];
-                    if (this.elemEQ(k, en.k)) {//type same!
+                    if (eq(h, en.hash) && this.elemEQ(k, en.k)) {//type same!
                         j = i;
                         break;
                     }
@@ -2260,11 +2261,12 @@
             return this.saved / this.capacity;
         },
         get: function (k) {
-            var idx = this.index(this.hash(k));
+            var h = this.hash(k);
+            var idx = this.index(h);
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
                     var en = this.data[idx][i];
-                    if (this.elemEQ(k, en.k)) {
+                    if (eq(h, en.hash) && this.elemEQ(k, en.k)) {
                         return en.v;
                     }
                 }
@@ -2298,7 +2300,7 @@
                 var notCovered = true;
                 for (var i = 0; i < len(this.data[idx]); i++) {
                     var oEn = this.data[idx][i];
-                    if (this.elemEQ(k, oEn.k)) {//coverage!
+                    if (eq(h, oEn.hash) && this.elemEQ(k, oEn.k)) {//coverage!
                         oEn.v = v;
                         notCovered = false;
                         break;
@@ -2359,10 +2361,12 @@
             return valuess;
         },
         has: function (k) {
-            var idx = this.index(this.hash(k));
+            var h = this.hash(k);
+            var idx = this.index(h);
             if (oExist(this.data[idx])) {
                 for (var i = 0; i < len(this.data[idx]); i++) {
-                    if (this.elemEQ(k, this.data[idx][i].k)) {
+                    var en = this.data[idx][i];
+                    if (eq(h, en.hash) && this.elemEQ(k, en.k)) {
                         return true;
                     }
                 }

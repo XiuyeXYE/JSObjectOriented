@@ -141,7 +141,20 @@ Write some utilities API for me.
 
 # BigInteger
 
+    let a = new xy.BigInteger('1234567890');
+    let b = new xy.BigInteger('1234567890');
+    //a+b+a*b-a^2
+    console.log(a.add(b).add(a.multiply(b)).substract(a.power(2)));
 
+    let e = 1234567890n;//bigint
+    let f = 1234567890n;//bigint
+    //a+b+a*b-a^2
+    console.log(e+f+e*f-e**2n);
+
+##### Output:
+
+    BigInteger {s: "2469135780", data: Array(10), radix: 10, sign: "-"}
+    2469135780n
 
 # HashMap [It's according to key value to get value!]
 

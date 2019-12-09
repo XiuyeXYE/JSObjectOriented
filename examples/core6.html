@@ -100,12 +100,15 @@
         let a = new xy.BigInteger('1234567890');
         let b = new xy.BigInteger('1234567890');
         //a+b+a*b-a^2
+        console.time();
         console.log(a.add(b).add(a.multiply(b)).substract(a.power(2)));
-
+        console.timeEnd();
         let e = 1234567890n;//bigint
         let f = 1234567890n;//bigint
         //a+b+a*b-a^2
+        console.time();
         console.log(e+f+e*f-e**2n);
+        console.timeEnd();
 
     </script>
 

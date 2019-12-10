@@ -80,6 +80,7 @@
         console.log("ratio:", c / m2.capacity, " count:", m2.count);
         console.log("ref ratio:", m2.refRatio(), " saved ratio:", m2.savedRatio());
         console.log("deepth:", m2.deepth);
+        console.log("hashmap hashcode:", m2.hashCode());
 
         function A(a, b, c, d) {
             console.log('A params:', a, b, c, d);
@@ -96,7 +97,7 @@
         console.log(y = A.of(1, 2, 43, 5));
         console.log(y.clone());
         console.log(y.clone() instanceof A);
-        
+
         let a = new xy.BigInteger('1234567890');
         let b = new xy.BigInteger('1234567890');
         //a+b+a*b-a^2
@@ -107,7 +108,7 @@
         let f = 1234567890n;//bigint
         //a+b+a*b-a^2
         console.time();
-        console.log(e+f+e*f-e**2n);
+        console.log(e + f + e * f - e ** 2n);
         console.timeEnd();
 
     </script>

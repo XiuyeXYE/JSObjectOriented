@@ -2010,19 +2010,19 @@
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
             var aData = a.int10Value();
             var oData = this.int10Value();
-            return new BigInteger(addInt10(aData, oData));
+            return new BigInteger(addInt10(oData, aData));
         },
         multiply: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
             var aData = a.int10Value();
             var oData = this.int10Value();
-            return new BigInteger(multiplyInt10(aData, oData));
+            return new BigInteger(multiplyInt10(oData, aData));
         },
         substract: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");
             var aData = a.int10Value();
             var oData = this.int10Value();
-            return new BigInteger(substractInt10(aData, oData));
+            return new BigInteger(substractInt10(oData, aData));
         },
         divide: function (a) {
             notInstanceof(a, BigInteger, "param must be BigInteger object!");

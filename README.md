@@ -159,7 +159,7 @@ Write some utilities API for me.
 # HashMap [It's according to key value to get value!]
 
     var n = 100000;
-        function G(a, b) {
+    function G(a, b) {
         this.a = a;
         this.b = b;
     }

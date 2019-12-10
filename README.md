@@ -23,17 +23,17 @@ Write some utilities API for me.
 ### Implements interfaces:
 
     var A_impl1 = {//implements 1
-    a2: function () {
-    console.log(this.constructor.name + ":a2");
-    }
+        a2: function () {
+            console.log(this.constructor.name + ":a2");
+        }
     };
     var A_impl2 = {//implements 1
-    a1: function () {
-    console.log(this.constructor.name + ":a1");
-    },
-    a3: function () {
-    console.log(this.constructor.name + ":a3");
-    }
+        a1: function () {
+            console.log(this.constructor.name + ":a1");
+        },
+        a3: function () {
+            console.log(this.constructor.name + ":a3");
+        }
     };
     xy.impl(A, A_impl1, A_impl2);
 	let a = new A();
@@ -166,7 +166,7 @@ Write some utilities API for me.
     console.time();
     var m2 = new xy.HashMap();
     for (var i = 0; i < n; i++) {
-    m2.set(new G(i, i), i);
+        m2.set(new G(i, i), i);
     }
     console.log(m2);
     console.timeEnd();

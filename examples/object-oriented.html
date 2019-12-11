@@ -24,35 +24,100 @@
     <script type="text/javascript">
 
         //define class 
-        function ClassA(a){
+        function ClassA(a) {
             this.a = a;
             console.log("class A : object created!");
-            console.log("this.a=",this.a);
+            console.log("this.a=", this.a);
         }
         console.log(new ClassA(123));
         //write a interface
         var interfaceA = {
-            f1:function(){
+            f1: function () {
                 console.log("ClassA::f1");
             },
-            f2:function(){
+            f2: function () {
                 console.log("ClassA::f2");
             }
         };
-        xy.impl(ClassA,interfaceA);
+        xy.impl(ClassA, interfaceA);
         var a = new ClassA(555);
         a.f1();
         a.f2();
 
         //extends
-        function ClassB(b){
+        function ClassB(b) {
             this.base(b);
             console.log("Class B : object created!");
         }
-        xy.ext(ClassB,ClassA);
+        xy.ext(ClassB, ClassA);
         var b = new ClassB(777);
         b.f1();
         b.f2();
+
+        function D() {
+            // this.base();//Root class have no this.base
+            this.d = 99;
+        }
+        function E() {
+            this.base();//super class constructor
+            this.e = 87;
+        }
+        function F() {
+            this.base();//super class constructor
+            this.f = 77;
+        }
+        xy.ext(F, E, D);
+        console.log(new D());
+        console.log(new E());
+        console.log(new F());
+
+        //interface combined
+        var inter1 = {
+            g1: function () {
+                console.log("ClassB::g1");
+            }
+        };
+        var inter2 = {
+            g2: function () {
+                console.log("ClassB::g2");
+            }
+        };
+        var inter_mixed = xy.inf_ext(inter1, inter2);
+        xy.impl(ClassB, inter_mixed);
+        var b = new ClassB(999);
+        b.g1();
+        b.g2();
+        //static
+        var static_inf = {
+            staticFunc: function () {
+                console.log("static ClassB::static_inf");
+            }
+        };
+        xy.static_impl(ClassB, static_inf);
+        ClassB.staticFunc();//called by class
+
+        //instanceof 
+        console.log('b instanceof ClassB:', b instanceof ClassB);//class
+        console.log('b instanceof ClassB:', xy.inst_of(b, ClassB));//class
+        console.log('b instanceof inter_mixed:', xy.inst_of(b, inter_mixed));//interface
+        console.log('b instanceof ClassA:', b instanceof ClassA);//super class
+        console.log('b instanceof ClassA:', xy.inst_of(b, ClassA));//super class
+
+        //std
+        xy.static_impl(ClassA, xy.std.static_of_interface);
+        console.log(ClassA.of(789));
+        console.log(ClassA.valueOf(789));
+
+        xy.impl(ClassA, xy.std.object_default_interfaces);
+        var a = new ClassA(999);
+        var b = new ClassA(999);
+        console.log("a = ", a);
+        console.log("b = ", b);
+        console.log("a == b:", a == b, " ; a===b:", a === b, " ; a.equals(b) : ", a.equals(b));
+        console.log("a.hashCode():", a.hashCode(), " ; b.hashCode():", b.hashCode());
+        console.log("a.clone():", a.clone());//deep copy
+        console.log("a.inst_of(ClassA):", a.inst_of(ClassA));//instanceof
+        console.log("a.toString():", a.toString());//string
 
     </script>
 

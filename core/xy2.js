@@ -800,6 +800,7 @@
 
     // };
     //es6 new feature ...args
+    //find bugs: JSON.stringify(this) will call valueOf!So don't covered this function!
     var static_of_interface = {
 
         //es6 
@@ -813,9 +814,9 @@
         of: function () {
             return new (this.bind.apply(this, [null].concat(arrayLike2Array(arguments))))()
         },
-        valueOf: function () {
-            return this.of.apply(this, arguments);
-        }
+        // valueOf: function () {
+        //     return this.of.apply(this, arguments);
+        // }
 
         //not good way!
         // valueOf: function () {
@@ -1036,9 +1037,6 @@
             return hashCodeI(this);
         }
     };
-
-
-
 
 
     var object_default_interfaces = inf_ext(

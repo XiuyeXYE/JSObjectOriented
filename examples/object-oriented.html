@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Core</title>
+    <style type="text/css">
+    </style>
+</head>
+
+<body>
+    <h1>API Operation!</h1>
+
+
+
+    <script type="text/javascript" src="../core/xy2.js"></script>
+    <script type="text/javascript" src="../core/dom.js"></script>
+    <script type="text/javascript" src="../core/ajax.js"></script>
+    <script type="text/javascript" src="../3lib/hashmap.js"></script>
+
+
+
+
+    <script type="text/javascript">
+
+        //define class 
+        function ClassA(a){
+            this.a = a;
+            console.log("class A : object created!");
+            console.log("this.a=",this.a);
+        }
+        console.log(new ClassA(123));
+        //write a interface
+        var interfaceA = {
+            f1:function(){
+                console.log("ClassA::f1");
+            },
+            f2:function(){
+                console.log("ClassA::f2");
+            }
+        };
+        xy.impl(ClassA,interfaceA);
+        var a = new ClassA(555);
+        a.f1();
+        a.f2();
+
+        //extends
+        function ClassB(b){
+            this.base(b);
+            console.log("Class B : object created!");
+        }
+        xy.ext(ClassB,ClassA);
+        var b = new ClassB(777);
+        b.f1();
+        b.f2();
+
+    </script>
+
+</body>
+
+</html>

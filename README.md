@@ -15,54 +15,61 @@ Write some utilities API for me.
 ## Using:
 ### Define a Class:
 
-    function A(a) {//define class
-        console.log('A');
-        console.log("A params =", a);
+    function ClassA(a){
+        this.a = a;
+        console.log("class A : object created!");
+        console.log("this.a=",this.a);
     }
+    console.log(new ClassA(123));
+
+##### Output:
+
+    class A : object created!
+    this.a= 123
+    ClassA {a: 123}
+    a: 123
+    __proto__: Object
 
 ### Implements interfaces:
 
-    var A_impl1 = {//implements 1
-        a2: function () {
-            console.log(this.constructor.name + ":a2");
-        }
-    };
-    var A_impl2 = {//implements 1
-        a1: function () {
-            console.log(this.constructor.name + ":a1");
+    var interfaceA = {
+        f1:function(){
+            console.log("ClassA::f1");
         },
-        a3: function () {
-            console.log(this.constructor.name + ":a3");
+        f2:function(){
+            console.log("ClassA::f2");
         }
     };
-    xy.impl(A, A_impl1, A_impl2);
-	let a = new A();
-    a.a1();
-    a.a2();
-    a.a3();
+    xy.impl(ClassA,interfaceA);
+    var a = new ClassA(555);
+    a.f1();
+    a.f2();
 
 ##### Output:
 
-	A
-	A params = undefined
-	A:a1
-	A:a2
-	A:a3
+	class A : object created!
+    this.a= 555
+    ClassA::f1
+    ClassA::f2
 
-### Extends super class: must inherit a class ,or not useful!
+### Extends super class and using "this.base"
 
-	function B() {
-        console.log("B");
-        this.base('B input');
-    }   
-    xy.ext(B, A);
-    let b = new B();
+	function ClassB(b){
+        this.base(b);
+        console.log("Class B : object created!");
+    }
+    xy.ext(ClassB,ClassA);
+    var b = new ClassB(777);
+    b.f1();
+    b.f2();
 	
 ##### Output:
 
-	B
-	A
-	A params = B input
+	class A : object created!
+    this.a= 777
+    Class B : object created!
+    ClassA::f1
+    ClassA::f2
 	
 ### Class F => E => D:
 

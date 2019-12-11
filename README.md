@@ -52,7 +52,7 @@ Write some utilities API for me.
     ClassA::f1
     ClassA::f2
 
-## 3.Extends super class and using "this.base" (called like call super class function)
+## 3.Extends super class and using "this.base" (called like calling super class function)
 
 	function ClassB(b){
         this.base(b);
@@ -122,7 +122,7 @@ Write some utilities API for me.
     ClassB::g1
     ClassB::g2
 
-## 6.Static implements: class call static function directly
+## 6.Static implements: classname calling static function directly
 
 	var static_inf = {
         staticFunc:function(){

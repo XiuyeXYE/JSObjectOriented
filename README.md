@@ -12,8 +12,8 @@ Write some utilities API for me.
 ### instanceof <=> inst_of
 
 
-## Using:
-### 1.Define a Class:
+# Using:
+## 1.Define a Class:
 
     function ClassA(a){
         this.a = a;
@@ -30,7 +30,7 @@ Write some utilities API for me.
     a: 123
     __proto__: Object
 
-### 2.Implements interfaces:
+## 2.Implements interfaces:
 
     var interfaceA = {
         f1:function(){
@@ -52,7 +52,7 @@ Write some utilities API for me.
     ClassA::f1
     ClassA::f2
 
-### 3.Extends super class and using "this.base" (called like call super class function)
+## 3.Extends super class and using "this.base" (called like call super class function)
 
 	function ClassB(b){
         this.base(b);
@@ -71,7 +71,7 @@ Write some utilities API for me.
     ClassA::f1
     ClassA::f2
 	
-### 4.Chain extends: F derived from E,E derived from D
+## 4.Chain extends: F derived from E,E derived from D
 
 	function D() {
         // this.base();//Root class have no this.base
@@ -96,7 +96,7 @@ Write some utilities API for me.
     E {d: 99, e: 87}
     F {d: 99, e: 87, f: 77}
 	
-### 5.Interfaces combined:
+## 5.Interfaces combined:
 
 	var inter1 = {
         g1: function () {
@@ -122,7 +122,7 @@ Write some utilities API for me.
     ClassB::g1
     ClassB::g2
 
-### 6.Static implements: class call static function directly
+## 6.Static implements: class call static function directly
 
 	var static_inf = {
         staticFunc:function(){
@@ -136,7 +136,7 @@ Write some utilities API for me.
 
 	static ClassB::static_inf
 
-### 7.Instanceof:
+## 7.Instanceof:
 
     console.log('b instanceof ClassB:',b instanceof ClassB);//class
     console.log('b instanceof ClassB:',xy.inst_of(b,ClassB));//class
@@ -152,9 +152,9 @@ Write some utilities API for me.
     b instanceof ClassA: true
     b instanceof ClassA: true
 
-### 8.Standard interfaces:
+## 8.Standard interfaces:
 
-#### (1)static_of_interfeace : create a object using ClassName.of(...params)
+### (1)static_of_interfeace : create a object using ClassName.of(...params)
     
     xy.static_impl(ClassA,xy.std.static_of_interface);
     console.log(ClassA.of(789));
@@ -165,7 +165,7 @@ Write some utilities API for me.
     this.a= 789
     ClassA {a: 789}
 
-#### (2)object_default_interfaces : object useful interfaces, it's includs equals,hashCode,clone,inst_of,toString()
+### (2)object_default_interfaces : object useful interfaces, it's includs equals,hashCode,clone,inst_of,toString()
 
     xy.impl(ClassA, xy.std.object_default_interfaces);
     var a = new ClassA(999);
@@ -189,9 +189,9 @@ Write some utilities API for me.
     a.inst_of(ClassA): true
     a.toString(): {"a":999}
 
-### 9.Standard classes
+## 9.Standard classes
 
-#### (1)BigInteger :
+### (1)BigInteger :
 
     let a = new xy.BigInteger('1234567890');
     let b = new xy.BigInteger('1234567890');
@@ -208,7 +208,7 @@ Write some utilities API for me.
     BigInteger {s: "2469135780", data: Array(10), radix: 10, sign: "+"}
     2469135780n
 
-#### (2)HashMap [It's according to key value to get value!] :
+### (2)HashMap [It's according to key value to get value!] :
 
     var n = 100000;
     function G(a, b) {

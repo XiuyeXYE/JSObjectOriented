@@ -154,7 +154,7 @@ Write some utilities API for me.
 
 ## 8.Standard interfaces:
 
-### (1)static_of_interfeace : create a object using ClassName.of(...params)
+### (1) static_of_interfeace : create a object using ClassName.of(...params)
     
     xy.static_impl(ClassA,xy.std.static_of_interface);
     console.log(ClassA.of(789));
@@ -165,7 +165,7 @@ Write some utilities API for me.
     this.a= 789
     ClassA {a: 789}
 
-### (2)object_default_interfaces : object useful interfaces, it's includs equals,hashCode,clone,inst_of,toString()
+### (2) object_default_interfaces : object useful interfaces, it's includs equals,hashCode,clone,inst_of,toString()
 
     xy.impl(ClassA, xy.std.object_default_interfaces);
     var a = new ClassA(999);
@@ -191,7 +191,7 @@ Write some utilities API for me.
 
 ## 9.Standard classes
 
-### (1)BigInteger :
+### (1) BigInteger :
 
     let a = new xy.BigInteger('1234567890');
     let b = new xy.BigInteger('1234567890');
@@ -208,7 +208,7 @@ Write some utilities API for me.
     BigInteger {s: "2469135780", data: Array(10), radix: 10, sign: "+"}
     2469135780n
 
-### (2)HashMap [It's according to key value to get value!] :
+### (2) HashMap [It's according to key value to get value!] :
 
     var n = 100000;
     function G(a, b) {

@@ -1041,7 +1041,7 @@
 
 
 
-    var object_default_insterfaces = inf_ext(
+    var object_default_interfaces = inf_ext(
         inst_of_insterface,
         equals_interface,
         clone_interface,
@@ -1057,7 +1057,7 @@
         clone_interface: clone_interface,
         equals_interface: equals_interface,
         hash_interface: hash_interface,
-        object_default_insterfaces: object_default_insterfaces
+        object_default_interfaces: object_default_interfaces
     };
 
 
@@ -1074,7 +1074,7 @@
         }
     }
 
-    impl(Set, object_default_insterfaces);
+    impl(Set, object_default_interfaces);
 
     var Set_impl = {
         size: function () {
@@ -1199,7 +1199,7 @@
         }
     }
 
-    impl(Map, object_default_insterfaces);
+    impl(Map, object_default_interfaces);
 
     var Map_impl = {
         elemEQ: function (a, b) {
@@ -2183,7 +2183,7 @@
         this.deepth = 0;//bucket deepth
     }
 
-    impl(HashMap, object_default_insterfaces);
+    impl(HashMap, object_default_interfaces);
 
     var HashMap_impl = {
         elemEQ: function (a, b) {

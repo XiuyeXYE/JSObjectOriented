@@ -122,7 +122,7 @@ Write some utilities API for me.
     ClassB::g1
     ClassB::g2
 
-## 6.Static implements: ClassName calling static function directly
+## 6.Static implements: calling static function directly
 
 	var static_inf = {
         staticFunc:function(){

@@ -30,7 +30,7 @@ Write some tools API for me.
     a: 123
     __proto__: Object
 
-## 2.Implements interfaces:
+## 2.Implements interfaces[last same name will cover the front!]:
 
     var interfaceA = {
         f1:function(){

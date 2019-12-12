@@ -165,7 +165,7 @@ Write some utilities API for me.
     this.a= 789
     ClassA {a: 789}
 
-### (2) object_default_interfaces : object useful interfaces, it's includes equals,hashCode,clone,inst_of,toString
+### (2) object_default_interfaces : object useful interfaces, it includes equals,hashCode,clone,inst_of,toString
 
     xy.impl(ClassA, xy.std.object_default_interfaces);
     var a = new ClassA(999);

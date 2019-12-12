@@ -1,5 +1,5 @@
-# JavaScript Utilities API
-Write some utilities API for me.
+# JavaScript Object Oriented
+Write some tools API for me.
 
 
 # Object-oriented:

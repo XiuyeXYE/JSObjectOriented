@@ -52,7 +52,7 @@ Write some tools API for me.
     ClassA::f1
     ClassA::f2
 
-## 3.Extends super class and using "this.base" (called like calling super class)
+## 3.Extends super class and using "this.base" (called like calling super class[only up one level available])
 
 	function ClassB(b){
         this.base(b);

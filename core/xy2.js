@@ -2091,7 +2091,7 @@
                 dotIdx = i;
             }
         }
-        if (gt(i, 1)) {
+        if (gt(j, 1)) {
             throw "Don't have two dot mark!";
         }
         this.d = s;
@@ -2100,7 +2100,6 @@
             s = s.replace('.', '');
         }
         this.base(s, radix);
-
     }
 
     ext(BigDecimal, BigInteger);
@@ -2137,7 +2136,6 @@
             return int10ToRadix(this.int10Value(), r);
         },
         unsignedInt10Value: function () {//string
-
             return radixToInt10(this.s, this.radix);
         },
         int10Value: function () {
@@ -2150,8 +2148,13 @@
 
         add: function (a) {
             notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
-            var aData = a.int10Value();
-            var oData = this.int10Value();
+            var aData = a.unsignedInt10Value();
+            var oData = this.unsignedInt10Value();
+            var aDotIdx = a.dotIdx;
+            var oDotIdx = this.dotIdx;
+            if (eq)
+                11.11 + 11 = 22.11
+
             return new BigDecimal(addInt10(oData, aData));
         },
         multiply: function (a) {

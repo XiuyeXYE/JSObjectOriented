@@ -1062,7 +1062,7 @@
 
     //11.Common data structure
     function Set(arr) {
-        notInstanceof(this, Set, "Constructor Set requires 'new' at Set!!!");
+        notInstanceof(this, Set, "Constructor Set requires 'new'!!!");
         this.data = EMPTY_VALUES.ARRAY;
         arr = arr || EMPTY_VALUES.ARRAY;
         if (pnl(arr, 1)) {
@@ -1187,7 +1187,7 @@
 
 
     function Map(arr) {
-        notInstanceof(this, Map, "Constructor Map requires 'new' at Map!!!");
+        notInstanceof(this, Map, "Constructor Map requires 'new'!!!");
         this.data = EMPTY_VALUES.ARRAY;
         arr = arr || EMPTY_VALUES.ARRAY;
         if (pnl(arr, 1)) {

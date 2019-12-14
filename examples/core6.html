@@ -86,7 +86,7 @@
             console.log('A params:', a, b, c, d);
         }
 
-        xy.impl(A, xy.std.object_default_insterfaces);
+        xy.impl(A, xy.std.object_default_interfaces);
         xy.static_impl(A, xy.std.static_of_interface);
 
         console.log(A.of());
@@ -102,7 +102,7 @@
         let b = new xy.BigInteger('1234567890');
         //a+b+a*b-a^2
         console.time();
-        console.log(a.add(b).add(a.multiply(b)).substract(a.power(2)));
+        console.log(a.add(b).add(a.multiply(b)).substract(a.power('2')));
         console.timeEnd();
         let e = 1234567890n;//bigint
         let f = 1234567890n;//bigint

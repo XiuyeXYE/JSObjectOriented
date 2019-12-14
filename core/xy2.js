@@ -1671,8 +1671,11 @@
      * @param {String} p 
      */
     function powerInt10(s, p) {
+        if (!oExist(p) || gt(p.indexOf('-'), -1)) {
+            throw new Error("exponent mustn't be negative!");
+        }
         if (!int10RegExp.test(s)) {
-            throw new Error("params must be decimal number and sign only one +/-!");
+            throw new Error("param must be decimal number and sign only one +/-!");
         }
         var finalSign = whatSign(s);
         s = getRidOfSign(s);
@@ -2076,6 +2079,146 @@
     static_impl(BigInteger, BigInteger_static_impl);
 
 
+    function BigDecimal(s, radix = 10) {
+        ntfs(this, BigDecimal);
+
+        //clear dot mark and remember dot index
+        var j = 0;
+        var dotIdx = -1;
+        for (var i = 0; i < len(s); i++) {
+            if (eq(s[i], '.')) {
+                j++;
+                dotIdx = i;
+            }
+        }
+        if (gt(i, 1)) {
+            throw "Don't have two dot mark!";
+        }
+        this.d = s;
+        this.dotIdx = dotIdx;
+        if (gt(dotIdx, -1)) {
+            s = s.replace('.', '');
+        }
+        this.base(s, radix);
+
+    }
+
+    ext(BigDecimal, BigInteger);
+
+    var BigDecimal_impl = {
+
+        real10: function () {//new bigint obj
+            return new BigDecimal(this.real10Value());
+        },
+        realRadix: function (r) {
+            return new BigDecimal(this.realRadixValue(r));
+        },
+        realRadixValue: function (r) {
+            return int10ToRadix(this.real10Value(), r);
+        },
+        unsignedReal10Value: function () {//string
+            return radixToInt10(this.s, this.radix);
+        },
+        real10Value: function () {
+            var sign = this.sign;
+            if (eq(sign, '+')) {
+                sign = '';
+            }
+            return sign + this.unsignedReal10Value()
+        },
+
+        int10: function () {//new bigint obj
+            return new BigDecimal(this.int10Value());
+        },
+        intRadix: function (r) {
+            return new BigDecimal(this.intRadixValue(r));
+        },
+        intRadixValue: function (r) {
+            return int10ToRadix(this.int10Value(), r);
+        },
+        unsignedInt10Value: function () {//string
+
+            return radixToInt10(this.s, this.radix);
+        },
+        int10Value: function () {
+            var sign = this.sign;
+            if (eq(sign, '+')) {
+                sign = '';
+            }
+            return sign + this.unsignedInt10Value()
+        },
+
+        add: function (a) {
+            notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigDecimal(addInt10(oData, aData));
+        },
+        multiply: function (a) {
+            notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigDecimal(multiplyInt10(oData, aData));
+        },
+        substract: function (a) {
+            notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigDecimal(substractInt10(oData, aData));
+        },
+        divide: function (a) {
+            notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigDecimal(divideInt10(oData, aData));
+        },
+        mod: function (a) {
+            notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            return new BigDecimal(modInt10(oData, aData));
+        },
+        power: function (n) {
+            //One:
+            // var sum = BigDecimal.ONE;
+            // n = String(n);
+            // for (var i = '0'; ltInt10(i, n); i = addInt10One(i)) {
+            //     sum = sum.multiply(this);
+            // }
+            // return sum;
+            //Two:
+            return new BigDecimal(powerInt10(this.int10Value(), String(n)));
+        },
+        negate: function () {
+            return new BigDecimal(
+                eq(this.sign, '-')
+                    ?
+                    '+' + this.unsignedInt10Value()
+                    :
+                    '-' + this.unsignedInt10Value());
+        },
+        addOne: function () {
+            return this.add(BigDecimal.ONE);
+        },
+        toString: function (r) {
+            if (isNumber(r) && !eq(this.radix, r)) {
+                return this.intRadixValue(r);
+            }
+            return this.s;
+        },
+        // toJSON: function (r) {//JSON.stringify()!
+        //     return this.toString(r);
+        // }
+    };
+
+    impl(BigDecimal, BigDecimal_impl);
+
+    //coverage
+    var BigDecimal_static_impl = {
+        ZERO: new BigDecimal('0'),
+        ONE: new BigDecimal('1'),
+    };
+    static_impl(BigDecimal, BigDecimal_static_impl);
 
     //very useful code for generating hash value!
     function hashCodeS(k) {
@@ -2653,6 +2796,7 @@
         Map: Map,
         ValueMap: ValueMap,
         BigInteger: BigInteger,
+        BigDecimal: BigDecimal,
         HashMap: HashMap
     };
 

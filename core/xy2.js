@@ -1381,7 +1381,7 @@
 
     function checkRadixAndNumber(s, radix) {
         if (!numRegExp.test(s)) {
-            throw new Error("Input first param must be a number string and and sign only one +/-!.");
+            throw new Error("Input first param must be a integer string and and sign only one +/-!.");
         }
         s = toLowerCase(s);
         var sign = '+';
@@ -1422,9 +1422,13 @@
             }
         }
         s = str2ListBySeparator(s, '');
-        s = clearOpenZeroI(s);
+        s = clearOpenZeroS(s);
         return [list2StrWithJoint(s, ''), radix, sign];
     }
+
+
+
+
 
     function checkBigIntegerNumber10(a) {
         if (oExist(a) && oExist(a.length)) {
@@ -1462,6 +1466,18 @@
             openZero++;
         }
         nums = nums.slice(openZero);
+        if (eq(len(nums), 0)) {
+            nums = '0';
+        }
+        return nums;
+    }
+
+    function clearEndZeroS(nums) {
+        var endZero = len(nums) - 1;
+        while (eq(nums[endZero], '0')) {
+            endZero--;
+        }
+        nums = nums.substring(0, endZero + 1);
         if (eq(len(nums), 0)) {
             nums = '0';
         }
@@ -1671,9 +1687,12 @@
      * @param {String} p 
      */
     function powerInt10(s, p) {
+
+        p = String(p);
         if (!oExist(p) || gt(p.indexOf('-'), -1)) {
             throw new Error("exponent mustn't be negative!");
         }
+
         if (!int10RegExp.test(s)) {
             throw new Error("param must be decimal number and sign only one +/-!");
         }
@@ -1682,7 +1701,7 @@
         checkBigIntegerNumber10(s);
         s = clearOpenZeroS(s);
         var num = '1';
-        p = String(p);
+
         for (var i = '0'; ltInt10(i, p); i = addInt10One(i)) {
             num = multiplyInt10(num, s);
         }
@@ -2078,11 +2097,36 @@
     };
     static_impl(BigInteger, BigInteger_static_impl);
 
+    var numRegExp2 = /^[+-]?(0[box]?)?\w*.?\w*$/;
 
     function BigDecimal(s, radix = 10) {
         ntfs(this, BigDecimal);
 
+        if (!numRegExp2.test(s)) {
+            throw new Error("Input first param must be a number string and and sign only one +/-!.");
+        }
+
+        s = toLowerCase(s);
+        this.origin = s;
+
+        var sign = '+';
+        if (eq(s.charAt(0), '-')) {
+            sign = '-';
+            s = s.substring(1);
+        } else if (eq(s.charAt(0), '+')) {
+            // sign = '+';
+            s = s.substring(1);
+        }
+
+        this.sign = sign;
+
+
+
         //clear dot mark and remember dot index
+        //fraction length
+        s = clearOpenZeroS(s);
+        s = clearEndZeroS(s);
+
         var j = 0;
         var dotIdx = -1;
         for (var i = 0; i < len(s); i++) {
@@ -2092,17 +2136,38 @@
             }
         }
         if (gt(j, 1)) {
-            throw "Don't have two dot mark!";
+            throw new Error("Don't have two dot mark!");
         }
-        this.d = s;
-        this.dotIdx = dotIdx;
+
+
+
+
+        // this.dotIdx = dotIdx;
+        var fractionLength = 0;
         if (gt(dotIdx, -1)) {
+            fractionLength = len(s) - dotIdx - 1;
             s = s.replace('.', '');
         }
-        this.base(s, radix);
+
+        if (!radix || lt(radix, 2) || gt(radix, 36)) {
+            throw new Error("Radix between 2 and 36.");
+        }
+
+        for (var i = 0; i < len(s); i++) {
+            if (nlt(digitsMap.get(s.charAt(i)), radix)) {
+                throw new Error("Input number cannot greater than radix: " + radix);
+            }
+        }
+        this.radix = radix;
+        this.fractionLength = fractionLength;
+
+        s = clearOpenZeroS(s);
+        this.s = s;
+        this.data = str2ListBySeparator(this.s, '');
+
     }
 
-    ext(BigDecimal, BigInteger);
+    // ext(BigDecimal, BigInteger);
 
     var BigDecimal_impl = {
 
@@ -2135,9 +2200,11 @@
         intRadixValue: function (r) {
             return int10ToRadix(this.int10Value(), r);
         },
+
         unsignedInt10Value: function () {//string
             return radixToInt10(this.s, this.radix);
         },
+
         int10Value: function () {
             var sign = this.sign;
             if (eq(sign, '+')) {
@@ -2148,14 +2215,38 @@
 
         add: function (a) {
             notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
-            var aData = a.unsignedInt10Value();
-            var oData = this.unsignedInt10Value();
-            var aDotIdx = a.dotIdx;
-            var oDotIdx = this.dotIdx;
-            if (eq)
-                11.11 + 11 = 22.11
+            var aData = a.int10Value();
+            var oData = this.int10Value();
+            var aFractionLength = a.fractionLength;
+            var oFractionLength = this.fractionLength;
 
-            return new BigDecimal(addInt10(oData, aData));
+            if (gt(oFractionLength, aFractionLength)) {
+                var sa = str2ListBySeparator(aData, '');
+                for (var i = 0; i < oFractionLength - aFractionLength; i++) {
+                    sa.push('0');
+                }
+                aData = list2StrWithJoint(sa, '');
+            } else {
+                var oa = str2ListBySeparator(oData, '');
+                for (var i = 0; i < aFractionLength - oFractionLength; i++) {
+                    oa.push('0');
+                }
+                oData = list2StrWithJoint(oa, '');
+            }
+            var result = addInt10(oData, aData);
+            var fractionLength = max(oFractionLength, aFractionLength);
+            if (gt(fractionLength, 0)) {
+                var dotIdx = len(result) - fractionLength;
+                result = result.slice(0, dotIdx) + '.' + result.slice(dotIdx);
+            }
+            if (result.startsWith('.')) {
+                result = '0' + result;
+            }
+            result = clearEndZeroS(result);
+            if (result.endsWith('.')) {
+                result = result + '0';
+            }
+            return new BigDecimal(result);
         },
         multiply: function (a) {
             notInstanceof(a, BigDecimal, "param must be BigDecimal object!");

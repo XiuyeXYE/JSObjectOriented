@@ -22,8 +22,33 @@
 
 
     <script type="text/javascript">
-
-       
+        let a = new xy.BigDecimal('123');
+        let b = new xy.BigDecimal('123');
+        console.log(a, b, a.add(b));
+        a = new xy.BigDecimal('123');
+        b = new xy.BigDecimal('0.123');
+        console.log(a, b, a.add(b));
+        a = new xy.BigDecimal('0.123');
+        b = new xy.BigDecimal('0.123');
+        console.log(a, b, a.add(b));
+        a = new xy.BigDecimal('0.12300');
+        b = new xy.BigDecimal('0.0123');
+        console.log(a, b, a.add(b));
+        a = new xy.BigDecimal('0.12300');
+        b = new xy.BigDecimal('-0.0123');
+        console.log(a, b, a.add(b));
+        a = new xy.BigDecimal('0.5');
+        b = new xy.BigDecimal('0.5');
+        console.log(a, b, a.add(b));
+        a = new xy.BigDecimal('0.5');
+        b = new xy.BigDecimal('-0.5');
+        console.log(a, b, a.add(b));
+        a = new xy.BigDecimal('0.555');
+        b = new xy.BigDecimal('0.555');
+        console.log(a, b, a.add(b));
+        a = new xy.BigDecimal('00.555');
+        b = new xy.BigDecimal('-0.555');
+        console.log(a, b, a.add(b));
 
     </script>
 

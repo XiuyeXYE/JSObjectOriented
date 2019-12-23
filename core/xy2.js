@@ -2099,8 +2099,11 @@
 
     var numRegExp2 = /^[+-]?(0[box]?)?\w*.?\w*$/;
 
-    function BigDecimal(s, radix = 10) {
+    function BigDecimal(s /** , radix = 10*/) {
+        
         ntfs(this, BigDecimal);
+        
+        this.radix = 10;//radix;
 
         if (!numRegExp2.test(s)) {
             throw new Error("Input first param must be a number string and and sign only one +/-!.");
@@ -2158,7 +2161,7 @@
                 throw new Error("Input number cannot greater than radix: " + radix);
             }
         }
-        this.radix = radix;
+
         this.fractionLength = fractionLength;
 
         s = clearOpenZeroS(s);

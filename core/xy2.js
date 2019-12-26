@@ -1377,10 +1377,10 @@
         }
     }
 
-    var numRegExp = /^[+-]?(0[box]?)?\w*$/;
+    var intRegExp = /^[+-]?(0[box]?)?\w*$/;
 
     function checkRadixAndNumber(s, radix) {
-        if (!numRegExp.test(s)) {
+        if (!intRegExp.test(s)) {
             throw new Error("Input first param must be a integer string and and sign only one +/-!.");
         }
         s = toLowerCase(s);
@@ -2097,7 +2097,7 @@
     };
     static_impl(BigInteger, BigInteger_static_impl);
 
-    var numRegExp2 = /^[+-]?(0[box]?)?\w*.?\w*$/;
+    var decimalRegExp = /^[+-]?(0[box]?)?\w*.?\w*$/;
 
     function BigDecimal(s /** , radix = 10*/) {
         
@@ -2105,7 +2105,7 @@
         
         this.radix = 10;//radix;
 
-        if (!numRegExp2.test(s)) {
+        if (!decimalRegExp.test(s)) {
             throw new Error("Input first param must be a number string and and sign only one +/-!.");
         }
 
@@ -2122,8 +2122,6 @@
         }
 
         this.sign = sign;
-
-
 
         //clear dot mark and remember dot index
         //fraction length
@@ -2142,9 +2140,6 @@
             throw new Error("Don't have two dot mark!");
         }
 
-
-
-
         // this.dotIdx = dotIdx;
         var fractionLength = 0;
         if (gt(dotIdx, -1)) {
@@ -2152,13 +2147,13 @@
             s = s.replace('.', '');
         }
 
-        if (!radix || lt(radix, 2) || gt(radix, 36)) {
+        if (!this.radix || lt(this.radix, 2) || gt(this.radix, 36)) {
             throw new Error("Radix between 2 and 36.");
         }
 
         for (var i = 0; i < len(s); i++) {
-            if (nlt(digitsMap.get(s.charAt(i)), radix)) {
-                throw new Error("Input number cannot greater than radix: " + radix);
+            if (nlt(digitsMap.get(s.charAt(i)), this.radix)) {
+                throw new Error("Input number cannot greater than radix: " + this.radix);
             }
         }
 

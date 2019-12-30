@@ -2097,220 +2097,220 @@
     };
     static_impl(BigInteger, BigInteger_static_impl);
 
-    var decimalRegExp = /^[+-]?(0[box]?)?\w*.?\w*$/;
+    // var decimalRegExp = /^[+-]?(0[box]?)?\w*.?\w*$/;
 
-    function BigDecimal(s /** , radix = 10*/) {
-        
-        ntfs(this, BigDecimal);
-        
-        this.radix = 10;//radix;
+    // function BigDecimal(s /** , radix = 10*/) {
 
-        if (!decimalRegExp.test(s)) {
-            throw new Error("Input first param must be a number string and and sign only one +/-!.");
-        }
+    //     ntfs(this, BigDecimal);
 
-        s = toLowerCase(s);
-        this.origin = s;
+    //     this.radix = 10;//radix;
 
-        var sign = '+';
-        if (eq(s.charAt(0), '-')) {
-            sign = '-';
-            s = s.substring(1);
-        } else if (eq(s.charAt(0), '+')) {
-            // sign = '+';
-            s = s.substring(1);
-        }
+    //     if (!decimalRegExp.test(s)) {
+    //         throw new Error("Input first param must be a number string and and sign only one +/-!.");
+    //     }
 
-        this.sign = sign;
+    //     s = toLowerCase(s);
+    //     this.origin = s;
 
-        //clear dot mark and remember dot index
-        //fraction length
-        s = clearOpenZeroS(s);
-        s = clearEndZeroS(s);
+    //     var sign = '+';
+    //     if (eq(s.charAt(0), '-')) {
+    //         sign = '-';
+    //         s = s.substring(1);
+    //     } else if (eq(s.charAt(0), '+')) {
+    //         // sign = '+';
+    //         s = s.substring(1);
+    //     }
 
-        var j = 0;
-        var dotIdx = -1;
-        for (var i = 0; i < len(s); i++) {
-            if (eq(s[i], '.')) {
-                j++;
-                dotIdx = i;
-            }
-        }
-        if (gt(j, 1)) {
-            throw new Error("Don't have two dot mark!");
-        }
+    //     this.sign = sign;
 
-        // this.dotIdx = dotIdx;
-        var fractionLength = 0;
-        if (gt(dotIdx, -1)) {
-            fractionLength = len(s) - dotIdx - 1;
-            s = s.replace('.', '');
-        }
+    //     //clear dot mark and remember dot index
+    //     //fraction length
+    //     s = clearOpenZeroS(s);
+    //     s = clearEndZeroS(s);
 
-        if (!this.radix || lt(this.radix, 2) || gt(this.radix, 36)) {
-            throw new Error("Radix between 2 and 36.");
-        }
+    //     var j = 0;
+    //     var dotIdx = -1;
+    //     for (var i = 0; i < len(s); i++) {
+    //         if (eq(s[i], '.')) {
+    //             j++;
+    //             dotIdx = i;
+    //         }
+    //     }
+    //     if (gt(j, 1)) {
+    //         throw new Error("Don't have two dot mark!");
+    //     }
 
-        for (var i = 0; i < len(s); i++) {
-            if (nlt(digitsMap.get(s.charAt(i)), this.radix)) {
-                throw new Error("Input number cannot greater than radix: " + this.radix);
-            }
-        }
+    //     // this.dotIdx = dotIdx;
+    //     var fractionLength = 0;
+    //     if (gt(dotIdx, -1)) {
+    //         fractionLength = len(s) - dotIdx - 1;
+    //         s = s.replace('.', '');
+    //     }
 
-        this.fractionLength = fractionLength;
+    //     if (!this.radix || lt(this.radix, 2) || gt(this.radix, 36)) {
+    //         throw new Error("Radix between 2 and 36.");
+    //     }
 
-        s = clearOpenZeroS(s);
-        this.s = s;
-        this.data = str2ListBySeparator(this.s, '');
+    //     for (var i = 0; i < len(s); i++) {
+    //         if (nlt(digitsMap.get(s.charAt(i)), this.radix)) {
+    //             throw new Error("Input number cannot greater than radix: " + this.radix);
+    //         }
+    //     }
 
-    }
+    //     this.fractionLength = fractionLength;
+
+    //     s = clearOpenZeroS(s);
+    //     this.s = s;
+    //     this.data = str2ListBySeparator(this.s, '');
+
+    // }
 
     // ext(BigDecimal, BigInteger);
 
-    var BigDecimal_impl = {
+    // var BigDecimal_impl = {
 
-        real10: function () {//new bigint obj
-            return new BigDecimal(this.real10Value());
-        },
-        realRadix: function (r) {
-            return new BigDecimal(this.realRadixValue(r));
-        },
-        realRadixValue: function (r) {
-            return int10ToRadix(this.real10Value(), r);
-        },
-        unsignedReal10Value: function () {//string
-            return radixToInt10(this.s, this.radix);
-        },
-        real10Value: function () {
-            var sign = this.sign;
-            if (eq(sign, '+')) {
-                sign = '';
-            }
-            return sign + this.unsignedReal10Value()
-        },
+    //     real10: function () {//new bigint obj
+    //         return new BigDecimal(this.real10Value());
+    //     },
+    //     realRadix: function (r) {
+    //         return new BigDecimal(this.realRadixValue(r));
+    //     },
+    //     realRadixValue: function (r) {
+    //         return int10ToRadix(this.real10Value(), r);
+    //     },
+    //     unsignedReal10Value: function () {//string
+    //         return radixToInt10(this.s, this.radix);
+    //     },
+    //     real10Value: function () {
+    //         var sign = this.sign;
+    //         if (eq(sign, '+')) {
+    //             sign = '';
+    //         }
+    //         return sign + this.unsignedReal10Value()
+    //     },
 
-        int10: function () {//new bigint obj
-            return new BigDecimal(this.int10Value());
-        },
-        intRadix: function (r) {
-            return new BigDecimal(this.intRadixValue(r));
-        },
-        intRadixValue: function (r) {
-            return int10ToRadix(this.int10Value(), r);
-        },
+    //     int10: function () {//new bigint obj
+    //         return new BigDecimal(this.int10Value());
+    //     },
+    //     intRadix: function (r) {
+    //         return new BigDecimal(this.intRadixValue(r));
+    //     },
+    //     intRadixValue: function (r) {
+    //         return int10ToRadix(this.int10Value(), r);
+    //     },
 
-        unsignedInt10Value: function () {//string
-            return radixToInt10(this.s, this.radix);
-        },
+    //     unsignedInt10Value: function () {//string
+    //         return radixToInt10(this.s, this.radix);
+    //     },
 
-        int10Value: function () {
-            var sign = this.sign;
-            if (eq(sign, '+')) {
-                sign = '';
-            }
-            return sign + this.unsignedInt10Value()
-        },
+    //     int10Value: function () {
+    //         var sign = this.sign;
+    //         if (eq(sign, '+')) {
+    //             sign = '';
+    //         }
+    //         return sign + this.unsignedInt10Value()
+    //     },
 
-        add: function (a) {
-            notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
-            var aData = a.int10Value();
-            var oData = this.int10Value();
-            var aFractionLength = a.fractionLength;
-            var oFractionLength = this.fractionLength;
+    //     add: function (a) {
+    //         notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
+    //         var aData = a.int10Value();
+    //         var oData = this.int10Value();
+    //         var aFractionLength = a.fractionLength;
+    //         var oFractionLength = this.fractionLength;
 
-            if (gt(oFractionLength, aFractionLength)) {
-                var sa = str2ListBySeparator(aData, '');
-                for (var i = 0; i < oFractionLength - aFractionLength; i++) {
-                    sa.push('0');
-                }
-                aData = list2StrWithJoint(sa, '');
-            } else {
-                var oa = str2ListBySeparator(oData, '');
-                for (var i = 0; i < aFractionLength - oFractionLength; i++) {
-                    oa.push('0');
-                }
-                oData = list2StrWithJoint(oa, '');
-            }
-            var result = addInt10(oData, aData);
-            var fractionLength = max(oFractionLength, aFractionLength);
-            if (gt(fractionLength, 0)) {
-                var dotIdx = len(result) - fractionLength;
-                result = result.slice(0, dotIdx) + '.' + result.slice(dotIdx);
-            }
-            if (result.startsWith('.')) {
-                result = '0' + result;
-            }
-            result = clearEndZeroS(result);
-            if (result.endsWith('.')) {
-                result = result + '0';
-            }
-            return new BigDecimal(result);
-        },
-        multiply: function (a) {
-            notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
-            var aData = a.int10Value();
-            var oData = this.int10Value();
-            return new BigDecimal(multiplyInt10(oData, aData));
-        },
-        substract: function (a) {
-            notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
-            var aData = a.int10Value();
-            var oData = this.int10Value();
-            return new BigDecimal(substractInt10(oData, aData));
-        },
-        divide: function (a) {
-            notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
-            var aData = a.int10Value();
-            var oData = this.int10Value();
-            return new BigDecimal(divideInt10(oData, aData));
-        },
-        mod: function (a) {
-            notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
-            var aData = a.int10Value();
-            var oData = this.int10Value();
-            return new BigDecimal(modInt10(oData, aData));
-        },
-        power: function (n) {
-            //One:
-            // var sum = BigDecimal.ONE;
-            // n = String(n);
-            // for (var i = '0'; ltInt10(i, n); i = addInt10One(i)) {
-            //     sum = sum.multiply(this);
-            // }
-            // return sum;
-            //Two:
-            return new BigDecimal(powerInt10(this.int10Value(), String(n)));
-        },
-        negate: function () {
-            return new BigDecimal(
-                eq(this.sign, '-')
-                    ?
-                    '+' + this.unsignedInt10Value()
-                    :
-                    '-' + this.unsignedInt10Value());
-        },
-        addOne: function () {
-            return this.add(BigDecimal.ONE);
-        },
-        toString: function (r) {
-            if (isNumber(r) && !eq(this.radix, r)) {
-                return this.intRadixValue(r);
-            }
-            return this.s;
-        },
-        // toJSON: function (r) {//JSON.stringify()!
-        //     return this.toString(r);
-        // }
-    };
+    //         if (gt(oFractionLength, aFractionLength)) {
+    //             var sa = str2ListBySeparator(aData, '');
+    //             for (var i = 0; i < oFractionLength - aFractionLength; i++) {
+    //                 sa.push('0');
+    //             }
+    //             aData = list2StrWithJoint(sa, '');
+    //         } else {
+    //             var oa = str2ListBySeparator(oData, '');
+    //             for (var i = 0; i < aFractionLength - oFractionLength; i++) {
+    //                 oa.push('0');
+    //             }
+    //             oData = list2StrWithJoint(oa, '');
+    //         }
+    //         var result = addInt10(oData, aData);
+    //         var fractionLength = max(oFractionLength, aFractionLength);
+    //         if (gt(fractionLength, 0)) {
+    //             var dotIdx = len(result) - fractionLength;
+    //             result = result.slice(0, dotIdx) + '.' + result.slice(dotIdx);
+    //         }
+    //         if (result.startsWith('.')) {
+    //             result = '0' + result;
+    //         }
+    //         result = clearEndZeroS(result);
+    //         if (result.endsWith('.')) {
+    //             result = result + '0';
+    //         }
+    //         return new BigDecimal(result);
+    //     },
+    //     multiply: function (a) {
+    //         notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
+    //         var aData = a.int10Value();
+    //         var oData = this.int10Value();
+    //         return new BigDecimal(multiplyInt10(oData, aData));
+    //     },
+    //     substract: function (a) {
+    //         notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
+    //         var aData = a.int10Value();
+    //         var oData = this.int10Value();
+    //         return new BigDecimal(substractInt10(oData, aData));
+    //     },
+    //     divide: function (a) {
+    //         notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
+    //         var aData = a.int10Value();
+    //         var oData = this.int10Value();
+    //         return new BigDecimal(divideInt10(oData, aData));
+    //     },
+    //     mod: function (a) {
+    //         notInstanceof(a, BigDecimal, "param must be BigDecimal object!");
+    //         var aData = a.int10Value();
+    //         var oData = this.int10Value();
+    //         return new BigDecimal(modInt10(oData, aData));
+    //     },
+    //     power: function (n) {
+    //         //One:
+    //         // var sum = BigDecimal.ONE;
+    //         // n = String(n);
+    //         // for (var i = '0'; ltInt10(i, n); i = addInt10One(i)) {
+    //         //     sum = sum.multiply(this);
+    //         // }
+    //         // return sum;
+    //         //Two:
+    //         return new BigDecimal(powerInt10(this.int10Value(), String(n)));
+    //     },
+    //     negate: function () {
+    //         return new BigDecimal(
+    //             eq(this.sign, '-')
+    //                 ?
+    //                 '+' + this.unsignedInt10Value()
+    //                 :
+    //                 '-' + this.unsignedInt10Value());
+    //     },
+    //     addOne: function () {
+    //         return this.add(BigDecimal.ONE);
+    //     },
+    //     toString: function (r) {
+    //         if (isNumber(r) && !eq(this.radix, r)) {
+    //             return this.intRadixValue(r);
+    //         }
+    //         return this.s;
+    //     },
+    //     // toJSON: function (r) {//JSON.stringify()!
+    //     //     return this.toString(r);
+    //     // }
+    // };
 
-    impl(BigDecimal, BigDecimal_impl);
+    // impl(BigDecimal, BigDecimal_impl);
 
-    //coverage
-    var BigDecimal_static_impl = {
-        ZERO: new BigDecimal('0'),
-        ONE: new BigDecimal('1'),
-    };
-    static_impl(BigDecimal, BigDecimal_static_impl);
+    // //coverage
+    // var BigDecimal_static_impl = {
+    //     ZERO: new BigDecimal('0'),
+    //     ONE: new BigDecimal('1'),
+    // };
+    // static_impl(BigDecimal, BigDecimal_static_impl);
 
     //very useful code for generating hash value!
     function hashCodeS(k) {

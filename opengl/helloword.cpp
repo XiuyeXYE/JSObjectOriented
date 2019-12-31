@@ -1,5 +1,8 @@
+// #include<windows.h>
+// #include<gl/GL.h>
 #include "../3lib/glfw-3.3.bin.WIN64/include/GLFW/glfw3.h"
-#pragma comment(lib, "..\\3lib\\glfw-3.3.bin.WIN64\\lib-vc2015\\glfw3.lib")
+#pragma comment(lib, "..\\3lib\\glfw-3.3.bin.WIN64\\lib-vc2015\\glfw3dll.lib")
+#pragma comment(lib, "GLU32.lib")
 
 int main(void)
 {
@@ -24,7 +27,7 @@ int main(void)
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
-        // glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

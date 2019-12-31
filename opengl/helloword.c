@@ -1,8 +1,20 @@
 // #include<windows.h>
 // #include<gl/GL.h>
-#include "../3lib/glfw-3.3.bin.WIN64/include/GLFW/glfw3.h"
-#pragma comment(lib, "..\\3lib\\glfw-3.3.bin.WIN64\\lib-vc2015\\glfw3dll.lib")
-#pragma comment(lib, "GLU32.lib")
+
+// #include <math.h>
+// #include <stdlib.h>
+// #include <stdio.h>
+// #include <string.h>
+// #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#pragma comment(lib, "glfw3.lib")
+// #pragma comment(lib, "GLU32.lib")
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "user32.lib")
+#pragma comment(lib, "gdi32.lib")
+#pragma comment(lib, "kernel32.lib")
+#pragma comment(lib, "Shell32.lib")
+// #pragma comment(lib, "ucrt.lib")
 
 int main(void)
 {

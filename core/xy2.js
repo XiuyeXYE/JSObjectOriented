@@ -2888,7 +2888,7 @@
         Map: Map,
         ValueMap: ValueMap,
         BigInteger: BigInteger,
-        BigDecimal: BigDecimal,
+        // BigDecimal: BigDecimal,
         HashMap: HashMap
     };
 

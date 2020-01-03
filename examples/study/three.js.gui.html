@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Basic</title>
+</head>
+<body>
+	<h1>Base</h1>
+
+	<script type="text/javascript" src="/3rd/three.js/three.js"></script>
+	<script type="text/javascript" src="/3rd/three.js/plugins/WebGL.js"></script>
+	<script type="text/javascript"
+		src="/3rd/three.js/plugins/libs/stats.min.js"></script>
+	<script type="text/javascript"
+		src="/3rd/three.js/plugins/libs/dat.gui.min.js"></script>
+	<script type="text/javascript" src="/3rd/xy/xy2.js"></script>
+	<script type="text/javascript">
+		let stats = new Stats();
+		console.log(stats.dom);
+		document.body.appendChild(stats.dom);
+		let pinsFormation = [];
+		function togglePins() {
+
+			pins = pinsFormation[~~(Math.random() * pinsFormation.length)];
+
+		}
+		let params = {
+			enableWind : true,
+			showBall : false,
+			tooglePins : togglePins
+		};
+		let gui = new dat.GUI();
+		gui.add(params, 'enableWind');
+		gui.add(params, 'showBall');
+		gui.add(params, 'tooglePins');
+	</script>
+</body>
+</html>

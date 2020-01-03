@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Basic</title>
+</head>
+<body>
+	<h1>Base</h1>
+
+	<script type="text/javascript" src="/3rd/three.js/three.js"></script>
+	<script type="text/javascript" src="/3rd/three.js/plugins/WebGL.js"></script>
+	<script type="text/javascript" src="/3rd/xy/xy2.js"></script>
+	<script id="vs" type="x-shader/x-vertex">
+#version 300 es
+
+void main() {
+
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+}
+</script>
+	<script id="fs" type="x-shader/x-fragment">
+#version 300 es
+
+precision highp float;
+precision highp int;
+out vec4 out_FragColor;
+
+void main() {
+
+	out_FragColor = vec4( 1.0 );
+
+}
+</script>
+	<script type="text/javascript">
+		let scene = new THREE.Scene();
+		let camera = new THREE.PerspectiveCamera(0, window.innerWidth
+				/ window.innerHeight, 0.1, 1000);
+		let canvas = document.createElement('canvas');
+		let context = canvas.getContext('webgl2', {
+			alpha : false
+		});
+		let renderer = new THREE.WebGLRenderer({
+			canvas : canvas,
+			context : context
+		});
+		//let renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+		console.log(renderer.domElement);
+		let geometry = new THREE.BoxGeometry(1, 1, 1);
+
+		/* let material = new THREE.MeshBasicMaterial({
+			color : 0x00ff00
+		}); */
+
+		let material = new THREE.ShaderMaterial({
+			vertexShader : document.getElementById('vs').textContent.trim(),
+			fragmentShader : document.getElementById('fs').textContent.trim()
+		});
+
+		let cube = new THREE.Mesh(geometry, material);
+		scene.add(cube);
+		camera.position.z = 5;
+		let smalling = true;
+		var locked = false;
+		function animate() {
+			if (!locked)
+				requestAnimationFrame(animate);
+
+			//cube.rotation.x += Math.PI/4;
+			//cube.rotation.y += Math.PI/4;
+			//cube.rotation.z += Math.PI / 4;
+			cube.rotation.x += 0.01;
+			cube.rotation.y += 0.01;
+			cube.rotation.z += 0.01;
+
+			camera.fov = camera.fov % 360 + 1;
+//			console.log(camera.fov, camera.getEffectiveFOV());
+			//console.log(camera.getFilmWidth () ,camera.getFilmHeight());
+			//console.log(camera.getFocalLength ());
+			
+			/*camera.fov += smalling ? 1 : -1;
+
+			 if (camera.fov == 180) {
+				smalling = false;
+			} else if (camera.fov == 0) {
+				smalling = true
+			} */
+
+			camera.updateProjectionMatrix();
+			renderer.render(scene, camera);
+		}
+		//animate();
+		console.log(THREE.WEBGL);
+		if (THREE.WEBGL.isWebGLAvailable()) {
+
+			// Initiate function or other initializations here
+			animate();
+
+		} else {
+
+			var warning = THREE.WEBGL.getWebGLErrorMessage();
+			document.getElementById('container').appendChild(warning);
+
+		}
+	</script>
+</body>
+</html>

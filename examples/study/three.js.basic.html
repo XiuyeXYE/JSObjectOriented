@@ -7,7 +7,7 @@
 </head>
 
 <body>
-	<h1>Base</h1>
+	<!-- <h1>Base</h1> -->
 
 	<script type="text/javascript" src="../../3lib/three.js/three.js"></script>
 	<script type="text/javascript" src="../../3lib/three.js/plugins/WebGL.js"></script>
@@ -15,6 +15,15 @@
 	<script type="text/javascript" src="../../3lib/three.js/plugins/libs/dat.gui.min.js"></script>
 	<script type="text/javascript" src="../../core/xy2.js"></script>
 	<script type="text/javascript">
+		let controls = new function () {
+			this.rotationSpeed = 0.02;
+			this.bouncingSpeed = 0.03;
+		};
+		let gui = new dat.GUI();
+		gui.add(controls, 'rotationSpeed', 0, 0.5);
+		gui.add(controls, 'bouncingSpeed', 0, 0.5);
+
+
 		function init() {
 			let stats = initStats(0);
 
@@ -91,7 +100,7 @@
 
 			renderer.render(scene, camera);
 			// let i = -40;
-			let MAX_POSITIVE_NUMBER = 1<<30;
+			let MAX_POSITIVE_NUMBER = 1 << 30;
 			let step = 0;
 			renderer.setAnimationLoop((time) => {
 
@@ -100,16 +109,16 @@
 				// camera.lookAt(new THREE.Vector3(i, 0, 0));
 				// spotLight.position.set(i, 40, -15);
 				stats.update();
-				
-				
-				
-				cube.rotation.x += 0.02;
-				cube.rotation.y += 0.02;
-				cube.rotation.z += 0.02;
 
-				
-				
-				step = step % MAX_POSITIVE_NUMBER + 0.04;
+
+
+				cube.rotation.x = cube.rotation.x % MAX_POSITIVE_NUMBER + controls.rotationSpeed;
+				cube.rotation.y = cube.rotation.x % MAX_POSITIVE_NUMBER + controls.rotationSpeed;
+				cube.rotation.z = cube.rotation.x % MAX_POSITIVE_NUMBER + controls.rotationSpeed;
+
+
+
+				step = step % MAX_POSITIVE_NUMBER + controls.bouncingSpeed;
 
 
 				// println(step);

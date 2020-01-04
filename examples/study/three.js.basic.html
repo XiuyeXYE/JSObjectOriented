@@ -13,6 +13,7 @@
 	<script type="text/javascript" src="../../3lib/three.js/plugins/WebGL.js"></script>
 	<script type="text/javascript" src="../../3lib/three.js/plugins/libs/stats.min.js"></script>
 	<script type="text/javascript" src="../../3lib/three.js/plugins/libs/dat.gui.min.js"></script>
+	<script type="text/javascript" src="../../3lib/three.js/plugins/controls/TrackballControls.js"></script>
 	<script type="text/javascript" src="../../core/xy2.js"></script>
 	<script type="text/javascript">
 		let controls = new function () {
@@ -94,8 +95,10 @@
 			scene.add(spotLight);
 
 			document.body.appendChild(renderer.domElement);
-
-
+			//鼠标控制界面 放大缩小拖动角度！
+			let trackballControls = new THREE.TrackballControls(camera, renderer.domElement);
+			let clock = new THREE.Clock();
+			println(clock);
 
 
 			renderer.render(scene, camera);
@@ -109,7 +112,7 @@
 				// camera.lookAt(new THREE.Vector3(i, 0, 0));
 				// spotLight.position.set(i, 40, -15);
 				stats.update();
-
+				trackballControls.update(clock.getDelta());
 
 
 				cube.rotation.x = cube.rotation.x % MAX_POSITIVE_NUMBER + controls.rotationSpeed;
@@ -137,7 +140,12 @@
 				renderer.render(scene, camera);
 				// camera.updateProjectionMatrix();
 			});
-
+			function onResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+			}
+			window.addEventListener("resize", onResize, false);
 			console.log('Using Three.js version:' + THREE.REVISION);
 		}
 
@@ -147,7 +155,6 @@
 			document.body.appendChild(stats.dom);
 			return stats;
 		}
-
 
 
 		init();

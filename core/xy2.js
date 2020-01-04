@@ -2930,3 +2930,5 @@
     return xy;
 
 }));
+//common outer API
+var println = console.log;

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Basic</title>
+</head>
+
+<body>
+	<h1>Base</h1>
+
+	<script type="text/javascript" src="../../3lib/three.js/three.js"></script>
+	<script type="text/javascript" src="../../3lib/three.js/plugins/WebGL.js"></script>
+	<script type="text/javascript" src="../../3lib/three.js/plugins/libs/stats.min.js"></script>
+	<script type="text/javascript" src="../../3lib/three.js/plugins/libs/dat.gui.min.js"></script>
+	<script type="text/javascript" src="../../core/xy2.js"></script>
+	<script type="text/javascript">
+		function init() {
+			let stats = initStats(0);
+
+
+			let scene = new THREE.Scene();
+			let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+			let renderer = new THREE.WebGLRenderer({
+				antialias: true,
+			});
+			renderer.setClearColor(new THREE.Color(0X000000));
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			println(renderer.shadowMap.enabled);
+			renderer.shadowMap.enabled = true;
+			let axes = new THREE.AxesHelper(30);
+			scene.add(axes);
+
+			let planeGeometry = new THREE.PlaneGeometry(60, 20);
+			// let planeMaterial = new THREE.MeshBasicMaterial({
+			// 	color: 0xAAAAAA
+			// });
+			let planeMaterial = new THREE.MeshLambertMaterial({
+				color: 0xFFFFFF
+			});
+			let plane = new THREE.Mesh(planeGeometry, planeMaterial);
+			plane.receiveShadow = true;
+			println(plane.rotation);
+			plane.rotation.x = -0.5 * Math.PI;
+			println(plane.rotation);
+			plane.position.set(15, 0, 0);
+			scene.add(plane);
+			let cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+			// let cubeMaterial = new THREE.MeshBasicMaterial({
+			// 	color: 0xFF0000,
+			// 	wireframe: true
+			// });
+			let cubeMaterial = new THREE.MeshLambertMaterial({
+				color: 0xFF0000,
+			});
+			let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+			cube.castShadow = true;
+			cube.position.set(-4, 3, 0);
+			scene.add(cube);
+			let sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+			// let sphereMaterial = new THREE.MeshBasicMaterial({
+			// 	color: 0x7777FF,
+			// 	wireframe: true
+			// });
+			let sphereMaterial = new THREE.MeshLambertMaterial({
+				color: 0x7777FF,
+			});
+			let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+			sphere.castShadow = true;
+			sphere.position.set(20, 4, 2);
+			scene.add(sphere);
+
+			camera.position.set(-30, 40, 30);
+			println("camera.position=", camera.position);
+			camera.lookAt(scene.position);
+			// camera.lookAt(new THREE.Vector3(50, 0, 0));
+
+			let spotLight = new THREE.SpotLight(0xFFFFFF);
+			spotLight.position.set(-40, 40, -15);
+			spotLight.castShadom = true;
+			spotLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
+			spotLight.shadow.camera.far = 130;
+			spotLight.shadow.camera.near = 40;
+			spotLight.castShadow = true;
+			scene.add(spotLight);
+
+			document.body.appendChild(renderer.domElement);
+
+
+
+
+			renderer.render(scene, camera);
+			// let i = -40;
+			let MAX_POSITIVE_NUMBER = 1<<30;
+			let step = 0;
+			renderer.setAnimationLoop((time) => {
+
+				// if (i != 0)
+				// i += 0.1;
+				// camera.lookAt(new THREE.Vector3(i, 0, 0));
+				// spotLight.position.set(i, 40, -15);
+				stats.update();
+				step = step % MAX_POSITIVE_NUMBER + 0.04;
+
+				// println(step);
+				//球体来回跳算法核心：
+				/**
+				 * 圆周的参数方程
+				 * x = x0 + radius * cos(A)
+				 * y = y0 + radius * sin(A)
+				 * 
+				 * abs: y positive(+) for ever! + axes
+				 * 
+				 */
+				sphere.position.x = 20 + 10 * (Math.cos(step));
+				sphere.position.y = 2 + 10 * Math.abs(Math.sin(step));
+
+				renderer.render(scene, camera);
+				// camera.updateProjectionMatrix();
+			});
+
+			console.log('Using Three.js version:' + THREE.REVISION);
+		}
+
+		function initStats(type) {
+			let stats = new Stats();
+			stats.showPanel(type);
+			document.body.appendChild(stats.dom);
+			return stats;
+		}
+
+
+
+		init();
+	</script>
+</body>
+
+</html>

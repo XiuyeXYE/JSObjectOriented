@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Basic</title>
+	<meta charset="UTF-8">
+	<title>Basic</title>
 </head>
+
 <body>
 	<h1>Base</h1>
 
-	<script type="text/javascript" src="/3rd/three.js/three.js"></script>
-	<script type="text/javascript" src="/3rd/three.js/plugins/WebGL.js"></script>
-	<script type="text/javascript" src="/3rd/xy/xy2.js"></script>
+	<script type="text/javascript" src="../../3lib/three.js/three.js"></script>
+	<script type="text/javascript" src="../../3lib/three.js/plugins/WebGL.js"></script>
+	<script type="text/javascript" src="../../core/xy2.js"></script>
 	<script id="vs" type="x-shader/x-vertex">
 #version 300 es
 
@@ -35,14 +37,14 @@ void main() {
 	<script type="text/javascript">
 		let scene = new THREE.Scene();
 		let camera = new THREE.PerspectiveCamera(0, window.innerWidth
-				/ window.innerHeight, 0.1, 1000);
+			/ window.innerHeight, 0.1, 1000);
 		let canvas = document.createElement('canvas');
 		let context = canvas.getContext('webgl2', {
-			alpha : false
+			alpha: false
 		});
 		let renderer = new THREE.WebGLRenderer({
-			canvas : canvas,
-			context : context
+			canvas: canvas,
+			context: context
 		});
 		//let renderer = new THREE.WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
@@ -55,8 +57,8 @@ void main() {
 		}); */
 
 		let material = new THREE.ShaderMaterial({
-			vertexShader : document.getElementById('vs').textContent.trim(),
-			fragmentShader : document.getElementById('fs').textContent.trim()
+			vertexShader: document.getElementById('vs').textContent.trim(),
+			fragmentShader: document.getElementById('fs').textContent.trim()
 		});
 
 		let cube = new THREE.Mesh(geometry, material);
@@ -76,10 +78,10 @@ void main() {
 			cube.rotation.z += 0.01;
 
 			camera.fov = camera.fov % 360 + 1;
-//			console.log(camera.fov, camera.getEffectiveFOV());
+			//			console.log(camera.fov, camera.getEffectiveFOV());
 			//console.log(camera.getFilmWidth () ,camera.getFilmHeight());
 			//console.log(camera.getFocalLength ());
-			
+
 			/*camera.fov += smalling ? 1 : -1;
 
 			 if (camera.fov == 180) {
@@ -106,4 +108,5 @@ void main() {
 		}
 	</script>
 </body>
+
 </html>

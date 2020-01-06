@@ -16,10 +16,13 @@
 	<script type="text/javascript" src="../../3lib/three.js/plugins/controls/TrackballControls.js"></script>
 	<script type="text/javascript" src="../../core/xy2.js"></script>
 	<script type="text/javascript">
+
+
 		let controls = new function () {
 			this.rotationSpeed = 0.02;
 			this.bouncingSpeed = 0.03;
 		};
+
 		let gui = new dat.GUI();
 		gui.add(controls, 'rotationSpeed', 0, 0.5);
 		gui.add(controls, 'bouncingSpeed', 0, 0.5);
@@ -48,6 +51,7 @@
 			let planeMaterial = new THREE.MeshLambertMaterial({
 				color: 0xFFFFFF
 			});
+			// println(planeGeometry);
 			let plane = new THREE.Mesh(planeGeometry, planeMaterial);
 			plane.receiveShadow = true;
 			println(plane.rotation);
@@ -55,6 +59,28 @@
 			println(plane.rotation);
 			plane.position.set(15, 0, 0);
 			scene.add(plane);
+			let group = new THREE.Group();
+			scene.add(group);
+			function addCube() {
+				let cubeSize = Math.ceil(Math.random() * 3);
+				// println(cubeSize);
+				let cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+				let cubeMaterial = new THREE.MeshLambertMaterial({ color: Math.round(Math.random() * 0xffffff) });
+
+				let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+				cube.castShadow = true;
+				cube.name = 'cube-' + scene.children.length;
+
+				cube.position.x = -15 + Math.round(Math.random() * planeGeometry.parameters.width);
+				cube.position.y = Math.round(Math.random() * 5);
+				cube.position.z = -10 + Math.round(Math.random() * planeGeometry.parameters.height);
+
+				group.add(cube);
+				// this.numerOfObjects = scene.children.length;
+				// println(scene.children);
+				// println(scene.children.length);
+			}
+
 			let cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
 			// let cubeMaterial = new THREE.MeshBasicMaterial({
 			// 	color: 0xFF0000,
@@ -67,6 +93,11 @@
 			cube.castShadow = true;
 			cube.position.set(-4, 3, 0);
 			scene.add(cube);
+
+			for (let i = 0; i < 30; i++) {
+				addCube();
+			}
+
 			let sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
 			// let sphereMaterial = new THREE.MeshBasicMaterial({
 			// 	color: 0x7777FF,
@@ -85,14 +116,20 @@
 			camera.lookAt(scene.position);
 			// camera.lookAt(new THREE.Vector3(50, 0, 0));
 
+
+			let ambientLight = new THREE.AmbientLight(0x3c3c3c);
+			scene.add(ambientLight);
+
 			let spotLight = new THREE.SpotLight(0xFFFFFF);
 			spotLight.position.set(-40, 40, -15);
-			spotLight.castShadom = true;
+			spotLight.castShadow = true;
 			spotLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
 			spotLight.shadow.camera.far = 130;
 			spotLight.shadow.camera.near = 40;
 			spotLight.castShadow = true;
 			scene.add(spotLight);
+
+
 
 			document.body.appendChild(renderer.domElement);
 			//鼠标控制界面 放大缩小拖动角度！
@@ -105,6 +142,46 @@
 			// let i = -40;
 			let MAX_POSITIVE_NUMBER = 1 << 30;
 			let step = 0;
+			// println(scene);
+			//fog 
+			// scene.fog = new THREE.Fog(0xffffff, 0.015, 100);
+			// scene.fog = new THREE.FogExp2(0xffffff, 0.01);
+			// scene.overrideMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+			var vertices = [
+				new THREE.Vector3(1, 3, 1),
+				new THREE.Vector3(1, 3, -1),
+				new THREE.Vector3(1, -1, 1),
+				new THREE.Vector3(1, -1, -1),
+				new THREE.Vector3(-1, 3, -1),
+				new THREE.Vector3(-1, 3, 1),
+				new THREE.Vector3(-1, -1, -1),
+				new THREE.Vector3(-1, -1, 1)
+			];
+			var faces = [
+				new THREE.Face3(0, 2, 1),
+				new THREE.Face3(2, 3, 1),
+				new THREE.Face3(4, 6, 5),
+				new THREE.Face3(6, 7, 5),
+				new THREE.Face3(4, 5, 1),
+				new THREE.Face3(5, 0, 1),
+				new THREE.Face3(7, 6, 2),
+				new THREE.Face3(6, 3, 2),
+				new THREE.Face3(5, 7, 0),
+				new THREE.Face3(7, 2, 0),
+				new THREE.Face3(1, 3, 4),
+				new THREE.Face3(3, 6, 4),
+			];
+			let geom = new THREE.Geometry();
+			geom.vertices = vertices;
+			geom.faces = faces;
+			geom.computeFaceNormals();
+
+			let selfShape = new THREE.Mesh(geom, new THREE.MeshLambertMaterial({ color: 0xcccccc }));
+
+			selfShape.position.set(-3, 10, 10);
+			scene.add(selfShape);
+
+
 			renderer.setAnimationLoop((time) => {
 
 				// if (i != 0)
@@ -137,7 +214,16 @@
 				sphere.position.x = 20 + 10 * (Math.cos(step));
 				sphere.position.y = 2 + 10 * Math.abs(Math.sin(step));
 
+				group.traverse(obj => {
+					if (xy.inst_of(obj, THREE.Mesh) && !xy.eq(obj, plane)) {
+						obj.rotation.x = obj.rotation.x % MAX_POSITIVE_NUMBER + controls.rotationSpeed;
+						obj.rotation.y = obj.rotation.y % MAX_POSITIVE_NUMBER + controls.rotationSpeed;
+						obj.rotation.z = obj.rotation.z % MAX_POSITIVE_NUMBER + controls.rotationSpeed;
+					}
+				});
+
 				renderer.render(scene, camera);
+				// renderer.render(scene2, camera);
 				// camera.updateProjectionMatrix();
 			});
 			function onResize() {

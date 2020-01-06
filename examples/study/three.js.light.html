@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Lights</title>
+</head>
+
+<body>
+	<!-- <h1>Base</h1> -->
+
+	<script type="text/javascript" src="../../3lib/babel.js"></script>
+	<script type="text/javascript" src="../../3lib/reactjs/react.development.js"></script>
+	<script type="text/javascript" src="../../3lib/reactjs/react-dom.development.js"></script>
+
+	<script type="text/javascript" src="../../3lib/three.js/three.js"></script>
+	<script type="text/javascript" src="../../3lib/three.js/plugins/WebGL.js"></script>
+	<script type="text/javascript" src="../../3lib/three.js/plugins/libs/stats.min.js"></script>
+	<script type="text/javascript" src="../../3lib/three.js/plugins/libs/dat.gui.min.js"></script>
+	<script type="text/javascript" src="../../3lib/three.js/plugins/controls/TrackballControls.js"></script>
+	<script type="text/javascript" src="../../core/xy2.js"></script>
+	<script type="text/javascript">
+		let scene = new THREE.Scene();
+		let spotLight = new THREE.SpotLight(0xff0000);
+		let ambientLight = new THREE.AmbientLight("#606008");
+		scene.add(ambientLight);
+
+		let controls = new function () {
+			this.intensity = ambientLight.intensity;
+			this.ambientColor = ambientLight.color.getStyle();
+			this.disableSpotlight = false;
+		};
+		let gui = new dat.GUI();
+		gui.add(controls, 'intensity', 0, 3, 0.1).onChange(e => {
+			ambientLight.color = new THREE.Color(controls.ambientColor);
+			ambientLight.intensity = controls.intensity;
+		});
+		gui.addColor(controls, 'ambientColor').onChange(e => {
+			ambientLight.color = new THREE.Color(controls.ambientColor);
+			ambientLight.intensity = controls.intensity;
+		});
+		gui.add(controls, 'disableSpotlight').onChange(e => {
+			spotLight.visible = !e;
+		});
+
+
+
+	</script>
+</body>
+
+</html>

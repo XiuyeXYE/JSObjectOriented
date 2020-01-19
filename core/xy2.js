@@ -2931,4 +2931,6 @@
 
 }));
 //common outer API
-var println = console.log;
+if(console&&console.log){
+    var println = console.log;
+}

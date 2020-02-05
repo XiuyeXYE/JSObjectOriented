@@ -146,7 +146,11 @@
 
     //Keys include symbol!
     function enumKeys(a) {
-        var keys = Object.keys(a);
+        // var keys = Object.keys(a);
+        var keys = EMPTY_VALUES.ARRAY;
+        for (var key in a) {
+            keys.push(key);
+        }
         if (fnExist(Object.getOwnPropertySymbols)) {
             keys = keys.concat(Object.getOwnPropertySymbols(a));
         }
@@ -2931,6 +2935,6 @@
 
 }));
 //common outer API
-if(console&&console.log){
+if (console && console.log) {
     var println = console.log;
 }

@@ -2943,12 +2943,12 @@
 //common outer API
 function println(){
     if (xy.STDOUT_OPENED && console && console.log) {
-        console.log.call(console,xy.arrayLike2Array(arguments));
+        console.log.apply(console,xy.arrayLike2Array(arguments));
     }
 }
 function xdebug(){
     if (xy.DEBUG && console && console.log) {
-        console.log.call(console,xy.arrayLike2Array(arguments));
+        console.log.apply(console,xy.arrayLike2Array(arguments));
     }
 }
 

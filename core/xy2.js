@@ -816,7 +816,7 @@
         // },
         //It's a very good way! "bind" is very good!
         of: function () {
-            return new (this.bind.apply(this, [null].concat(arrayLike2Array(arguments))))()
+            return new (this.bind.apply(this, [null].concat(arrayLike2Array(arguments))))();
         },
         // valueOf: function () {
         //     return this.of.apply(this, arguments);
@@ -2896,6 +2896,11 @@
         HashMap: HashMap
     };
 
+    var parameters = {
+        DEBUG:true,
+        STDOUT_OPENED:true,
+    };
+
     // var pluginsDEV = {
     //     // plugins: plugins,
     //     Plugin: Plugin,
@@ -2926,6 +2931,7 @@
 
     xy.extend(fn);
     xy.extend(classes);
+    xy.extend(parameters);
     xy.extend(interfaces);
     // xy.extend(pluginsDEV);
 
@@ -2935,6 +2941,14 @@
 
 }));
 //common outer API
-if (console && console.log) {
-    var println = console.log;
+function println(){
+    if (xy.STDOUT_OPENED && console && console.log) {
+        console.log.call(console,xy.arrayLike2Array(arguments));
+    }
 }
+function xdebug(){
+    if (xy.DEBUG && console && console.log) {
+        console.log.call(console,xy.arrayLike2Array(arguments));
+    }
+}
+

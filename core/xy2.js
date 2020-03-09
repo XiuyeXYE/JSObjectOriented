@@ -2788,7 +2788,13 @@
     //     return peq(plugins, 0);
     // }
 
-
+    //20.new tools 
+    //source file and code line
+    function sourceFileAndCodeLine(n) {
+        var stack = new Error().stack;
+        var ss = stack.split('at');
+        return ss[n].trim();
+    }
 
 
 
@@ -2878,7 +2884,8 @@
         inf_ext: inf_ext,
         inst_of: inst_of,
         notInstanceof: notInstanceof,
-        ntfs: ntfs
+        ntfs: ntfs,
+        sourceFileAndCodeLine: sourceFileAndCodeLine
     };
 
     var interfaces = {
@@ -2897,8 +2904,8 @@
     };
 
     var parameters = {
-        DEBUG:true,
-        STDOUT_OPENED:true,
+        DEBUG: true,
+        STDOUT_OPENED: true,
     };
 
     // var pluginsDEV = {
@@ -2941,14 +2948,17 @@
 
 }));
 //common outer API
-function println(){
+function println() {
     if (xy.STDOUT_OPENED && console && console.log) {
-        console.log.apply(console,xy.arrayLike2Array(arguments));
+        var params = xy.arrayLike2Array(arguments);
+        params.push(xy.sourceFileAndCodeLine(3));
+        console.log.apply(console, params);
     }
 }
-function xdebug(){
+function xdebug() {
     if (xy.DEBUG && console && console.log) {
-        console.log.apply(console,xy.arrayLike2Array(arguments));
+        var params = xy.arrayLike2Array(arguments);
+        params.push(xy.sourceFileAndCodeLine(3));
+        console.log.apply(console, params);
     }
 }
-

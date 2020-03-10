@@ -2791,7 +2791,10 @@
     //20.new tools 
     //source file and code line
     function sourceFileAndCodeLine(n) {
-        var stack = new Error().stack;
+        //var stack = new Error().stack;
+        var obj = EMPTY_VALUES.OBJECT;
+        Error.captureStackTrace(obj, sourceFileAndCodeLine);
+        var stack = obj.stack;
         var ss = stack.split('at');
         return ss[n].trim();
     }

@@ -1050,6 +1050,10 @@
         inst_string_interface,
         hash_interface);
 
+    var static_default_interfaces = inf_ext(
+        static_of_interface,
+    );
+
     var std_interfaces = {
         static_of_interface: static_of_interface,
         extend_interface: extend_interface,
@@ -1059,7 +1063,8 @@
         clone_interface: clone_interface,
         equals_interface: equals_interface,
         hash_interface: hash_interface,
-        object_default_interfaces: object_default_interfaces
+        object_default_interfaces: object_default_interfaces,
+        static_default_interfaces: static_default_interfaces
     };
 
 
@@ -2803,6 +2808,7 @@
         if (fnExist(c) && strNonEmpty(c.name)) {
             if (implStd) {
                 impl(c, object_default_interfaces);
+                static_impl(c, static_default_interfaces);
             }
             impl(c, members);
             static_impl(c, staticMembers);
@@ -2822,7 +2828,7 @@
         }
     }
 
-    
+
 
     //9.Open API functions
 

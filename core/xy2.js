@@ -2799,7 +2799,20 @@
         return ss[n].trim();
     }
 
+    function defineClass(c, members, staticMembers) {
+        if (fnExist(c) && oExist(members)) {
+            impl(c, members);
+            static_impl(c, staticMembers);
+            return c;
+        }
+    }
 
+    function joinTheClub(c, members, staticMembers) {
+        if (fnExist(c) && oExist(members)) {
+            c = defineClass(c, members, staticMembers);
+            xy[c.name] = c;
+        }
+    }
 
 
 
@@ -2886,6 +2899,8 @@
         static_impl: static_impl,
         inf_ext: inf_ext,
         inst_of: inst_of,
+        defineClass: defineClass,
+        joinTheClub: joinTheClub,
         notInstanceof: notInstanceof,
         ntfs: ntfs,
         sourceFileAndCodeLine: sourceFileAndCodeLine

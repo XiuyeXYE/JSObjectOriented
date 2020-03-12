@@ -2716,6 +2716,22 @@
 
     function add(c, members, staticMembers, implStd = false) {//class or function
         if (fnExist(c) && strNonEmpty(c.name)) {
+            if (oExist(xy[c.name])) {
+                throw new Error("xy." + c.name + " is existed,please using xy.cover!");
+            }
+            c = define(c, members, staticMembers, implStd);
+            xy[c.name] = c;
+        }
+        else {
+            throw new Error("First parameter must be named function!");
+        }
+    }
+
+    function cover(c, members, staticMembers, implStd = false) {
+        if (fnExist(c) && strNonEmpty(c.name)) {
+            if (!oExist(xy[c.name])) {
+                throw new Error("xy." + c.name + " is not existed,please using xy.add!");
+            }
             c = define(c, members, staticMembers, implStd);
             xy[c.name] = c;
         }
@@ -2811,6 +2827,7 @@
         inst_of: inst_of,
         define: define,
         add: add,
+        cover: cover,
         notInstanceof: notInstanceof,
         ntfs: ntfs,
         sourceFileAndCodeLine: sourceFileAndCodeLine

@@ -2799,8 +2799,11 @@
         return ss[n].trim();
     }
 
-    function define(c, members, staticMembers) {
+    function define(c, members, staticMembers, implStd = false) {
         if (fnExist(c) && strNonEmpty(c.name)) {
+            if (implStd) {
+                impl(c, object_default_interfaces);
+            }
             impl(c, members);
             static_impl(c, staticMembers);
             return c;
@@ -2809,9 +2812,9 @@
         }
     }
 
-    function add(c, members, staticMembers) {//class or function
+    function add(c, members, staticMembers, implStd = false) {//class or function
         if (fnExist(c) && strNonEmpty(c.name)) {
-            c = define(c, members, staticMembers);
+            c = define(c, members, staticMembers, implStd);
             xy[c.name] = c;
         }
         else {
@@ -2819,10 +2822,7 @@
         }
     }
 
-
-
-
-
+    
 
     //9.Open API functions
 

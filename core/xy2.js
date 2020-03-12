@@ -2840,6 +2840,7 @@
         I: I,//for xy inner function
         S: S,//for xy inner function
         D: add,//for xy inner function
+        R: cover,//for xy inner function
         inf_ext: inf_ext,
         inst_of: inst_of,
         define: define,

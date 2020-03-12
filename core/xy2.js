@@ -2686,112 +2686,8 @@
 
     static_impl(HashMap, HashMap_static_impl);
 
-    //12.Plugins dev
 
-    // var plugins = EMPTY_VALUES.ARRAY;
-    // var pluginId = 0;
 
-    // function uuid() {
-    //     // return new Date().getTime();
-    //     return pluginId++;
-    // }
-
-    // function Plugin(t, f, name) {
-    //     ntfs(this, Plugin);
-    //     if (oExist(t) && fnExist(f)) {
-    //         this.t = t;
-    //         this.f = f;
-    //         this.name = name || f.name;
-    //         if (!isStr(this.name) || strIsEmpty(this.name) || /^\d/.test(this.name)) {
-    //             throw "Plugin name must be string and not start with number!";
-    //         }
-    //         this.loaded = false;
-    //         this.pId = uuid();
-    //     } else {
-    //         throw "Plugin must have two parameters:type and function!";
-    //     }
-    // }
-
-    // Plugin.TYPE_CALL = 1;
-    // // Plugin.TYPE_MEMBER = 2;
-    // Plugin.TYPE_FUNCTION = 3;
-    // Plugin.TYPE_CLASS = 5;
-
-    // function allPlugins() {
-    //     return plugins;
-    // }
-
-    // function hasPlugin(iOrFOrN) {
-    //     for (var i = 0; i < len(plugins); i++) {
-    //         var v = plugins[i];
-    //         var flag = false;
-    //         if (isFunction(iOrFOrN)) {
-    //             flag = eq(v.f, iOrFOrN);
-    //         }
-    //         else if (isNumber(iOrFOrN)) {
-    //             flag = eq(v.pId, iOrFOrN);
-    //         }
-    //         else if (isStr(iOrFOrN)) {
-    //             flag = eq(v.name, iOrFOrN);
-    //         }
-    //         if (flag) {
-    //             return flag;
-    //         }
-    //     }
-    //     return false;
-    // }
-
-    // function addPlugin(t, f, name) {
-    //     if (!oExist(t) || !isFunction(f)) {
-    //         throw "first plugin type,second plugin function,indeed!";
-    //     }
-    //     name = name || f.name;
-    //     for (var i = 0; i < len(plugins); i++) {
-    //         var v = plugins[i];
-    //         if (eq(v.f, f) || eq(v.name, name) || oExist(xy[name])) {
-    //             throw "Plugin exists or plugin name conflicts !!!";
-    //             // return false;
-    //         }
-    //     }
-    //     if (!eq(t, Plugin.TYPE_CALL)) {
-    //         xy[name] = f;
-    //     }
-    //     var ot = new Plugin(t, f, name);
-    //     ot.loaded = true;
-    //     plugins.push(ot);
-    //     return ot.pId;
-    // }
-
-    // function removePlugin(iOrFOrN) {
-    //     var a = len(plugins);
-    //     plugins = arrayFilter(plugins, function (v, i, a) {
-    //         var flag = false;//true:exist!
-    //         if (isFunction(iOrFOrN)) {
-    //             flag = eq(v.f, iOrFOrN);
-    //         }
-    //         else if (isNumber(iOrFOrN)) {
-    //             flag = eq(v.pId, iOrFOrN);
-    //         }
-    //         else if (isStr(iOrFOrN)) {
-    //             flag = eq(v.name, iOrFOrN);
-    //         }
-    //         if (flag && !eq(v.t, Plugin.TYPE_CALL)) {
-    //             delete xy[v.name];
-    //         }
-    //         return !flag;
-    //     });
-    //     return gt(a, len(plugins));
-    // }
-
-    // function clearPlugins() {
-    //     arrayForEach(plugins, function (v, i, a) {
-    //         if (!eq(v.t, Plugin.TYPE_CALL)) {
-    //             delete xy[v.name];
-    //         }
-    //     });
-    //     plugins.length = 0;
-    //     return peq(plugins, 0);
-    // }
 
     //20.new tools 
     //source file and code line
@@ -2936,34 +2832,34 @@
     };
 
     var parameters = {
+        version: "version 1.0.0",
+        author: "Jack Lee;& 风行百里;",
         DEBUG: true,
         STDOUT_OPENED: true,
     };
 
-    // var pluginsDEV = {
-    //     // plugins: plugins,
-    //     Plugin: Plugin,
-    //     allPlugins: allPlugins,
-    //     addPlugin: addPlugin,
-    //     removePlugin: removePlugin,
-    //     clearPlugins: clearPlugins,
-    //     hasPlugin: hasPlugin
-    // }
 
     // For nothing of conflict of JQuery ... frameworks, it must be function.
     // xy is open and outside API.
-    function xy(p) {
-        // for (var i = 0; i < len(plugins); i++) {
-        //     var plugin = plugins[i];
-        //     if (eq(Plugin.TYPE_CALL, plugin.t)) {
-        //         plugin.f(p);
-        //     }
-        // }
-        // if (isFunction(p)) {
-        //     dom.of(document).on('DOMContentLoaded', p);
-        // } else if (strNonEmpty(p)) {
-        //     return xy.d(p);
-        // }
+    function xy() {
+        var ps = arrayLike2Array(arguments);
+        var result;
+        if (pgt(ps, 0)) {
+            //1.xy self function called
+            var command = ps[0];
+            ps.shift();
+            if (strNonEmpty(command)) {
+                if (isFunction(xy[command])) {
+                    result = xy[command].apply(xy, ps);
+                } else {
+                    result = xy[command];//old
+                    if (pgt(ps, 0)) {
+                        xy[command] = ps[0];
+                    }
+                }
+            }
+        }
+        return result;
     };
 
     static_impl(xy, extend_interface);

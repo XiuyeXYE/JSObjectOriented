@@ -2811,7 +2811,7 @@
 
     function add(c, members, staticMembers) {//class or function
         if (fnExist(c) && strNonEmpty(c.name)) {
-            c = defineClass(c, members, staticMembers);
+            c = define(c, members, staticMembers);
             xy[c.name] = c;
         }
         else {

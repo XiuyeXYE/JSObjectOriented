@@ -2740,14 +2740,14 @@
         }
     }
 
-    function i() {
+    function I() {
         var ps = arrayLike2Array(arguments);
         if (pgt(ps, 1) && strNonEmpty(ps[0]) && fnExist(ps[0] = xy[ps[0]])) {
             impl.apply(xy, ps);
         }
     }
 
-    function s() {
+    function S() {
         var ps = arrayLike2Array(arguments);
         if (pgt(ps, 1) && strNonEmpty(ps[0]) && fnExist(ps[0] = xy[ps[0]])) {
             static_impl.apply(xy, ps);
@@ -2837,9 +2837,9 @@
         ext: ext,
         impl: impl,
         static_impl: static_impl,
-        i: i,
-        s: s,
-        c: add,
+        I: I,//for xy inner function
+        S: S,//for xy inner function
+        D: add,//for xy inner function
         inf_ext: inf_ext,
         inst_of: inst_of,
         define: define,

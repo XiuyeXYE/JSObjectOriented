@@ -2936,9 +2936,9 @@ function runtime() {
         var that = ps[1];
         ps.splice(0, 2);
         var label = f.name ? f.name : 'running time';
-        if (DEBUG_TIME) console.time(label);
+        if (xy.DEBUG_TIME) console.time(label);
         f.apply(that, ps);
-        if (DEBUG_TIME) console.timeEnd(label);
+        if (xy.DEBUG_TIME) console.timeEnd(label);
     }
 
 }

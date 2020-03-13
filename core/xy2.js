@@ -540,6 +540,20 @@
         return dest;
     }
 
+    function copy(deep) {
+        var ps = arrayLike2Array(arguments);
+        if (isBoolean(deep)) {
+            ps.shift();
+            if (deep) {
+                return deepCopy.apply(null, ps);
+            } else {
+                return simpleCopy.apply(null, ps);
+            }
+        } else {
+            return simpleCopy.apply(null, ps);
+        }
+    }
+
     //6.Class definition keywords
 
     /**
@@ -2849,7 +2863,7 @@
         notInstanceof: notInstanceof,
         ntfs: ntfs,
         sourceFileAndCodeLine: sourceFileAndCodeLine,
-
+        copy: copy,
     };
 
     var interfaces = {

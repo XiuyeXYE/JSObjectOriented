@@ -2872,6 +2872,7 @@
         author: "Jack Lee;& 风行百里;",
         DEBUG: true,
         STDOUT_OPENED: true,
+        DEBUG_TIME: true,
     };
 
 
@@ -2926,3 +2927,19 @@ function xdebug() {
         console.log.apply(console, params);
     }
 }
+
+function runtime() {
+    var ps = xy.arrayLike2Array(arguments);
+    if (xy.pgt(ps, 0) && xy.fnExist(ps[0])) {
+
+        var f = ps[0];
+        var that = ps[1];
+        ps.splice(0, 2);
+        var label = f.name ? f.name : 'running time';
+        if (DEBUG_TIME) console.time(label);
+        f.apply(that, ps);
+        if (DEBUG_TIME) console.timeEnd(label);
+    }
+
+}
+

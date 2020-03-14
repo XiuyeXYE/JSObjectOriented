@@ -1065,7 +1065,7 @@
         hash_interface);
 
     var static_default_interfaces = inf_ext(
-        static_of_interface,
+        static_of_interface
     );
 
     var std_interfaces = {
@@ -2706,12 +2706,28 @@
     //20.new tools 
     //source file and code line
     function sourceFileAndCodeLine(n) {
-        //var stack = new Error().stack;
-        var obj = EMPTY_VALUES.OBJECT;
-        Error.captureStackTrace(obj, sourceFileAndCodeLine);
-        var stack = obj.stack;
-        var ss = stack.split('at');
-        return ss[n].trim();
+        var stack = EMPTY_VALUES.STRING;
+        //compatible handler
+        if (fnExist(Error.captureStackTrace)) {
+            var obj = EMPTY_VALUES.OBJECT;
+            Error.captureStackTrace(obj, sourceFileAndCodeLine);
+            var stack = obj.stack;
+        }
+        else {
+            var stack = new Error().stack
+        }
+        var ss = stack.split('\n');
+        // console.log(stack, ss);
+        var codeLine = ss[n].trim();
+        var idx = -1;
+        // console.log("origin codeLine : ", codeLine);
+        if (gt((idx = codeLine.indexOf('at')), -1)) {
+            codeLine = codeLine.substring(idx + 2);
+        } else if (gt((idx = codeLine.indexOf('@')), -1)) {
+            codeLine = codeLine.substring(idx + 1);
+        }
+
+        return codeLine.trim();
     }
 
     function define(c, members, staticMembers, implStd = false) {
@@ -2930,14 +2946,16 @@
 function println() {
     if (xy.STDOUT_OPENED && console && console.log) {
         var params = xy.arrayLike2Array(arguments);
-        params.push('Source:' + xy.sourceFileAndCodeLine(2));
+        if (xy.DEBUG_TIME) params.unshift('[' + new Date().toLocaleString() + ']');
+        params.push(xy.sourceFileAndCodeLine(2));
         console.log.apply(console, params);
     }
 }
 function xdebug() {
     if (xy.DEBUG && console && console.log) {
         var params = xy.arrayLike2Array(arguments);
-        params.push('Source:' + xy.sourceFileAndCodeLine(2));
+        if (xy.DEBUG_TIME) params.unshift('[' + new Date().toLocaleString() + ']');
+        params.push(xy.sourceFileAndCodeLine(2));
         console.log.apply(console, params);
     }
 }

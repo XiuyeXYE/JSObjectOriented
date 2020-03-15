@@ -33,7 +33,14 @@
  */
 
 
+
+function sizeof(o) {
+    return 0;
+}
+
 //typedef
+
+
 let string = String;
 let A_stm = A_stm_;
 let A_exp = A_exp_;
@@ -50,11 +57,7 @@ let A_binop = {
 
 
 function A_stm_() {
-    this.kind = {
-        A_compoundStm: 1,
-        A_assignStm: 2,
-        A_printStm: 3
-    };
+    this.kind = undefined;//KIND
     this.u = {
         compound: {
             stm1: undefined,//refer to A_stm
@@ -72,7 +75,23 @@ function A_stm_() {
 
     };
 }
+
+xy.static_impl(A_stm_, {
+    KIND: {
+        A_compoundStm: 1,
+        A_assignStm: 2,
+        A_printStm: 3
+    }
+});
+
+
+
 function A_CompoundStm(/* A_stm */stm1,/*A_stm*/stm2) {//return A_stm
+    let s = checkd_malloc(sizeof(s));
+    s.kind = A_stm.KIND.A_compoundStm;
+    s.u.compound.stm1 = stm1;
+    s.u.compound.stm2 = stm2;
+    return s;
 
 }
 
@@ -85,12 +104,8 @@ function A_PrintStm(/* A_expList */ exps) {
 }
 
 function A_exp_() {
-    this.kind = {
-        A_idExp: 1,
-        A_numExp: 2,
-        A_opExp: 3,
-        A_eseqExp: 3
-    };
+
+    this.kind = undefined;//KIND
     this.u = {
         id: undefined,//refer to string
         num: undefined,//refer to int
@@ -107,34 +122,52 @@ function A_exp_() {
     };
 }
 
-function A_IdExp(/* string */ id){//A_exp
-    
-}
+xy.static_impl(A_exp_, {
+    KIND: {
+        A_idExp: 1,
+        A_numExp: 2,
+        A_opExp: 3,
+        A_eseqExp: 3
+    }
+});
 
-function A_NumExp(/* int */ num){//A_exp
-    
-}
-
-function A_OpExp(/* A_exp */ left,/* A_binop */ oper,/* A_exp */ right){//A_exp
-
-}
-
-function A_EseqExp(/* A_stm */ stm,/* A_exp */ exp){//A_exp
+function A_IdExp(/* string */ id) {//A_exp
 
 }
 
-function A_expList_(){
-    this.kind={
-        A_pairExpList:1,
-        A_lastExpList:2
-    };
-    this.u={
-        pair:{
-            head:undefined,//A_exp
-            tail:undefined//A_expList
+function A_NumExp(/* int */ num) {//A_exp
+
+}
+
+function A_OpExp(/* A_exp */ left,/* A_binop */ oper,/* A_exp */ right) {//A_exp
+
+}
+
+function A_EseqExp(/* A_stm */ stm,/* A_exp */ exp) {//A_exp
+
+}
+
+function A_expList_() {
+    this.kind = undefined;//KIND
+    this.u = {
+        pair: {
+            head: undefined,//A_exp
+            tail: undefined//A_expList
         },
-        last:undefined,//A_exp
+        last: undefined,//A_exp
     }
 }
+
+xy.static_impl(A_expList_, {
+    KIND: {
+        A_pairExpList: 1,
+        A_lastExpList: 2
+    }
+});
+
+
+
+
+
 
 

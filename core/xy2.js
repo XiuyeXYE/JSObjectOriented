@@ -2975,3 +2975,12 @@ function runtime() {
 
 }
 
+function property(obj) {
+    console.dir(obj);
+}
+
+function datatable(obj) {
+    console.table(obj);
+}
+
+

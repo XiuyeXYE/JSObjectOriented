@@ -2784,6 +2784,15 @@
         }
     }
 
+    function functionApply(f, t, args) {
+        if (peq(arguments, 3) && fnExist(f)) {
+            var ps = arrayLike2Array(args);
+            return f.apply(t, ps);
+        }
+        else {
+            throw new Error("Three(3) parameters:function,this,arguments!Called by outer function!");
+        }
+    }
 
 
     //9.Open API functions
@@ -2880,6 +2889,7 @@
         ntfs: ntfs,
         sourceFileAndCodeLine: sourceFileAndCodeLine,
         copy: copy,
+        fn: functionApply
     };
 
     var interfaces = {
@@ -2975,12 +2985,15 @@ function runtime() {
 
 }
 
-function property(obj) {
-    console.dir(obj);
+function property() {
+    xy.fn(console.dir, console, arguments);
 }
 
-function datatable(obj) {
-    console.table(obj);
+function datatable() {
+    xy.fn(console.table, console, arguments);
 }
 
+function assert() {
+    xy.fn(console.assert, console, arguments);
+}
 

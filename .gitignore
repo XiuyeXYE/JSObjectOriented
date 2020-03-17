@@ -3,3 +3,6 @@
 /engine-1.19.2
 /nwjs-sdk
 /3lib/OpenRA-release-20191117
+/.idea
+/.settings
+/.vscode

@@ -146,13 +146,15 @@
 
     //Keys include symbol!
     function enumKeys(a) {
-        // var keys = Object.keys(a);
         var keys = EMPTY_VALUES.ARRAY;
-        for (var key in a) {
-            keys.push(key);
-        }
-        if (fnExist(Object.getOwnPropertySymbols)) {
-            keys = keys.concat(Object.getOwnPropertySymbols(a));
+        if (oExist(a)) {
+            // var keys = Object.keys(a);
+            for (var key in a) {
+                keys.push(key);
+            }
+            if (fnExist(Object.getOwnPropertySymbols)) {
+                keys = keys.concat(Object.getOwnPropertySymbols(a));
+            }
         }
         return keys;
     }
@@ -889,6 +891,9 @@
         o: function (o) {
             this.origin = o;
         },
+        exist: function () {
+            return oExist(this.get());
+        },
         /**
          * 返回原始对象
          */
@@ -983,16 +988,7 @@
 
             var ps = EMPTY_VALUES.ARRAY;
             ps[0] = f;
-            // if (isFunction(this.invoke.caller)) {
-            // 	ps[0] = this.invoke.caller.name;
-            // }
-            // var args = EMPTY_VALUES.ARRAY;
-            // if (p1(arguments)) {
-            // 	args = aorf || EMPTY_VALUES.ARRAY;
-            // } else if (pnl2(arguments)) {
-            // 	ps[0] = aorf;
-            // 	args = a || EMPTY_VALUES.ARRAY;
-            // }
+            
             for (var i = 0; i < args.length; i++) {
                 ps.push(args[i]);
             }

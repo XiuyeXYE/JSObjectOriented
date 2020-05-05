@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hello World</title>
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+        <div id="webgl"></div>
+        <script>
+            let menu = new nw.Menu();
+            menu.append(new nw.MenuItem({
+                label:"Item A",
+                click:function(){
+                    alert("You have clicked at 'Item A'");
+                }
+            }));
+            menu.append(new nw.MenuItem({label:"Item B"}));
+            menu.append(new nw.MenuItem({type:"separator"}));
+            menu.append(new nw.MenuItem({label:"Item C"}));
+            document.body.addEventListener("contextmenu",(e)=>{
+                e.preventDefault();
+                menu.popup(e.x,e.y);
+                return false;
+            },false);
+            let os = require("os");
+            document.write("You are running on ",os.platform());
+        </script>
+        <script type="module">
+            import xy,{xdebug} from "./xy/xy2.module.js";
+            import "../xy/network.js";
+            xy.ajaxPublicNetworkIP((d)=>{
+                alert(d);
+            });
+            import Stats from "./xy/stats.module.js";
+
+            import * as dat from "./xy/dat.gui.module.js";
+
+            let stats = new Stats();
+            stats.showPanel(0);
+            document.body.appendChild(stats.dom);
+
+            let gui = new dat.GUI();
+            let controls = new function(){
+                this.rotationSpeed = 0.02;
+                this.bouncingSpeed = 0.03;
+            }
+            gui.add(controls,"rotationSpeed",0,0.5);
+            gui.add(controls,"bouncingSpeed",0,0.5);
+
+            function update(){
+                stats.update();
+                requestAnimationFrame(update);
+            }
+
+            update();
+
+            import * as three from "./xy/three.module.js";
+            let scene = new three.Scene();
+            let camera = new three.PerspectiveCamera(45,window.innerWidth/window.innerHeight);
+            let render = new three.WebGLRenderer({antialias:true});
+            render.shadowMap.enabled = true;
+            render.setClearColor(new three.Color(0x000));
+            render.setSize(window.innerWidth,window.innerHeight);
+            
+            
+
+            let axes = new three.AxesHelper(20);
+            scene.add(axes);
+
+            let planeGeometry = new three.PlaneGeometry(60,20);
+            // let planeMaterial = new three.MeshBasicMaterial({
+            //     color:0xAAAAAA
+            // });
+            let planeMaterial = new three.MeshLambertMaterial({
+                color:0xAAAAAA
+            });
+            let plane = new three.Mesh(planeGeometry,planeMaterial);
+            plane.rotation.x = -0.5 * Math.PI;
+            plane.position.set(15,0,0);
+            plane.receiveShadow = true;
+            scene.add(plane);
+
+            let cubeGeometry = new three.BoxGeometry(4,4,4);
+            // let cubeMaterial = new three.MeshBasicMaterial({
+            //     color:0xFF0000,
+            //     wireframe:true
+            // });
+            let cubeMaterial = new three.MeshLambertMaterial({
+                color:0xFF0000,
+                // wireframe:true
+            });
+            let cube = new three.Mesh(cubeGeometry,cubeMaterial);
+            cube.position.set(-4,3,0);
+            cube.castShadow=true;
+            scene.add(cube);
+
+
+            let sphereGeometry = new three.SphereGeometry(4,20,20);
+            // let sphereMaterial = new three.MeshBasicMaterial({
+            //     color:0x7777FF,
+            //     wireframe:true
+            // });
+            let sphereMaterial = new three.MeshLambertMaterial({
+                color:0x7777FF,
+                // wireframe:true
+            });
+            let sphere = new three.Mesh(sphereGeometry,sphereMaterial);
+            sphere.position.set(20,4,2);
+            sphere.castShadow=true;
+            scene.add(sphere);
+
+            let spotLight = new three.SpotLight(0xFFFFFF);
+            spotLight.position.set(-40,40,-15);
+            spotLight.castShadow = true;
+            spotLight.shadow.mapSize = new three.Vector2(1024,1024);
+            spotLight.shadow.camera.far = 130;
+            spotLight.shadow.camera.near = 40;
+            // spotLight.castShadow=true;
+            scene.add(spotLight);
+            
+
+            camera.position.set(-30,40,30);
+            camera.lookAt(scene.position);
+
+            render.render(scene,camera);
+           
+
+            document.querySelector("#webgl").appendChild(render.domElement);
+            // setInterval(()=>{
+            //     plane.rotation.x += 1;                
+            // });
+        </script>
+    </body>
+</html>

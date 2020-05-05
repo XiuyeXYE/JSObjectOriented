@@ -124,6 +124,11 @@
 
             render.render(scene,camera);
            
+            window.addEventListener('resize',(e)=>{
+                camera.aspect = window.innerWidth/innerHeight;
+                camera.updateProjectionMatrix();
+                render.setSize(window.innerWidth,window.innerHeight);
+            },false);
 
             document.querySelector("#webgl").appendChild(render.domElement);
             // setInterval(()=>{

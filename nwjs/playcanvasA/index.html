@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hello World</title>
+</head>
+
+<body>
+    <h1>Hello World!</h1>
+    <div id="container">
+        <canvas id='application'></canvas>
+    </div>
+
+    <iframe src="D:\code\util_js\3lib\engine-1.19.2\index.html"></iframe>
+
+    <script type="text/javascript" src="xy/playcanvas-latest.js"> </script>
+    <script type="text/javascript" src="xy/sweetalert2.all.js"> </script>
+    <script type="text/javascript">
+
+        // create a PlayCanvas application
+        const canvas = document.getElementById('application');
+        const app = new pc.Application(canvas);
+
+        // fill the available space at full resolution
+        app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
+        app.setCanvasResolution(pc.RESOLUTION_AUTO);
+
+        // ensure canvas is resized when window changes size
+        window.addEventListener('resize', () => app.resizeCanvas());
+
+        // create box entity
+        const box = new pc.Entity('cube');
+        box.addComponent('model', {
+            type: 'box'
+        });
+        app.root.addChild(box);
+
+        // create camera entity
+        const camera = new pc.Entity('camera');
+        camera.addComponent('camera', {
+            clearColor: new pc.Color(0.1, 0.1, 0.1)
+        });
+        app.root.addChild(camera);
+        camera.setPosition(0, 0, 10);
+
+        // create directional light entity
+        const light = new pc.Entity('light');
+        light.addComponent('light');
+        app.root.addChild(light);
+        light.setEulerAngles(45, 0, 0);
+
+        // rotate the box according to the delta time since the last frame
+        app.on('update', dt => box.rotate(10 * dt, 20 * dt, 30 * dt));
+
+        app.start();
+    </script>
+    <script type="module">
+        import xy, { xdebug } from "./xy/xy2.module.js";
+        import "../xy/network.js";
+        xy.ajaxPublicNetworkIP((d) => {
+            // alert(d);
+            Swal.fire(
+                'Your IP',
+                d,
+                'success'
+            )
+        });
+        xdebug(pc);
+
+
+    </script>
+</body>
+
+</html>

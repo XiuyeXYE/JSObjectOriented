@@ -1,0 +1,1 @@
+[0515/175007.696:ERROR:chrome_main_delegate.cc(672)] Web security may only be disabled if '--user-data-dir' is also specified with a non-default value.
